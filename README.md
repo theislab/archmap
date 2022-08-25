@@ -1,2 +1,2 @@
 # General info
-atrchmap 
+archmap 
