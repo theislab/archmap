@@ -11,7 +11,7 @@ const PRODUCTION_BACKEND_ADDRESS = 'https://custom-helix-329116.ey.r.appspot.com
 export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
 
 // const names for indexed DB variables
-export const INDEXED_DB_NAME = 'indexedDB-archemap-projects';
+export const INDEXED_DB_NAME = 'indexedDB-archmap-projects';
 export const DB_VERSION = 1;
 
 export const JOB_QUEUE_UPDATE_INTERVAL = 5000;

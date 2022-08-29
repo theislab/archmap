@@ -71,7 +71,7 @@ const Contact = () => {
                 align="center"
               >
                 Please message us in case you have any questions,
-                feedback or collaboration-related inquiries concerning Archemap.org.
+                feedback or collaboration-related inquiries concerning Archmap.bio.
               </Typography>
             </div>
           </Stack>

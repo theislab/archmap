@@ -278,7 +278,7 @@ export default function Navbar({
             >
               <img width={28} alt="logo" src={logo} />
             </IconButton>
-            <Navlink fontWeight="bold" fontSize="20px">archemap.org</Navlink>
+            <Navlink fontWeight="bold" fontSize="20px">archmap.bio</Navlink>
           </LinkBox>
           <LinkBox to="/genemapper"><Navlink>Map</Navlink></LinkBox>
           <LinkBox to="/references"><Navlink>References</Navlink></LinkBox>
