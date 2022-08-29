@@ -70,12 +70,8 @@ function DrawerBar({ open, setOpen, executeScroll }) {
       <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0.7em' }}>
         <IconButton
           disableRipple
-          sx={{
-            bgcolor: 'white',
-            ':hover': { bgcolor: 'primary.dark' },
-          }}
         >
-          <img width={28} alt="logo" src={logo} />
+          <img width={50} alt="logo" src={logo} />
         </IconButton>
       </LinkBox>
 
@@ -268,15 +264,15 @@ export default function Navbar({
           executeScroll={handleClickContactUsInDrawer}
         />
         <Leftbar>
-          <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0.7em' }}>
+          <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0em' }}>
             <IconButton
               disableRipple
               sx={{
-                bgcolor: 'white',
-                ':hover': { bgcolor: 'white' },
+                bgcolor: '',
+                ':hover': { transform: 'scale(1.0)' }, // no effect, since scaling to same size. Left in for future reference
               }}
             >
-              <img width={28} alt="logo" src={logo} />
+              <img width={50} alt="logo" src={logo} />
             </IconButton>
             <Navlink fontWeight="bold" fontSize="20px">archmap.bio</Navlink>
           </LinkBox>
