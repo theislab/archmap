@@ -34,25 +34,12 @@ const WindowiOS = ({ onSignUpClicked }) => {
             Reference-Based Analysis of Single-Cell Omics Data Powered by scArches
          </Typography>
         </Box>
-        {/* <Typography fontSize={{ xs: "1.4rem", sm: "1.6rem", md: "1.4rem", lg: "2rem", xl: "2rem" }} fontWeight="semibold">
-          No Code. Just Results.
-        </Typography> */}
         <Box sx={{ display: 'inline-block', padding: '30px', borderRadius: '20px', margin: "3em 2em 2em 2em" }}>
-          <Box id="Sign-up box" sx={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: 'center',  justifyContent: 'center' }}>
-            <CustomButton onClick={()=>alert(`Will scroll down to the "getting started" section that is under construction. This alert is just to make it clear what will happen.`)} sx={{ padding: "15px" }}>
-              <Typography fontSize="19px" fontWeight="400" >
-                Get started
-              </Typography>
-            </CustomButton>
-              {/* <Box sx={{ color: colors.neutral[700]  }}>
-                or <Link href="#/references" color="#5676E4">analyze</Link> without logging in.
-              </Box> */}
-         </Box>
-          {/* <Box sx={{ marginBlock: "10px", display: "flex", flexDirection: "row", gap: "10px", justifyContent: "center" }}>
-            <Box sx={{ color: colors.neutral[700] }}>
-              Check the <Link href="https://genecruncher.readthedocs.io/en/latest/" color="#5676E4">docs</Link> or scroll down for info.
-            </Box>
-          </Box> */}
+          <CustomButton onClick={()=>alert(`Will scroll down to the "getting started" section.`)} type="primary">
+            <Typography fontSize="17px" fontWeight="400" >
+              Get started
+            </Typography>
+          </CustomButton>
         </Box>
         
         {/* commented out bottom part is about the partners */}
