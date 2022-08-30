@@ -264,12 +264,12 @@ export default function Navbar({
           executeScroll={handleClickContactUsInDrawer}
         />
         <Leftbar>
-          <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0em' }}>
+          <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0.7em' }}>
             <IconButton
               disableRipple
               sx={{
                 bgcolor: '',
-                ':hover': { transform: 'scale(1.0)' }, // no effect, since scaling to same size. Left in for future reference
+                ':hover': { transform: 'scale(1.1)' },
               }}
             >
               <img width={50} alt="logo" src={logo} />
