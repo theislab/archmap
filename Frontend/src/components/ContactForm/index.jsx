@@ -1,42 +1,65 @@
 import { Box, Typography, Button, Stack, TextField, TextareaAutosize } from "@mui/material";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CustomButton from "components/CustomButton";
-import Input from 'components/Input/Input'
+import Input from 'components/Input/Input';
+import emailjs from '@emailjs/browser';
 import ContactUsService from "shared/services/ContactUs.service";
 
-export default function ContactForm(){
+export default function ContactForm() {
 
-  const [data, setData] = useState({email: "", firstName: "", lastName: "", subject: "", message: ""})
-  const [error, setError] = useState({email: false, firstName: false, lastName: false, subject: false, message: false})
+  const [data, setData] = useState({ email: "", firstName: "", lastName: "", subject: "", message: "" })
+  const [error, setError] = useState({ email: false, firstName: false, lastName: false, subject: false, message: false })
 
-  const onChange = (type) => 
+  // code fo email.js
+  const form = useRef();
+
+  // EmailJS Variables for: ronald.skorobogat@helmholtz-muenchen.de
+  const SERVICE_ID = "service_iv3tvs5";
+  const TEMPLATE_ID = "template_3336nfq";
+  const PUBLIC_KEY = "FVrX1Wu4qZfbJBQ5u";
+
+  const sendEmail = () => {
+    console.log("inside the send email");
+    // send data as email
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, data, PUBLIC_KEY)
+      .then((response) => {
+        console.log(response.text);
+      }, (error) => {
+        console.log(error.text);
+      });
+  }
+
+
+
+
+  const onChange = (type) =>
     (event) => {
-      setData({...data, [type]: event.target.value})
+      setData({ ...data, [type]: event.target.value })
     }
 
-  const onFocus = (type) => 
+  const onFocus = (type) =>
     () => {
-      setError({...error, [type]: false})
+      setError({ ...error, [type]: false })
     }
 
-  const onBlur = (type) => 
+  const onBlur = (type) =>
     () => {
-    if(data[type]==="") setError({...error, [type]: true})
-    else setError({...error, [type]: false})
+      if (data[type] === "") setError({ ...error, [type]: true })
+      else setError({ ...error, [type]: false })
     }
 
   const onClick = () => {
-    let ok=true
-    const newError = {...error}
-    for(const type in data){
-      if(data[type]===""){
-        newError[type]=true
-        ok=false
+    let ok = true
+    const newError = { ...error }
+    for (const type in data) {
+      if (data[type] === "") {
+        newError[type] = true
+        ok = false
       }
     }
     setError(newError)
-    setData({email: "", firstName: "", lastName: "", subject: "", message: ""})
-    
+    setData({ email: "", firstName: "", lastName: "", subject: "", message: "" })
+
     ContactUsService.postContactForm(data)
   }
 
@@ -56,8 +79,8 @@ export default function ContactForm(){
         </Stack>
         <Input value={data.subject} isRequired label="Subject" maxLength={100} errorHandler={error.subject} helperText={error.subject ? "Subject cannot be empty!" : ""} onChangeEvent={onChange("subject")} onBlurEvent={onBlur("subject")} onFocusEvent={onFocus("subject")} />
         <Input value={data.message} isRequired label="Message" multiline maxLength={1000} errorHandler={error.message} helperText={error.message ? "Message cannot be empty!" : ""} onChangeEvent={onChange("message")} onBlurEvent={onBlur("message")} onFocusEvent={onFocus("message")} />
-        <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
-          <CustomButton onClick={onClick}>Send</CustomButton>
+        <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+          <CustomButton onClick={sendEmail}>Send</CustomButton>
         </Box>
       </Stack>
     </Box>

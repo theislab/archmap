@@ -4,6 +4,7 @@
   "homepage": "https://www.genecruncher.com",
   "private": true,
   "dependencies": {
+    "@emailjs/browser": "^3.6.2",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",

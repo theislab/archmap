@@ -1296,6 +1296,11 @@
   dependencies:
     "@date-io/core" "^2.11.0"
 
+"@emailjs/browser@^3.6.2":
+  "integrity" "sha512-Swc8w+vwDX4XPy6tPegOFGSwHqNiEmEsIKbtAkqHo2WqnS0ORZUnnuZats2R3XqwfxNQD0F6RwnlVWHIMf6sCQ=="
+  "resolved" "https://registry.npmjs.org/@emailjs/browser/-/browser-3.6.2.tgz"
+  "version" "3.6.2"
+
 "@emotion/babel-plugin@^11.3.0":
   "integrity" "sha512-UZKwBV2rADuhRp+ZOGgNWg2eYgbzKzQXfQPtJbu/PLy8onurxlNCLvxMQEvlr1/GudguPI5IU9qIY1+2z1M5bA=="
   "resolved" "https://registry.npmjs.org/@emotion/babel-plugin/-/babel-plugin-11.3.0.tgz"
