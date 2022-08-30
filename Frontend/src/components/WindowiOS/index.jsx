@@ -25,21 +25,34 @@ const WindowiOS = ({ onSignUpClicked }) => {
         marginBottom: "2em",
       }}
     >
-      <Box sx={{ p: { xs: "1em 1em", sm: "1em 4em", md: "1em 4em", lg: "1em 4em", xl: "1em 4em" }, marginTop: "4em", backdropFilter: "blur(5px)", borderWidth: "1px", borderRadius:"20px" }}>
-        <Typography fontSize={{ xs: "1.7rem", sm: "2.3rem", md: "2.1rem", lg: "3.1rem", xl: "3.1rem" }} fontWeight="bold">
-          Single-Cell Query to Reference Mapping
-        </Typography>
+      <Box sx={{ p: { xs: "1em 1em", sm: "1em 4em", md: "1em 4em", lg: "1em 4em", xl: "1em 4em", textAlign: 'center' }, borderWidth: "1px", borderRadius:"20px" }}>
+        <Box sx={{ backdropFilter: "blur(5px)", borderRadius: '20px', textAlign: "center", padding: '10px' }}>
+          <Typography fontSize={{ xs: "1.7rem", sm: "2.3rem", md: "2.1rem", lg: "3.1rem", xl: "3.1rem" }}  fontWeight="bold">
+            Single-Cell Reference Mapping
+          </Typography>
+          <Typography fontSize="1.2rem" fontWeight="light" color="white" marginTop='10px' marginBottom='20px'>
+            Reference-Based Analysis of Single-Cell Omics Data Powered by scArches
+         </Typography>
+        </Box>
         {/* <Typography fontSize={{ xs: "1.4rem", sm: "1.6rem", md: "1.4rem", lg: "2rem", xl: "2rem" }} fontWeight="semibold">
           No Code. Just Results.
         </Typography> */}
-        <Typography fontSize="1.2rem" fontWeight="light" color="white">
-          Mapping single-cell data to reference atlases using transfer learning.
-        </Typography>
-        <Box sx={{ margin: "2em 0 0 0px", display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
-          <CustomButton onClick={onSignUpClicked} sx={{ width: "100px"}}>Sign up</CustomButton>
-        </Box>
-        <Box sx={{ marginBlock: "10px", display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
-          <Box sx={{ color: colors.neutral[200] }}><Link href="#/references" color="#5676E4" fontWeight="bold">Try out</Link> our GeneMapper. No need to sign up.</Box>
+        <Box sx={{ display: 'inline-block', padding: '30px', borderRadius: '20px', margin: "3em 2em 2em 2em" }}>
+          <Box id="Sign-up box" sx={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: 'center',  justifyContent: 'center' }}>
+            <CustomButton onClick={()=>alert(`Will scroll down to the "getting started" section that is under construction. This alert is just to make it clear what will happen.`)} sx={{ padding: "15px" }}>
+              <Typography fontSize="19px" fontWeight="400" >
+                Get started
+              </Typography>
+            </CustomButton>
+              {/* <Box sx={{ color: colors.neutral[700]  }}>
+                or <Link href="#/references" color="#5676E4">analyze</Link> without logging in.
+              </Box> */}
+         </Box>
+          {/* <Box sx={{ marginBlock: "10px", display: "flex", flexDirection: "row", gap: "10px", justifyContent: "center" }}>
+            <Box sx={{ color: colors.neutral[700] }}>
+              Check the <Link href="https://genecruncher.readthedocs.io/en/latest/" color="#5676E4">docs</Link> or scroll down for info.
+            </Box>
+          </Box> */}
         </Box>
         
         {/* commented out bottom part is about the partners */}
