@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.21ee2ff8.chunk.css",
-    "main.js": "/static/js/main.39c07e23.chunk.js",
-    "main.js.map": "/static/js/main.39c07e23.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.7f9c56c0.js",
-    "runtime-main.js.map": "/static/js/runtime-main.7f9c56c0.js.map",
+    "main.css": "/static/css/main.b53b9e18.chunk.css",
+    "main.js": "/static/js/main.de1ac9c5.chunk.js",
+    "main.js.map": "/static/js/main.de1ac9c5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.cf7847e4.js",
+    "runtime-main.js.map": "/static/js/runtime-main.cf7847e4.js.map",
     "static/css/2.325324c8.chunk.css": "/static/css/2.325324c8.chunk.css",
-    "static/js/2.d4b881dc.chunk.js": "/static/js/2.d4b881dc.chunk.js",
-    "static/js/2.d4b881dc.chunk.js.map": "/static/js/2.d4b881dc.chunk.js.map",
+    "static/js/2.50b6aa36.chunk.js": "/static/js/2.50b6aa36.chunk.js",
+    "static/js/2.50b6aa36.chunk.js.map": "/static/js/2.50b6aa36.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.325324c8.chunk.css.map": "/static/css/2.325324c8.chunk.css.map",
-    "static/css/main.21ee2ff8.chunk.css.map": "/static/css/main.21ee2ff8.chunk.css.map",
-    "static/js/2.d4b881dc.chunk.js.LICENSE.txt": "/static/js/2.d4b881dc.chunk.js.LICENSE.txt",
+    "static/css/main.b53b9e18.chunk.css.map": "/static/css/main.b53b9e18.chunk.css.map",
+    "static/js/2.50b6aa36.chunk.js.LICENSE.txt": "/static/js/2.50b6aa36.chunk.js.LICENSE.txt",
     "static/media/Helmholtz_TheisLab_Naturecover_2021_cropped.2fd3d815.png": "/static/media/Helmholtz_TheisLab_Naturecover_2021_cropped.2fd3d815.png",
     "static/media/allClusterLabels.06044daf.png": "/static/media/allClusterLabels.06044daf.png",
     "static/media/clusterDetails.3b8b8559.png": "/static/media/clusterDetails.3b8b8559.png",
@@ -20,7 +20,7 @@
     "static/media/helmholtz-logo.afeb6aa4.jpg": "/static/media/helmholtz-logo.afeb6aa4.jpg",
     "static/media/helmholtz.a1f90967.png": "/static/media/helmholtz.a1f90967.png",
     "static/media/institution-default-background.f2294d54.jpg": "/static/media/institution-default-background.f2294d54.jpg",
-    "static/media/logo.a8b3a51b.svg": "/static/media/logo.a8b3a51b.svg",
+    "static/media/logo.c5c8dbf2.svg": "/static/media/logo.c5c8dbf2.svg",
     "static/media/index.css": "/static/media/roboto-v30-latin-ext_latin-regular.eb22083c.woff2",
     "static/media/processing.ed520e72.png": "/static/media/processing.ed520e72.png",
     "static/media/results.24ccf56c.png": "/static/media/results.24ccf56c.png",
@@ -32,10 +32,10 @@
     "static/media/zoomVisualisation.982e0091.png": "/static/media/zoomVisualisation.982e0091.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.7f9c56c0.js",
+    "static/js/runtime-main.cf7847e4.js",
     "static/css/2.325324c8.chunk.css",
-    "static/js/2.d4b881dc.chunk.js",
-    "static/css/main.21ee2ff8.chunk.css",
-    "static/js/main.39c07e23.chunk.js"
+    "static/js/2.50b6aa36.chunk.js",
+    "static/css/main.b53b9e18.chunk.css",
+    "static/js/main.de1ac9c5.chunk.js"
   ]
 }

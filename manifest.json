@@ -1,8 +1,13 @@
 {
-  "short_name": "ArcheMap",
+  "short_name": "ArchMap",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "dark-mode-icon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "light-mode-icon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
