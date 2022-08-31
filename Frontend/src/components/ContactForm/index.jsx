@@ -1,47 +1,78 @@
-import { Box, Typography, Button, Stack, TextField, TextareaAutosize } from "@mui/material";
-import { useState } from "react";
+import { Box, Typography, Button, Stack, TextField, TextareaAutosize, Snackbar, Alert } from "@mui/material";
+import { useState, useRef } from "react";
 import CustomButton from "components/CustomButton";
-import Input from 'components/Input/Input'
+import Input from 'components/Input/Input';
+import emailjs from '@emailjs/browser';
+import { SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY } from '../../shared/utils/common/constants';
 import ContactUsService from "shared/services/ContactUs.service";
 
-export default function ContactForm(){
+export default function ContactForm() {
 
-  const [data, setData] = useState({email: "", firstName: "", lastName: "", subject: "", message: ""})
-  const [error, setError] = useState({email: false, firstName: false, lastName: false, subject: false, message: false})
+  const [data, setData] = useState({ email: "", firstName: "", lastName: "", subject: "", message: "" })
+  const [error, setError] = useState({ email: false, firstName: false, lastName: false, subject: false, message: false })
+  const [snackbar, setSnackbar] = useState({ open: false, type: "error" });
+  
+  // submit email handler
+  const sendEmail = () => {
+    // check errors and set them
+    let ok = true;
+    const newError = { ...error }
+    for (const type in data) {
+      if (data[type] === "") {
+        newError[type] = true
+        ok = false
+      }
+    };
+    setError(newError);
 
-  const onChange = (type) => 
+    // send data(the whole form's content) as email
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, data, PUBLIC_KEY)
+      .then((response) => {
+        console.log(`email sent successfully status: ${response}`)
+        // "email sent succssfully" snackbar
+        setSnackbar({open: true, type: "success"});
+        // reset form values
+        setData({ email: "", firstName: "", lastName: "", subject: "", message: "" });
+      }, (error) => {
+        console.log(`error occurred: ${error}`)
+        setSnackbar({open: true, type: "error"});
+      });
+  }
+
+  const onChange = (type) =>
     (event) => {
-      setData({...data, [type]: event.target.value})
+      setData({ ...data, [type]: event.target.value })
     }
 
-  const onFocus = (type) => 
+  const onFocus = (type) =>
     () => {
-      setError({...error, [type]: false})
+      setError({ ...error, [type]: false })
     }
 
-  const onBlur = (type) => 
+  const onBlur = (type) =>
     () => {
-    if(data[type]==="") setError({...error, [type]: true})
-    else setError({...error, [type]: false})
+      if (data[type] === "") setError({ ...error, [type]: true })
+      else setError({ ...error, [type]: false })
     }
 
   const onClick = () => {
-    let ok=true
-    const newError = {...error}
-    for(const type in data){
-      if(data[type]===""){
-        newError[type]=true
-        ok=false
+    let ok = true
+    const newError = { ...error }
+    for (const type in data) {
+      if (data[type] === "") {
+        newError[type] = true
+        ok = false
       }
     }
     setError(newError)
-    setData({email: "", firstName: "", lastName: "", subject: "", message: ""})
-    
+    setData({ email: "", firstName: "", lastName: "", subject: "", message: "" })
+
     ContactUsService.postContactForm(data)
   }
 
   return (
-    <Box sx={{
+    <>
+      <Box sx={{
       width: "100%",
       margin: "2em 0 0em 0",
       padding: "2em 0em",
@@ -56,10 +87,25 @@ export default function ContactForm(){
         </Stack>
         <Input value={data.subject} isRequired label="Subject" maxLength={100} errorHandler={error.subject} helperText={error.subject ? "Subject cannot be empty!" : ""} onChangeEvent={onChange("subject")} onBlurEvent={onBlur("subject")} onFocusEvent={onFocus("subject")} />
         <Input value={data.message} isRequired label="Message" multiline maxLength={1000} errorHandler={error.message} helperText={error.message ? "Message cannot be empty!" : ""} onChangeEvent={onChange("message")} onBlurEvent={onBlur("message")} onFocusEvent={onFocus("message")} />
-        <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
-          <CustomButton onClick={onClick}>Send</CustomButton>
+        <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+          <CustomButton onClick={sendEmail}>Send</CustomButton>
         </Box>
       </Stack>
     </Box>
+    {/* Snackbar after email being sent */}
+    <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={()=>setSnackbar({...snackbar, open: false})}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        >
+        <Alert onClose={()=>setSnackbar({...snackbar, open: false})} severity={snackbar.type} sx={{ width: '100%' }}>
+        {snackbar.type === "success" ? 'Email sent succesfully!' : 'Error occurred. Please send again!'}
+        </Alert>
+      </Snackbar> 
+    </>
   )
 }
