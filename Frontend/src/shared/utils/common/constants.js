@@ -14,6 +14,13 @@ export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
 export const INDEXED_DB_NAME = 'indexedDB-archemap-projects';
 export const DB_VERSION = 1;
 
+// const variables for emails to send contact forms to 
+
+// EmailJS Variables for: ronald.skorobogat@helmholtz-muenchen.de
+export const SERVICE_ID = "service_iv3tvs5";
+export const TEMPLATE_ID = "template_3336nfq";
+export const PUBLIC_KEY = "FVrX1Wu4qZfbJBQ5u";
+
 export const JOB_QUEUE_UPDATE_INTERVAL = 5000;
 export const PROJECTS_UPDATE_INTERVAL = 5000;
 
