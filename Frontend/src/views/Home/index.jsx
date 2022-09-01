@@ -35,15 +35,23 @@ const Home = () => {
     context.switchRegister(false)
     context.switchLogin(true)
   }
-
+  
   const onSignUpClicked = () => {
     context.switchLogin(false);
     context.switchRegister(true);
   }
 
+  // ref for the "get started" section
+  const getStartedRef = useRef();
+
+  // scroll down function to "get started" section
+  const onGetStartedClick = () => {
+    getStartedRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+
   //here we get the ref of the contact us, in order to be able to scroll to it
   const contactUsBoxRef = useRef()
-  const executeScroll = () => contactUsBoxRef.current.scrollIntoView()
+  const executeScroll = () => contactUsBoxRef.current.scrollIntoView({ behavior: "smooth" })
 
   useEffect(() => {
     if (location.state && location.state.contact_us) contactUsBoxRef.current.scrollIntoView()
@@ -73,8 +81,8 @@ const Home = () => {
         <Box sx={{ height: navbarHeight, position: "relative" }}> 
           <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} executeScroll={executeScroll} />
         </Box>
-        {/* IOS WINDOW */}
-        <WindowiOS onSignUpClicked={onSignUpClicked} />
+        {/* Get Started Section */}
+        <WindowiOS onGetStartedClick={onGetStartedClick} />
       </Box>
       {/* the Eclipse */}
       <Box
@@ -98,8 +106,8 @@ const Home = () => {
         }}
       >
 
-        {/* WHAT WE DO */}
-        <Box sx={{ width: "100%", position: "relative", margin: "auto" }}>
+        {/* GET STARTED */}
+        <Box ref={getStartedRef} sx={{ width: "100%", position: "relative", margin: "auto" }}>
           <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">What we do</Typography>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "80%", gap: "1em", margin: "auto" }}>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "transparent", borderRadius: "20px" }}>

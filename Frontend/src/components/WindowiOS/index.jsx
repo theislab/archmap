@@ -10,7 +10,7 @@ import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/He
 import CustomButton from "components/CustomButton";
 import { useHistory } from "react-router-dom";
 
-const WindowiOS = ({ onSignUpClicked }) => {
+const WindowiOS = ({ onGetStartedClick }) => {
   const history = useHistory()
 
   return (
@@ -35,7 +35,7 @@ const WindowiOS = ({ onSignUpClicked }) => {
          </Typography>
         </Box>
         <Box sx={{ display: 'inline-block', padding: '30px', borderRadius: '20px', margin: "3em 2em 2em 2em" }}>
-          <CustomButton onClick={()=>alert(`Will scroll down to the "getting started" section.`)} type="primary">
+          <CustomButton onClick={() => onGetStartedClick()} type="primary">
             <Typography fontSize="17px" fontWeight="400" >
               Get started
             </Typography>
