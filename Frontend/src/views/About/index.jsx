@@ -122,7 +122,9 @@ export default function About(props){
     context.switchRegister(true);
   } 
 
-  const executeScroll = () => history.push({pathname: '/', state: {contact_us: true}})
+  // For the redirect to the contact us section
+  const executeScroll = () => history.push({pathname: '/', state: {contact_us: true}});
+
 
   return (
     <Box sx={{overflowX: "hidden"}}>

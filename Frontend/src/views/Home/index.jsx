@@ -45,7 +45,7 @@ const Home = () => {
   const getStartedRef = useRef();
 
   // scroll down function to "get started" section
-  const onGetStartedClick = () => {
+  const onGetStartedClicked = () => {
     getStartedRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
@@ -54,7 +54,9 @@ const Home = () => {
   const executeScroll = () => contactUsBoxRef.current.scrollIntoView({ behavior: "smooth" })
 
   useEffect(() => {
-    if (location.state && location.state.contact_us) contactUsBoxRef.current.scrollIntoView()
+    if (location.state && location.state.contact_us) contactUsBoxRef.current.scrollIntoView();
+    // check if the get started section has been redirected by another page
+    if (location.state && location.state.onGetStartedClicked) onGetStartedClicked();
   }, [])
 
   //we store the actual height of the Navbar, since we set the Navbar's position to fixed
@@ -79,10 +81,10 @@ const Home = () => {
         {/* NAVBAR HERE */}
         {/* the Box that contains the Navbar will collapse, so we reset the height */}
         <Box sx={{ height: navbarHeight, position: "relative" }}> 
-          <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} executeScroll={executeScroll} />
+          <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGetStartedClicked={onGetStartedClicked} executeScroll={executeScroll} />
         </Box>
         {/* Get Started Section */}
-        <WindowiOS onGetStartedClick={onGetStartedClick} />
+        <WindowiOS onGetStartedClick={onGetStartedClicked} />
       </Box>
       {/* the Eclipse */}
       <Box
