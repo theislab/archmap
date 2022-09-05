@@ -30,7 +30,7 @@ function VisualizationPage() {
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <NavBar />
+        {/* <NavBar /> */} {/* TODO: is this navbar even useful? I think it can be deleted and with it the old navbar */}
         <div className={styles.headerContainer}>
           <Box
             sx={{

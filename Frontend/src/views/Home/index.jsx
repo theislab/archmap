@@ -83,7 +83,7 @@ const Home = () => {
         <Box sx={{ height: navbarHeight, position: "relative" }}> 
           <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGetStartedClicked={onGetStartedClicked} executeScroll={executeScroll} />
         </Box>
-        {/* Get Started Section */}
+        {/* Get Started Intro Section */}
         <WindowiOS onGetStartedClick={onGetStartedClicked} />
       </Box>
       {/* the Eclipse */}
@@ -110,15 +110,44 @@ const Home = () => {
 
         {/* GET STARTED */}
         <Box ref={getStartedRef} sx={{ width: "100%", position: "relative", margin: "auto" }}>
-          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">What we do</Typography>
-          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "80%", gap: "1em", margin: "auto" }}>
+          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">Get started</Typography>
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", gap: "1em", margin: "auto" }}>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "transparent", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic1} alt="Science" />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Query to reference dataset mapping using Transfer Learning</Typography>
-              <Typography margin="2em 0 2em 0">ArchMap enables mapping by using a novel deep learning strategy called single-cell architectural surgery (ScArches).</Typography>
-              <CustomButton onClick={() => history.push('/references')}>References</CustomButton>
+              <Typography fontSize="1.2em" fontWeight="bold">What We Do</Typography>
+              <Typography margin="2em 0 2em 0">
+                ArchMap offers single-cell omics data analysis using <a 
+                style={{ 
+                  textDecoration: "none",
+                }} href="https://scarches.readthedocs.io/en/latest/"><Typography sx={{ color: colors.primary[400], 
+                ':hover': {color: colors.primary[500]} }} display="inline">scArches</Typography></a>.
+                Check out the references we provide or jump right in!</Typography>
+              {/* Container of links to different pages */}
+              <Box sx={{ display: 'flex', flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" },  justifyContent: "space-evenly", width: "100%", }}>
+                <Box id="References div" sx={{ width: '50%' }}>
+                  <Box onClick={() => {
+                    history.push('/references');
+                    window.scrollTo(0,0);
+                    }}>
+                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': {color: colors.primary[500], cursor: 'pointer' } }}>References</Typography>
+                  </Box>
+                  <Typography>We offer multiple atlases to choose from.</Typography>
+                </Box>
+                <Box id="Docs div" sx={{ width: '50%' }}>
+                  <Box>
+                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': {color: colors.primary[500], cursor: 'pointer' } }}>
+                    <a 
+                style={{ 
+                  textDecoration: "none", 
+                  color: colors.primary[400], 
+                  '&:hover': {color: colors.primary[900]},
+                }} href="https://scarches.readthedocs.io/en/latest/">Docs</a></Typography>
+                  </Box>
+                    <Typography>Check out the docs for more information.</Typography>
+                </Box>
+              </Box>
             </Box>
           </Box>
         </Box>

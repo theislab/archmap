@@ -91,9 +91,16 @@ function DrawerBar({ open, setOpen, executeScroll }) {
             width: '100vw', height: '25vh', bgcolor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center',
           }}
           >
+            {/* TODO: add the references here to execute scroll */}
+            <Box onClick={()=>{}}> {/* TODO: Here currently, fixing the links in the drawer */}
+              <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGetStartedClicked: true }}}>
+                <DrawerNavlink>
+                  Get Started
+                </DrawerNavlink>
+              </Link>
+            </Box>
             <LinkBox to="/references"><DrawerNavlink>References</DrawerNavlink></LinkBox>
             <DrawerNavlink onClick={() => window.open('https://genecruncher.readthedocs.io/')}>Docs</DrawerNavlink>
-            <LinkBox to="/about"><DrawerNavlink>About</DrawerNavlink></LinkBox>
             <Box onClick={executeScroll} sx={{ cursor: 'pointer' }}><DrawerNavlink>Contact</DrawerNavlink></Box>
           </Box>
         </Drawer>
@@ -233,7 +240,8 @@ function LinkBox(props) {
 export default function Navbar({ 
   backgroundColor,
   onLoginClicked, 
-  onSignUpClicked, 
+  onSignUpClicked,
+  onGetStartedClicked,
   executeScroll, 
   setNavbarHeight,
   position,
@@ -264,7 +272,7 @@ export default function Navbar({
           executeScroll={handleClickContactUsInDrawer}
         />
         <Leftbar>
-          <LinkBox to="/" sx={{ display: 'flex', alignItems: 'center', gap: '0.7em' }}>
+          <LinkBox to="/" onClick={()=>window.scrollTo(0,0)} sx={{ display: 'flex', alignItems: 'center', gap: '0.7em' }}>
             <IconButton
               disableRipple
               sx={{
@@ -275,6 +283,11 @@ export default function Navbar({
               <img width={50} alt="logo" src={logo} />
             </IconButton>
             <Navlink fontWeight="bold" fontSize="20px">archmap.bio</Navlink>
+          </LinkBox>
+          <LinkBox onClick={onGetStartedClicked}>
+            <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGetStartedClicked: true }}}>
+              <Navlink>Get Started</Navlink>
+            </Link>
           </LinkBox>
           <LinkBox to="/genemapper"><Navlink>Map</Navlink></LinkBox>
           <LinkBox to="/references"><Navlink>References</Navlink></LinkBox>
