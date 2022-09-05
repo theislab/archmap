@@ -114,7 +114,7 @@ const Home = () => {
           <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">What We Do</Typography>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", gap: "1em", margin: "auto" }}>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "transparent", borderRadius: "20px" }}>
-              <img style={{ width: "100%" }} src={graphic1} alt="Science" />
+              <img style={{ width: "100%" }} src={"https://storage.googleapis.com/jst-2021-bucket-static/retina.png"} alt="Science" />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
               <Typography fontSize="1.2em" fontWeight="bold">Single-Cell Omics Analysis</Typography>
