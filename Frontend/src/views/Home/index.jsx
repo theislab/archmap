@@ -129,7 +129,7 @@ const Home = () => {
                 Check out our reference atlases or jump right in!</Typography>
               {/* Container of links to different pages */}
               <Box sx={{ display: 'flex', flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-evenly", width: "100%" }}>
-                <Box id="References div" sx={{ width: "auto", margin: '1em 0 1em 0' }}>
+                <Box id="References div" sx={{ width: "auto", margin: '1em 0 1em 0', padding: '5px' }}>
                   <Box onClick={() => {
                     history.push('/references');
                     window.scrollTo(0, 0);
@@ -138,7 +138,7 @@ const Home = () => {
                   </Box>
                   <Typography color={colors.neutral[600]}>We offer multiple atlases to choose from.</Typography>
                 </Box>
-                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0' }}>
+                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0', padding: '5px' }}>
                   <Box>
                     <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': { color: colors.primary[500], cursor: 'pointer' } }}>
                       <a
@@ -189,8 +189,8 @@ const Home = () => {
               <UploadIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold" paddin>Step 1: Select an Atlas and Model</Typography>
-              <Typography color={colors.neutral[500]}>Start analyzing your dataset by choosing a reference atlas and a pre-trained neural network (model). Afterwards, upload your dataset and name your project.</Typography>
+              <Typography fontSize="1.2em" fontWeight="bold" paddingBottom='2%'>Step 1: Select Atlas and Model</Typography>
+              <Typography color={colors.neutral[500]}>Start by choosing a reference atlas and a one of the available pre-trained models.</Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic2} alt="Upload" />
@@ -204,8 +204,8 @@ const Home = () => {
               <AutorenewIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Step 2: Upload your Files</Typography>
-              <Typography color={colors.neutral[500]}>ScArches will map your single-cell dataset to the specified atlas using the selected model. This step can take several minutes!</Typography>
+              <Typography fontSize="1.2em" fontWeight="bold" paddingBottom='2%'>Step 2: Upload your Data</Typography>
+              <Typography color={colors.neutral[500]}>After making your choice, upload your data. Afterwards, click on "Create Project" and wait for the processing to finish.</Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic3} alt="Processing" />
@@ -222,10 +222,8 @@ const Home = () => {
               <AssignmentIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Step 3: Create your Project</Typography>
-              <Typography color={colors.neutral[500]}>Your analysis is now ready. Start exploring it by clicking on "See Results". 
-                
-                After the processing of the dataset is finished, you can view your results. This step will take a while.
+              <Typography fontSize="1.2em" fontWeight="bold" paddingBottom='2%'>Step 3: View Results</Typography>
+              <Typography color={colors.neutral[500]}>After processing, your result will be ready. This may take some time. 
               Don't worry! You can close the tab and come back later to see the results.  </Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
@@ -243,7 +241,7 @@ const Home = () => {
                   history.push('/genemapper');
                   window.scrollTo(0,0);
                   }}>
-                  Start Mapping
+                  Start Mapping!
                   </Box>
               </Typography>
             </Box>
