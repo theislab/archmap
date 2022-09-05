@@ -118,7 +118,7 @@ const Home = () => {
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
               <Typography fontSize="1.2em" fontWeight="bold">Single-Cell Omics Analysis</Typography>
-              <Typography margin="2em 0 2em 0" color={colors.neutral[600]}>
+              <Typography margin="0.5em 0 1em 0" color={colors.neutral[600]}>
                 ArchMap offers single-cell omics reference mapping using <a
                   style={{
                     textDecoration: "none",
@@ -129,7 +129,7 @@ const Home = () => {
                 Check out our reference atlases or jump right in!</Typography>
               {/* Container of links to different pages */}
               <Box sx={{ display: 'flex', flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-evenly", width: "100%" }}>
-                <Box id="References div" sx={{ width: "auto", margin: '1em 0 1em 0', padding: '5px' }}>
+                <Box id="References div" sx={{ width: "auto", margin: '1em 0 1em 0', padding: '0px 5px 0px 5px' }}>
                   <Box onClick={() => {
                     history.push('/references');
                     window.scrollTo(0, 0);
@@ -138,7 +138,7 @@ const Home = () => {
                   </Box>
                   <Typography color={colors.neutral[600]}>We offer multiple atlases to choose from.</Typography>
                 </Box>
-                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0', padding: '5px' }}>
+                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0', padding: '0px 5px 0px 5px' }}>
                   <Box>
                     <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': { color: colors.primary[500], cursor: 'pointer' } }}>
                       <a
