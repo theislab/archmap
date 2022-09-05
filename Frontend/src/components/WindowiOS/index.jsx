@@ -42,7 +42,7 @@ const WindowiOS = ({ onGetStartedClick }) => {
           </CustomButton>
         </Box>
         
-        {/* commented out bottom part is about the partners */}
+        {/* commented out part below is about the partners */}
         {/* DIVIDER */}
         {/* <Box sx={{ marginTop: "3em", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ height: "1px", width: { xs: "25%", sm: "37%", md: "35%", lg: "40%", xl: "40%" }, backgroundColor: "rgba(255,255,255, 0.5)" }} />

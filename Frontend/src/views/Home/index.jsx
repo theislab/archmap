@@ -19,7 +19,7 @@ import graphic4 from 'assets/landing-illustrations/results.png';
 import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021_cropped.png';
 import CustomButton from "components/CustomButton";
 import Input from 'components/Input/Input'
-import { useHistory, useLocation } from "react-router-dom";
+import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
 import PasswordForgetForm from "components/PasswordForgetForm";
 import ContactForm from 'components/ContactForm';
 import { LoginContext } from "shared/context/loginContext";
@@ -35,7 +35,7 @@ const Home = () => {
     context.switchRegister(false)
     context.switchLogin(true)
   }
-  
+
   const onSignUpClicked = () => {
     context.switchLogin(false);
     context.switchRegister(true);
@@ -67,20 +67,21 @@ const Home = () => {
   return (
     <Box style={{ overflow: "hidden" }} sx={{ position: "relative" }}>
       {context.loginVisible && <LoginForm />}
-      {context.registerVisible && <RegistrationForm  />}
+      {context.registerVisible && <RegistrationForm />}
       {context.forgetVisible && <PasswordForgetForm />}
       {/* STARTING PAGE */}
-      <Box sx={{ 
-        width: window.width, 
+      <Box sx={{
+        width: window.width,
         minHeight: '100vh',
         // bgcolor: colors.primary[800], 
         backgroundImage: `url(${Helmholtz_TheisLab_Naturecover_2021})`,
-        backgroundSize: 'cover', 
-        position: "relative", 
-        paddingBottom: "4em" }}>
+        backgroundSize: 'cover',
+        position: "relative",
+        paddingBottom: "4em"
+      }}>
         {/* NAVBAR HERE */}
         {/* the Box that contains the Navbar will collapse, so we reset the height */}
-        <Box sx={{ height: navbarHeight, position: "relative" }}> 
+        <Box sx={{ height: navbarHeight, position: "relative" }}>
           <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGetStartedClicked={onGetStartedClicked} executeScroll={executeScroll} />
         </Box>
         {/* Get Started Intro Section */}
@@ -108,50 +109,54 @@ const Home = () => {
         }}
       >
 
-        {/* GET STARTED */}
+        {/* INITIAL PAGE */}
         <Box ref={getStartedRef} sx={{ width: "100%", position: "relative", margin: "auto" }}>
-          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">Get started</Typography>
+          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">What We Do</Typography>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", gap: "1em", margin: "auto" }}>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "transparent", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic1} alt="Science" />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">What We Do</Typography>
-              <Typography margin="2em 0 2em 0">
-                ArchMap offers single-cell omics data analysis using <a 
-                style={{ 
-                  textDecoration: "none",
-                }} href="https://scarches.readthedocs.io/en/latest/"><Typography sx={{ color: colors.primary[400], 
-                ':hover': {color: colors.primary[500]} }} display="inline">scArches</Typography></a>.
-                Check out the references we provide or jump right in!</Typography>
+              <Typography fontSize="1.2em" fontWeight="bold">Single-Cell Omics Analysis</Typography>
+              <Typography margin="2em 0 2em 0" color={colors.neutral[600]}>
+                ArchMap offers single-cell omics reference mapping using <a
+                  style={{
+                    textDecoration: "none",
+                  }} href="https://scarches.readthedocs.io/en/latest/"><Typography sx={{
+                    color: colors.primary[400],
+                    ':hover': { color: colors.primary[500] }
+                  }} display="inline">scArches</Typography></a>.
+                Check out our reference atlases or jump right in!</Typography>
               {/* Container of links to different pages */}
-              <Box sx={{ display: 'flex', flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" },  justifyContent: "space-evenly", width: "100%", }}>
-                <Box id="References div" sx={{ width: '50%' }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-evenly", width: "100%" }}>
+                <Box id="References div" sx={{ width: "auto", margin: '1em 0 1em 0' }}>
                   <Box onClick={() => {
                     history.push('/references');
-                    window.scrollTo(0,0);
-                    }}>
-                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': {color: colors.primary[500], cursor: 'pointer' } }}>References</Typography>
+                    window.scrollTo(0, 0);
+                  }}>
+                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': { color: colors.primary[500], cursor: 'pointer' } }}>References</Typography>
                   </Box>
-                  <Typography>We offer multiple atlases to choose from.</Typography>
+                  <Typography color={colors.neutral[600]}>We offer multiple atlases to choose from.</Typography>
                 </Box>
-                <Box id="Docs div" sx={{ width: '50%' }}>
+                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0' }}>
                   <Box>
-                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': {color: colors.primary[500], cursor: 'pointer' } }}>
-                    <a 
-                style={{ 
-                  textDecoration: "none", 
-                  color: colors.primary[400], 
-                  '&:hover': {color: colors.primary[900]},
-                }} href="https://scarches.readthedocs.io/en/latest/">Docs</a></Typography>
+                    <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': { color: colors.primary[500], cursor: 'pointer' } }}>
+                      <a
+                        style={{
+                          textDecoration: "none",
+                          color: colors.primary[400],
+                          '&:hover': { color: colors.primary[900] },
+                        }} href="https://scarches.readthedocs.io/en/latest/">Docs
+                      </a>
+                    </Typography>
                   </Box>
-                    <Typography>Check out the docs for more information.</Typography>
+                  <Typography color={colors.neutral[600]}>Check out the docs for more information.</Typography>
                 </Box>
               </Box>
             </Box>
           </Box>
         </Box>
-        {/* HOW IT WORKS */}
+        {/* Getting Started */}
         <Box sx={{
           width: "100%",
           marginTop: "5em",
@@ -162,9 +167,21 @@ const Home = () => {
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           position: "relative"
         }}>
-          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">How it works</Typography>
+          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">Getting Started</Typography>
 
-          {/* UPLOAD */}
+          {/* Log In or Start Uploading */}
+          <Box sx={{ position: "relative", gap: "1em", display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", margin: "auto", padding: "5% 10% 0% 10%" }}>
+            <Box sx={{ width: "100%" }}>
+              <Typography sx={{ fontSize: "1.2em", textAlign: 'center', fontWeight: "bold", paddingBottom: '2%' }}>
+                <Box sx={{ cursor: "pointer", display: "inline", color: colors.primary[400], ':hover': { color: colors.primary[500] } }} onClick={onSignUpClicked}>Sign Up</Box> Or Start Analyzing</Typography>
+              <Typography color={colors.neutral[500]}>
+                Create an account or start analyzing right away.
+                By creating an account, you benefit from permanent project storage and collaboration with other labs.
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Selection Step */}
           <Box sx={{ position: "relative", gap: "1em", display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", margin: "auto", padding: "10% 10% 5% 10%" }}>
             <Box sx={{ position: "absolute", top: "calc(5% + 8px)", left: "7px", width: "2px", height: "calc(95% - 8px)", bgcolor: colors.neutral[700] }} />
             <Box sx={{ width: "16px", height: "16px", position: "absolute", top: "5%", left: "0%", borderRadius: "10px", border: "2px solid white", bgcolor: colors.primary[800] }}></Box>
@@ -172,8 +189,8 @@ const Home = () => {
               <UploadIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Select & Upload</Typography>
-              <Typography color={colors.neutral[500]}>Create a mapping project by choosing a reference atlas together with a pre-trained neural network (model) and upload your single-cell data.</Typography>
+              <Typography fontSize="1.2em" fontWeight="bold" paddin>Step 1: Select an Atlas and Model</Typography>
+              <Typography color={colors.neutral[500]}>Start analyzing your dataset by choosing a reference atlas and a pre-trained neural network (model). Afterwards, upload your dataset and name your project.</Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic2} alt="Upload" />
@@ -187,8 +204,8 @@ const Home = () => {
               <AutorenewIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Processing</Typography>
-              <Typography color={colors.neutral[500]}>ScArches will map your input data to the specified atlas using the selected machine learning model, while performing the cell-type classification.</Typography>
+              <Typography fontSize="1.2em" fontWeight="bold">Step 2: Upload your Files</Typography>
+              <Typography color={colors.neutral[500]}>ScArches will map your single-cell dataset to the specified atlas using the selected model. This step can take several minutes!</Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic3} alt="Processing" />
@@ -205,11 +222,30 @@ const Home = () => {
               <AssignmentIcon sx={{ width: "20px", height: "20px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
-              <Typography fontSize="1.2em" fontWeight="bold">Check Results</Typography>
-              <Typography color={colors.neutral[500]}>Your new mapping will be automaticly displayed for further analysis. </Typography>
+              <Typography fontSize="1.2em" fontWeight="bold">Step 3: Create your Project</Typography>
+              <Typography color={colors.neutral[500]}>Your analysis is now ready. Start exploring it by clicking on "See Results". 
+                
+                After the processing of the dataset is finished, you can view your results. This step will take a while.
+              Don't worry! You can close the tab and come back later to see the results.  </Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic4} alt="Check Results" />
+            </Box>
+          </Box>
+
+          {/* CALL TO ACTION */}
+          <Box sx={{ position: "relative", gap: "1em", display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", margin: "auto", padding: "5% 10% 0% 10%" }}>
+            <Box sx={{ width: "100%" }}>
+              <Typography sx={{ fontSize: "1.2em", textAlign: 'center', fontWeight: "bold", paddingBottom: '2%' }}>
+                Ready? <Box 
+                  sx={{ cursor: "pointer", display: "inline", color: colors.primary[400], ':hover': { color: colors.primary[500] }, display: 'inline' }} 
+                  onClick={()=>{
+                  history.push('/genemapper');
+                  window.scrollTo(0,0);
+                  }}>
+                  Start Mapping
+                  </Box>
+              </Typography>
             </Box>
           </Box>
         </Box>
