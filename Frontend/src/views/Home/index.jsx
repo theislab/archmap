@@ -49,7 +49,7 @@ const Home = () => {
     getStartedRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
-  //here we get the ref of the contact us, in order to be able to scroll to it
+  // here we get the ref of the contact us, in order to be able to scroll to it
   const contactUsBoxRef = useRef()
   const executeScroll = () => contactUsBoxRef.current.scrollIntoView({ behavior: "smooth" })
 
@@ -59,9 +59,9 @@ const Home = () => {
     if (location.state && location.state.onGetStartedClicked) onGetStartedClicked();
   }, [])
 
-  //we store the actual height of the Navbar, since we set the Navbar's position to fixed
-  //it jumps out from the document flow => the height collapse
-  //we need to reset it
+  // we store the actual height of the Navbar, since we set the Navbar's position to fixed
+  // it jumps out from the document flow => the height collapse
+  // we need to reset it
   const [navbarHeight, setNavbarHeight] = useState(0)
 
   return (
