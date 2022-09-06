@@ -1,12 +1,5 @@
 /* eslint-disable */
-
-import { Circle } from "@mui/icons-material"
 import { Box, Typography, Link } from "@mui/material"
-import { colors } from "shared/theme/colors"
-import tum from 'assets/landing-illustrations/tum-logo.png';
-import rostlab from 'assets/landing-illustrations/rostlab.png';
-import helmholtz from 'assets/landing-illustrations/helmholtz.png';
-import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021.png';
 import CustomButton from "components/CustomButton";
 import { useHistory } from "react-router-dom";
 
@@ -16,13 +9,10 @@ const WindowiOS = ({ onGetStartedClick }) => {
   return (
     <Box
       sx={{
-        position: "relative",
         width: { xs: "90%", sm: "90%", md: "61.8%", lg: "61.8%", xl: "61.8%" },
         margin: "auto",
         color: "white",
         p: "0.7em",
-        marginTop: "10%",
-        marginBottom: "2em",
       }}
     >
       <Box sx={{ p: { xs: "1em 1em", sm: "1em 4em", md: "1em 4em", lg: "1em 4em", xl: "1em 4em", textAlign: 'center' }, borderWidth: "1px", borderRadius:"20px" }}>

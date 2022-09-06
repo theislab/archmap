@@ -94,12 +94,12 @@ const Home = () => {
       {/* STARTING PAGE */}
       <Box sx={{
         width: window.width,
-        minHeight: '100vh',
+        height: '100vh',
         // bgcolor: colors.primary[800], 
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         position: "relative",
-        paddingBottom: "4em"
+        paddingBottom: "4em",
       }}>
         {/* NAVBAR HERE */}
         {/* the Box that contains the Navbar will collapse, so we reset the height */}
@@ -107,7 +107,9 @@ const Home = () => {
           <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGetStartedClicked={onGetStartedClicked} executeScroll={executeScroll} />
         </Box>
         {/* Get Started Intro Section */}
-        <WindowiOS onGetStartedClick={onGetStartedClicked} />
+        <Box id="title container" width="100%" height='100%' textAlign="center" position="relative" top="30%">
+          <WindowiOS onGetStartedClick={onGetStartedClicked} />
+        </Box>
       </Box>
       {/* the Eclipse */}
       <Box
