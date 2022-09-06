@@ -108,7 +108,7 @@ const Home = () => {
         </Box>
         {/* Get Started Intro Section */}
         <Box id="title container" width="100%" height='100%' textAlign="center" position="relative" top="30%">
-          <WindowiOS onGetStartedClick={onGetStartedClicked} />
+          <WindowiOS backgroundImageLoaded={backgroundImage === Helmholtz_TheisLab_Naturecover_2021} onGetStartedClick={onGetStartedClicked} />
         </Box>
       </Box>
       {/* the Eclipse */}

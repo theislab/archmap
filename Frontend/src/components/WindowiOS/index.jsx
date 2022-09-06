@@ -3,7 +3,7 @@ import { Box, Typography, Link } from "@mui/material"
 import CustomButton from "components/CustomButton";
 import { useHistory } from "react-router-dom";
 
-const WindowiOS = ({ onGetStartedClick }) => {
+const WindowiOS = ({ onGetStartedClick, backgroundImageLoaded }) => {
   const history = useHistory()
 
   return (
@@ -16,7 +16,7 @@ const WindowiOS = ({ onGetStartedClick }) => {
       }}
     >
       <Box sx={{ p: { xs: "1em 1em", sm: "1em 4em", md: "1em 4em", lg: "1em 4em", xl: "1em 4em", textAlign: 'center' }, borderWidth: "1px", borderRadius:"20px" }}>
-        <Box sx={{ backdropFilter: "blur(5px)", borderRadius: '20px', textAlign: "center", padding: '10px' }}>
+        <Box sx={{ backdropFilter: backgroundImageLoaded ? "blur(5px)" : '', borderRadius: '20px', textAlign: "center", padding: '10px' }}>
           <Typography fontSize={{ xs: "1.7rem", sm: "2.3rem", md: "2.1rem", lg: "3.1rem", xl: "3.1rem" }}  fontWeight="bold">
             Single-Cell Reference Mapping
           </Typography>
