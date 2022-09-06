@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.b53b9e18.chunk.css",
-    "main.js": "/static/js/main.9c7917f2.chunk.js",
-    "main.js.map": "/static/js/main.9c7917f2.chunk.js.map",
+    "main.js": "/static/js/main.c2525ca2.chunk.js",
+    "main.js.map": "/static/js/main.c2525ca2.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.cf7847e4.js",
     "runtime-main.js.map": "/static/js/runtime-main.cf7847e4.js.map",
     "static/css/2.325324c8.chunk.css": "/static/css/2.325324c8.chunk.css",
@@ -22,12 +22,12 @@
     "static/media/institution-default-background.f2294d54.jpg": "/static/media/institution-default-background.f2294d54.jpg",
     "static/media/logo.c5c8dbf2.svg": "/static/media/logo.c5c8dbf2.svg",
     "static/media/index.css": "/static/media/roboto-v30-latin-ext_latin-regular.eb22083c.woff2",
-    "static/media/processing.9add2ab1.png": "/static/media/processing.9add2ab1.png",
-    "static/media/results.43316f13.png": "/static/media/results.43316f13.png",
+    "static/media/processing.ed520e72.png": "/static/media/processing.ed520e72.png",
+    "static/media/results.24ccf56c.png": "/static/media/results.24ccf56c.png",
     "static/media/rostlab.328da955.png": "/static/media/rostlab.328da955.png",
     "static/media/science.ae60a04b.png": "/static/media/science.ae60a04b.png",
     "static/media/umap_data.2c9710d5.bin": "/static/media/umap_data.2c9710d5.bin",
-    "static/media/upload.18f5c45b.png": "/static/media/upload.18f5c45b.png",
+    "static/media/upload.c25c0640.png": "/static/media/upload.c25c0640.png",
     "static/media/visualisation.af229bc1.png": "/static/media/visualisation.af229bc1.png",
     "static/media/zoomVisualisation.982e0091.png": "/static/media/zoomVisualisation.982e0091.png"
   },
@@ -36,6 +36,6 @@
     "static/css/2.325324c8.chunk.css",
     "static/js/2.50b6aa36.chunk.js",
     "static/css/main.b53b9e18.chunk.css",
-    "static/js/main.9c7917f2.chunk.js"
+    "static/js/main.c2525ca2.chunk.js"
   ]
 }
