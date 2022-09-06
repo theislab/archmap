@@ -16,7 +16,8 @@ import graphic1 from 'assets/landing-illustrations/science.png';
 import graphic2 from 'assets/landing-illustrations/upload.png';
 import graphic3 from 'assets/landing-illustrations/processing.png';
 import graphic4 from 'assets/landing-illustrations/results.png';
-import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021_cropped.png';
+import Helmholtz_TheisLab_Naturecover_2021_Blur from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021_blurred.png';
+import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021.png';
 import CustomButton from "components/CustomButton";
 import Input from 'components/Input/Input'
 import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
@@ -28,6 +29,8 @@ const Home = () => {
 
   const history = useHistory();
   const location = useLocation();
+
+  const [backgroundImage, setBackgroundImage] = useState(Helmholtz_TheisLab_Naturecover_2021_Blur);
 
   const context = useContext(LoginContext)
 
@@ -62,7 +65,26 @@ const Home = () => {
   // we store the actual height of the Navbar, since we set the Navbar's position to fixed
   // it jumps out from the document flow => the height collapse
   // we need to reset it
-  const [navbarHeight, setNavbarHeight] = useState(0)
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
+  // load background image to full resolution and set it once loaded
+  useEffect(() => {
+    // function for loading image
+    function load(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.addEventListener('load', resolve);
+        image.addEventListener('error', reject);
+        image.src = src;
+      });
+    }
+
+    /** load full-res background image */
+    load(Helmholtz_TheisLab_Naturecover_2021).then(() => {
+      setBackgroundImage(Helmholtz_TheisLab_Naturecover_2021);
+    })
+  }, []);
+
 
   return (
     <Box style={{ overflow: "hidden" }} sx={{ position: "relative" }}>
@@ -74,7 +96,7 @@ const Home = () => {
         width: window.width,
         minHeight: '100vh',
         // bgcolor: colors.primary[800], 
-        backgroundImage: `url(${Helmholtz_TheisLab_Naturecover_2021})`,
+        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         position: "relative",
         paddingBottom: "4em"
@@ -138,7 +160,7 @@ const Home = () => {
                   </Box>
                   <Typography color={colors.neutral[600]}>We offer multiple atlases to choose from.</Typography>
                 </Box>
-                <Box id="Docs div" sx={{ width: "auto",  margin: '1em 0 1em 0', padding: '0px 5px 0px 5px' }}>
+                <Box id="Docs div" sx={{ width: "auto", margin: '1em 0 1em 0', padding: '0px 5px 0px 5px' }}>
                   <Box>
                     <Typography sx={{ fontWeight: "bold", color: colors.primary[400], ':hover': { color: colors.primary[500], cursor: 'pointer' } }}>
                       <a
@@ -223,8 +245,8 @@ const Home = () => {
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
               <Typography fontSize="1.2em" fontWeight="bold" paddingBottom='2%'>Step 3: View Results</Typography>
-              <Typography color={colors.neutral[500]}>After processing, your result will be ready. This may take some time. 
-              Don't worry! You can close the tab and come back later to see the results.  </Typography>
+              <Typography color={colors.neutral[500]}>After processing, your result will be ready. This may take some time.
+                Don't worry! You can close the tab and come back later to see the results.  </Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic4} alt="Check Results" />
@@ -235,14 +257,14 @@ const Home = () => {
           <Box sx={{ position: "relative", gap: "1em", display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", margin: "auto", padding: "5% 10% 0% 10%" }}>
             <Box sx={{ width: "100%" }}>
               <Typography sx={{ fontSize: "1.2em", textAlign: 'center', fontWeight: "bold", paddingBottom: '2%' }}>
-                Ready? <Box 
-                  sx={{ cursor: "pointer", display: "inline", color: colors.primary[400], ':hover': { color: colors.primary[500] }, display: 'inline' }} 
-                  onClick={()=>{
-                  history.push('/genemapper');
-                  window.scrollTo(0,0);
+                Ready? <Box
+                  sx={{ cursor: "pointer", display: "inline", color: colors.primary[400], ':hover': { color: colors.primary[500] }, display: 'inline' }}
+                  onClick={() => {
+                    history.push('/genemapper');
+                    window.scrollTo(0, 0);
                   }}>
                   Start Mapping!
-                  </Box>
+                </Box>
               </Typography>
             </Box>
           </Box>

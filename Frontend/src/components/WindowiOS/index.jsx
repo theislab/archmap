@@ -6,7 +6,7 @@ import { colors } from "shared/theme/colors"
 import tum from 'assets/landing-illustrations/tum-logo.png';
 import rostlab from 'assets/landing-illustrations/rostlab.png';
 import helmholtz from 'assets/landing-illustrations/helmholtz.png';
-import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021_cropped.png';
+import Helmholtz_TheisLab_Naturecover_2021 from 'assets/landing-illustrations/Helmholtz_TheisLab_Naturecover_2021.png';
 import CustomButton from "components/CustomButton";
 import { useHistory } from "react-router-dom";
 
