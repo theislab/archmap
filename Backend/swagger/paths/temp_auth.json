@@ -1,0 +1,54 @@
+{
+    "/temp_auth": {
+      "get": {
+        "summary": "Get temporary jwt token for access for 24 hrs",
+        "tags": ["Temp Auth"],
+        "responses": {
+          "200": {
+            "description": "Getting temporary access successful",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "msg": {
+                                "type": "string",
+                                "required": true
+                              },
+                            "user": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": "-",
+                                    "lastName": "-",
+                                    "email": "-",
+                                    "password": "-",
+                                    "note": "temporary_user",
+                                    "isEmailVerified": "false",
+                                    "isAdministrator": "false",
+                                    "_id": "string",
+                                    "createdAt": "string",
+                                    "updatedAt": "string",
+                                    "__v": "integer"
+                                },
+                                "required": true
+                            },
+                            "jwt": {
+                                "type": "string",
+                                "required": true
+                            },
+                            "iat": {
+                                "type": "integer",
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            }
+          },
+          "500": {
+            "description": "Error accessing the demos."
+          }
+        }
+      }
+    }
+  }
