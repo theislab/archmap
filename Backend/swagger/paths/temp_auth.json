@@ -1,11 +1,11 @@
 {
     "/temp_auth": {
       "get": {
-        "summary": "Get temporary jwt token for access for 24 hrs",
-        "tags": ["Temp Auth"],
+        "summary": "Get temporary jwt token for access for 24 hrs yay",
+        "tags": ["User"],
         "responses": {
           "200": {
-            "description": "Getting temporary access successful",
+            "description": "Getting token for temporary access successful",
             "content": {
                 "application/json": {
                     "schema": {
@@ -18,17 +18,17 @@
                             "user": {
                                 "type": "object",
                                 "properties": {
-                                    "firstName": "-",
-                                    "lastName": "-",
-                                    "email": "-",
-                                    "password": "-",
-                                    "note": "temporary_user",
-                                    "isEmailVerified": "false",
-                                    "isAdministrator": "false",
-                                    "_id": "string",
-                                    "createdAt": "string",
-                                    "updatedAt": "string",
-                                    "__v": "integer"
+                                    "firstName": { "type": "string" },
+                                    "lastName": { "type": "string"},
+                                    "email": { "type": "string"},
+                                    "password": { "type": "string"},
+                                    "note": { "type": "string"},
+                                    "isEmailVerified": false,
+                                    "isAdministrator": false,
+                                    "_id": { "type": "string" },
+                                    "createdAt": { "type": "string" },
+                                    "updatedAt": { "type": "string" },
+                                    "__v": { "type": "string" }
                                 },
                                 "required": true
                             },
@@ -46,7 +46,7 @@
             }
           },
           "500": {
-            "description": "Error accessing the demos."
+            "description": "Error getting temporary access token."
           }
         }
       }
