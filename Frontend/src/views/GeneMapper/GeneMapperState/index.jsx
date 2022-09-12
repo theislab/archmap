@@ -68,6 +68,7 @@ function GeneMapperState({ path }) {
       setDemoDatasets(a);
     });
   }, []);
+
   useEffect(() => {
     AtlasService.getAtlases().then((a) => {
       a.map((a) => {

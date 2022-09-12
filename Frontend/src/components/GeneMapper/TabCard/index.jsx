@@ -13,14 +13,15 @@ import { colors } from 'shared/theme/colors';
  * Add property isDemo to demo datasets "data" property to visualize properly
  * @param handleOnClick executed function on card click
  * @param selected boolean parameter to indicate if a card element is selected
+ * @param minimal makes the tabcard view minimal and shows only the most essential information
 */
 export const TabCard = ({
-  width, height, data, handleOnClick, selected,
+  width, height, data, handleOnClick, selected, minimal
 }) => (
   <Box
     onClick={handleOnClick}
     sx={{
-      width: { width }, height: { height }, backgroundColor: 'white', borderRadius: '0.625rem', marginTop: '1.5em', marginBottom: '0.75em', cursor: 'pointer',
+      width: { width }, height: { height }, backgroundColor: 'white', borderRadius: '0.625rem', marginBottom: '0.67em', cursor: 'pointer',
     }}
   >
     <Box
@@ -44,12 +45,13 @@ export const TabCard = ({
           },
         }}
     >
-      <Stack p="0.1em" pl="0.3em">
-        <Typography variant="body1">
-          {data.name}
+      <Stack spacing={0} p="0.1em" pl="0.3em">
+        <Typography fontSize={minimal ? "1em" : "p" }> 
+          Atlas: <Typography display="inline">{data.atlas} | </Typography>
+          Model: <Typography display="inline">{data.model}</Typography>
         </Typography>
-        <Typography variant="caption">
-          {data.isDemo ? `Demo dataset for ${data.atlas} & ${data.model}` : data.visibility}
+        <Typography variant="caption" fontWeight="">
+          { !minimal && data.isDemo ? `Demo dataset for ${data.atlas} & ${data.model}` : data.visibility}
         </Typography>
       </Stack>
     </Box>

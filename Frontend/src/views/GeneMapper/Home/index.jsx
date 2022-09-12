@@ -184,9 +184,6 @@ function GeneMapperHome({ loggedIn }) {
               or learn more about ScArches by clicking the Help-Icon next to the title.
             </Alert>
           )}
-        {/* todo: in the future, check the cache for the projects
-        instead of disabling if not logged in, right now,
-        it is disabled in order to not get null exceptions */}
         {projects
           && (
             <div>

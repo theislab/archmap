@@ -49,12 +49,10 @@ function GeneMapper({ sidebarShown, loggedIn = true }) {
       >
         <Switch>
           <Route exact path={`${path}`}>
-            {/* should mostly be fine, todo: make sure the paths work properly */}
             <GeneMapperHome basePath={path} loggedIn={loggedIn} />
           </Route>
 
           <Route path={`${path}/create`}>
-            {/* should mostly be fine, todo: make sure the paths work properly */}
             <GeneMapperState path={`${path}`} loggedIn={loggedIn} />
           </Route>
 

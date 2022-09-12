@@ -88,53 +88,57 @@ function AtlasModelChoice({
         }
       </Grid>
 
-      <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
-        Pick a Model
-      </Typography>
+      <Box width="100%" display="flex">
+        <Box id="Grid" width="65%">
+          <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
+            Pick a Model
+          </Typography>
 
-      <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
-        {
-          models && models.map((m) => (
-            <Grid item height="225px">
-              <ModelCardSelect
-                width="225px"
-                height="97%"
-                title={m.name}
-                description={m.description}
-                selected={selectedModel.name === m.name}
-                onSelect={setSelectedModel}
-                modelObject={m}
-                disabled={!compatibleModels
-                  || !compatibleModels.map(
-                    (m) => m.toLowerCase(),
-                  ).includes(m.name.toLowerCase()) || compatibleModels.length === 0}
-              />
-            </Grid>
-          ))
-        }
-      </Grid>
-
-      {/* Demo datasets */}
-      <Box sx={{ width: 400 }}>
-        <Typography variant="h5" sx={{ fontSize: '18px', fontWeight: 'bold', pb: '1em' }} marginTop="32px">
-          Or try out one of the available demo datasets
-        </Typography>
+          <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap">
+            {
+              models && models.map((m) => (
+                <Grid item height="225px">
+                  <ModelCardSelect
+                    width="225px"
+                    height="97%"
+                    title={m.name}
+                    description={m.description}
+                    selected={selectedModel.name === m.name}
+                    onSelect={setSelectedModel}
+                    modelObject={m}
+                    disabled={!compatibleModels
+                      || !compatibleModels.map(
+                        (m) => m.toLowerCase()
+                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} />
+                </Grid>
+              ))
+            }
+          </Grid>
+        </Box>
+        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column' }}>
+          {/* Demo datasets */}
+          <Box sx={{ width: '100%', marginBottom: "1.5em" }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }} marginTop="32px">
+              Or try out one of the demos
+            </Typography>
+          </Box>
+          {/* Loop over demo datasets */}
+            {demos && demos.map((dataset) => (
+                <TabCard
+                  width="97%"
+                  data={{
+                    name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
+                    atlas: dataset.atlas,
+                    model: dataset.model,
+                    isDemo: true,
+                  }}
+                  minimal
+                  handleOnClick={() => handleDemoClick(dataset)}
+                  selected={datasetIsSelected && dataset._id === selectedDataset._id}
+                />
+            ))}
+        </Box>
       </Box>
-      {/* Loop over demo datasets */}
-      { demos && demos.map((dataset) => (
-        <TabCard
-          width="40%"
-          height="50px"
-          data={{
-            name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
-            atlas: dataset.atlas,
-            model: dataset.model,
-            isDemo: true,
-          }}
-          handleOnClick={() => handleDemoClick(dataset)}
-          selected={datasetIsSelected && dataset._id === selectedDataset._id}
-        />
-      ))}
 
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>

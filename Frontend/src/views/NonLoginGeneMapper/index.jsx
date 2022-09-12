@@ -35,9 +35,7 @@ function NonLoginGeneMapper() {
       }) // set token
       .then((data) => {
         localStorage.setItem('jwt', data.jwt);
-        // Add the timestamp when the jwt token was fetched.
-        // Useful for checking if a token is expired
-        localStorage.setItem('temp_jwt_expiresAt', data.exp); // 
+        localStorage.setItem('temp_jwt_expiresAt', data.exp);
       });
   }, []);
 
