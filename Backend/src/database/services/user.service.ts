@@ -96,6 +96,18 @@ export default class UserService {
   }
 
   /**
+   * Delete all temporary users that have expired.
+   * A user is expired if the expiration time is less than the current time.
+   * @returns users - temporary users or null
+   */
+  static async deleteTemporaryUsers(): Promise<{ deletedCount: Number }> {
+    // time 20 hours ago
+    let time = new Date(new Date().getTime() -(20*60*60*1000));
+    // delete all users that were created more than 20 hours ago
+    return await userModel.deleteMany({ createdAt: { $lt: time }});
+  }
+
+  /**
    *  Adds given user to the database.
    *
    *  @param    user - the user to add to the db

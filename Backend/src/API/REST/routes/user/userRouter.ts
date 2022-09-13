@@ -69,4 +69,23 @@ const get_user_by_id = (): Router => {
   return router;
 };
 
+/**
+ * Route for deleting temporary users that were granted access for the non-login version.
+ * @returns Router
+ */
+const delete_temp_users = (): Router => {
+  let router = express.Router();
+  router.get("/delete_temp_users", async (req: ExtRequest, res: any) => {
+    // delete all expired temporary users
+    try{
+      let obj = await UserService.deleteTemporaryUsers();
+      res.status(200).json(obj);
+    }catch (err){
+      console.error(err);
+      return res.status(500).send("Internal server error");
+    }});
+
+  return router;
+}
+
 export { get_teams_of_user, get_users, get_user_by_id };
