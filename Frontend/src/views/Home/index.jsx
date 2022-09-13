@@ -146,7 +146,7 @@ const Home = () => {
                 ArchMap offers single-cell omics reference mapping using <a
                   style={{
                     textDecoration: "none",
-                  }} href="https://scarches.readthedocs.io/en/latest/"><Typography sx={{
+                  }} href="https://genecruncher.readthedocs.io/en/latest/"><Typography sx={{
                     color: colors.primary[400],
                     ':hover': { color: colors.primary[500] }
                   }} display="inline">scArches</Typography></a>.
