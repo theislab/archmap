@@ -18,7 +18,6 @@ export default function get_temp_auth(): Router {
         // Create temporary user that will be deleted after 
         // upload/download process is finished.  
         try {
-            // TODO: delete user afterwards  
             let userToAdd: AddUserDTO = {
                 firstName: "-",
                 lastName: "-",
@@ -41,7 +40,6 @@ export default function get_temp_auth(): Router {
             // get expiration time
             let expirationDate;
             jwt.verify(token, JWT_SECRET, (err, decoded)=>{
-                console.log("decoded payload: " + JSON.stringify(decoded));
                 expirationDate = decoded.exp;
             })
 

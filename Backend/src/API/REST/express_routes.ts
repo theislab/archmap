@@ -25,7 +25,7 @@ import download_results_route from "./routes/file_download/results";
 import upload_user_avatar_route from "./routes/upload_user_avatar";
 
 
-import { get_teams_of_user, get_users, get_user_by_id } from "./routes/user/userRouter";
+import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
 import { get_atlas, get_atlas_visualization, get_allAtlases } from "./routes/atlas/atlasRouter";
 
@@ -108,6 +108,10 @@ export function express_routes(): Router {
   router.use(resend_verification_link());
   router.use(verify_email_route());
   router.use(password_reset_route());
+  
+  // temporary user routes
+  router.use(get_temp_auth_route());
+  router.use(delete_temp_users());
 
   // authenticated routes
   router.use(update_profile_route());
@@ -151,9 +155,6 @@ export function express_routes(): Router {
   router.use(get_users());
   router.use(get_user_by_id());
 
-  // temporary user route
-  router.use(get_temp_auth_route());
-
   // project routes
   router.use(get_projects());
   router.use(get_userProjects());
@@ -174,7 +175,7 @@ export function express_routes(): Router {
   router.use(get_atlas_visualization());
   router.use(get_allAtlases());
 
-  // demo routres
+  // demo routes
   router.use(get_allDemos());
 
   // upload routes

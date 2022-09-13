@@ -6,7 +6,7 @@ import { ExtRequest } from "../../../../definitions/ext_request";
 import UserService from "../../../../database/services/user.service";
 
 /**
- *  Returns all the teams that the user belong to.
+ *  Returns all the teams that the user belongs to.
  */
 const get_teams_of_user = (): Router => {
   let router = express.Router();
@@ -78,8 +78,9 @@ const delete_temp_users = (): Router => {
   router.get("/delete_temp_users", async (req: ExtRequest, res: any) => {
     // delete all expired temporary users
     try{
-      let obj = await UserService.deleteTemporaryUsers();
-      res.status(200).json(obj);
+      let obj = await UserService.deleteTemporaryUsers(); // return obj in the form: { deletedCount: Number }
+
+      res.status(200).json({ deletedCount: obj.deletedCount });
     }catch (err){
       console.error(err);
       return res.status(500).send("Internal server error");
@@ -88,4 +89,4 @@ const delete_temp_users = (): Router => {
   return router;
 }
 
-export { get_teams_of_user, get_users, get_user_by_id };
+export { get_teams_of_user, get_users, get_user_by_id, delete_temp_users };
