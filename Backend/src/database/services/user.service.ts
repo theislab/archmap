@@ -98,7 +98,7 @@ export default class UserService {
   /**
    * Delete all temporary users that have expired.
    * A user is expired if the creation time is more than 20 hours ago.
-   * @returns users - temporary users or null
+   * @returns object - contains the property deletedCount: { deletedCount: Number }
    */
   static async deleteTemporaryUsers(): Promise<{ deletedCount: Number }> {
     // time 20 hours ago
