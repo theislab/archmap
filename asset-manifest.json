@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/static/css/main.b53b9e18.chunk.css",
-    "main.js": "/static/js/main.f64ded69.chunk.js",
-    "main.js.map": "/static/js/main.f64ded69.chunk.js.map",
+    "main.js": "/static/js/main.c4b934f8.chunk.js",
+    "main.js.map": "/static/js/main.c4b934f8.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.cf7847e4.js",
     "runtime-main.js.map": "/static/js/runtime-main.cf7847e4.js.map",
     "static/css/2.325324c8.chunk.css": "/static/css/2.325324c8.chunk.css",
-    "static/js/2.33a58aac.chunk.js": "/static/js/2.33a58aac.chunk.js",
-    "static/js/2.33a58aac.chunk.js.map": "/static/js/2.33a58aac.chunk.js.map",
+    "static/js/2.7bb1d02b.chunk.js": "/static/js/2.7bb1d02b.chunk.js",
+    "static/js/2.7bb1d02b.chunk.js.map": "/static/js/2.7bb1d02b.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.325324c8.chunk.css.map": "/static/css/2.325324c8.chunk.css.map",
     "static/css/main.b53b9e18.chunk.css.map": "/static/css/main.b53b9e18.chunk.css.map",
-    "static/js/2.33a58aac.chunk.js.LICENSE.txt": "/static/js/2.33a58aac.chunk.js.LICENSE.txt",
+    "static/js/2.7bb1d02b.chunk.js.LICENSE.txt": "/static/js/2.7bb1d02b.chunk.js.LICENSE.txt",
     "static/media/Helmholtz_TheisLab_Naturecover_2021.2fd3d815.png": "/static/media/Helmholtz_TheisLab_Naturecover_2021.2fd3d815.png",
     "static/media/Helmholtz_TheisLab_Naturecover_2021_blurred.4ec22968.png": "/static/media/Helmholtz_TheisLab_Naturecover_2021_blurred.4ec22968.png",
     "static/media/allClusterLabels.06044daf.png": "/static/media/allClusterLabels.06044daf.png",
@@ -33,8 +33,8 @@
   "entrypoints": [
     "static/js/runtime-main.cf7847e4.js",
     "static/css/2.325324c8.chunk.css",
-    "static/js/2.33a58aac.chunk.js",
+    "static/js/2.7bb1d02b.chunk.js",
     "static/css/main.b53b9e18.chunk.css",
-    "static/js/main.f64ded69.chunk.js"
+    "static/js/main.c4b934f8.chunk.js"
   ]
 }
