@@ -4,8 +4,10 @@ import {
   Typography, createTheme, ThemeProvider, Stack, TextField, Alert, CircularProgress,
 } from '@mui/material';
 import PlusIcon from 'components/general/PlusIcon';
+import Search from 'components/Search';
 import ProjectBarCard from 'components/GeneMapper/projectBarCard';
 import SearchIcon from '@mui/icons-material/Search';
+import { colors } from 'shared/theme/colors';
 import ProjectService from 'shared/services/Project.service';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
 import {
@@ -30,7 +32,7 @@ const theme = createTheme({
 });
 
 // The loggedIn parameter is set to true when the user is logged in
-function GeneMapperHome({ loggedIn }) {
+function GeneMapperHome({ style, loggedIn }) {
   const [projects, setProjects] = useState(null);
   const [deletedProjects, setDeletedProjects] = useState([]);
   const [atlases, setAtlases] = useState([]);
@@ -139,7 +141,7 @@ function GeneMapperHome({ loggedIn }) {
   }, []);
 
   return (
-    <div>
+    <div style={style}>
       <ThemeProvider theme={theme}>
         <Box
           sx={{
@@ -151,24 +153,17 @@ function GeneMapperHome({ loggedIn }) {
           }}
         >
           <Stack direction="row" className="stack" alignItems="Center">
-
             <Typography variant="h5" sx={{ pr: 1 }}>Your Mappings</Typography>
             <PlusIcon onClick={() => { history.push('genemapper/create'); }} />
           </Stack>
-          <TextField
-            id="outlined-basic"
-            sx={{ width: '32.7ch' }}
-            label={(
-              <Stack direction="row">
-                <SearchIcon />
-                Find a Mapping
-              </Stack>
-            )}
-            variant="outlined"
-            size="small"
-            value={findString}
-            onChange={(e) => setFindString(e.target.value)}
-          />
+          {/* Search bar */}
+          <Box sx={{ alignSelf: 'center', width: { xs: '95%', md: '25%' }, marginBlock: '2%' }}>
+            <Search
+              value={findString}
+              handleSearch={(str) => setFindString(str)}
+              noFilterComponent={true}
+            />
+          </Box>
         </Box>
         {projects === null
           && (
@@ -198,7 +193,7 @@ function GeneMapperHome({ loggedIn }) {
                     handleDelete={() => handleDeleteProject(project._id)}
                     loggedIn={loggedIn}
                   />
-              ))}
+                ))}
             </div>
           )}
         {deletedProjects.length > 0

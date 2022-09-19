@@ -31,7 +31,17 @@ const FilterButton = ({ onClick }) => (
   </ButtonBase>
 );
 
-const Search = ({ filterComponent, handleSearch, value, padding = '10px', visible = true }) => {
+/**
+ * 
+ * @param {*} filterComponent - The filter component used in the search bar.
+ * @param {*} handleSearch - search handler
+ * @param {string} value - the value that is being searched for.
+ * @param {string} padding - padding value.
+ * @param {boolean} visible - variable that decides whether the search bar is boolean or not.
+ * @param {boolean} noFilterComponent - boolean variable for whether there is a filter component or not. 
+ * @returns search bar component 
+ */
+const Search = ({ filterComponent, handleSearch, value, padding = '10px', visible = true, noFilterComponent = false }) => {
 
   const [active, setActive] = useState(false)
   const [filterEnabled, setFilterEnabled] = useState(false)
@@ -66,19 +76,23 @@ const Search = ({ filterComponent, handleSearch, value, padding = '10px', visibl
         border: `2px solid ${active ? colors.primary[400] : colors.primary[700]}`,
         borderRadius: '40px',
         display: visible ? 'flex' : 'none',
+        height: '58px'
       }}
     >
       {/* Left part */}
-      <Stack direction="row" alignItems="center" gap="5px" sx={{ marginLeft: "20px", width: "100%" }}>
+      <Stack direction="row" alignItems="center" gap="5px" sx={{ marginLeft: "20px", width: "100%", paddingRight:"5px" }}>
         <SearchIcon sx={{ color: active ? "primary.light" : "primary.main" }} />
-        <SearchInput onChange={(e) => handleSearch(e.target.value)} placeholder="Search" onMouseEnter={() => setActive(true)} onMouseLeave={() => setActive(false)} value={value}/>
+        <SearchInput onChange={(e) => handleSearch(e.target.value)} placeholder="Search" onMouseEnter={() => setActive(true)} onMouseLeave={() => setActive(false)} value={value} />
       </Stack>
       {/* Right part */}
-      <Stack direction="row" sx={{ marginRight: '20px' }}>
-        <FilterButton onClick={() => setFilterEnabled(!filterEnabled)} />
-      </Stack>
+
+      {noFilterComponent ? null : (
+        <Stack direction="row" sx={{ marginRight: '20px' }}>
+          <FilterButton onClick={() => setFilterEnabled(!filterEnabled)} />
+        </Stack>
+      )}
       {
-        !filterEnabled ? null : (
+        noFilterComponent || !filterEnabled ? null : (
           <Box
             ref={filterBox}
             sx={{
