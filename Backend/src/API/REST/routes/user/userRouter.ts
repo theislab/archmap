@@ -75,10 +75,10 @@ const get_user_by_id = (): Router => {
  */
 const delete_temp_users = (): Router => {
   let router = express.Router();
-  router.get("/delete_temp_users", async (req: ExtRequest, res: any) => {
-    // delete all expired temporary users
+  router.delete("/temp_users", async (req: ExtRequest, res: any) => {
     try{
-      let obj = await UserService.deleteTemporaryUsers(); // return obj in the form: { deletedCount: Number }
+      // delete all expired temporary users
+      let obj = await UserService.deleteTemporaryUsers();
 
       res.status(200).json({ deletedCount: obj.deletedCount });
     }catch (err){
