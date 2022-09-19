@@ -36,7 +36,7 @@ function Leftbar(props) {
       {...props}
       sx={{
         width: {
-          xs: '100%', sm: '486px', md: '389px', lg: '519px', xl: '664px',
+          xs: '100%', sm: '500px', md: '450px', lg: '650px', xl: '664px',
         },
         display: {
           xs: 'none', sm: 'flex', md: 'flex', lg: 'flex', xl: 'flex',
@@ -91,11 +91,10 @@ function DrawerBar({ open, setOpen, executeScroll }) {
             width: '100vw', height: '25vh', bgcolor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center',
           }}
           >
-            {/* TODO: add the references here to execute scroll */}
             <Box onClick={()=>{}}> {/* TODO: Here currently, fixing the links in the drawer */}
-              <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGetStartedClicked: true }}}>
+              <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGuideClicked: true }}}>
                 <DrawerNavlink>
-                  Get Started
+                  Quick Guide
                 </DrawerNavlink>
               </Link>
             </Box>
@@ -241,7 +240,7 @@ export default function Navbar({
   backgroundColor,
   onLoginClicked, 
   onSignUpClicked,
-  onGetStartedClicked,
+  onGuideClicked,
   executeScroll, 
   setNavbarHeight,
   position,
@@ -284,9 +283,9 @@ export default function Navbar({
             </IconButton>
             <Navlink fontWeight="bold" fontSize="20px">archmap.bio</Navlink>
           </LinkBox>
-          <LinkBox onClick={onGetStartedClicked}>
-            <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGetStartedClicked: true }}}>
-              <Navlink>Get Started</Navlink>
+          <LinkBox onClick={onGuideClicked}>
+            <Link style={{ textDecoration:"none" }} to={{pathname: "/", state: { onGuideClicked: true }}}>
+              <Navlink>Quick Guide</Navlink>
             </Link>
           </LinkBox>
           <LinkBox to="/genemapper"><Navlink>Map</Navlink></LinkBox>
