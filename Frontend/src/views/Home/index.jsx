@@ -44,11 +44,11 @@ const Home = () => {
     context.switchRegister(true);
   }
 
-  // ref for the "get started" section
+  // ref for the "Quick Guide" section
   const getStartedRef = useRef();
 
-  // scroll down function to "get started" section
-  const onGetStartedClicked = () => {
+  // scroll down function to "Quick Guide" section
+  const onGuideClicked = () => {
     getStartedRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
@@ -58,8 +58,8 @@ const Home = () => {
 
   useEffect(() => {
     if (location.state && location.state.contact_us) contactUsBoxRef.current.scrollIntoView();
-    // check if the get started section has been redirected by another page
-    if (location.state && location.state.onGetStartedClicked) onGetStartedClicked();
+    // check if the Quick Guide section has been redirected by another page
+    if (location.state && location.state.onGuideClicked) onGuideClicked();
   }, [])
 
   // we store the actual height of the Navbar, since we set the Navbar's position to fixed
@@ -104,11 +104,11 @@ const Home = () => {
         {/* NAVBAR HERE */}
         {/* the Box that contains the Navbar will collapse, so we reset the height */}
         <Box sx={{ height: navbarHeight, position: "relative" }}>
-          <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGetStartedClicked={onGetStartedClicked} executeScroll={executeScroll} />
+          <Navbar backgroundColor="transparent" setNavbarHeight={setNavbarHeight} onLoginClicked={onLoginClicked} onSignUpClicked={onSignUpClicked} onGuideClicked={onGuideClicked} executeScroll={executeScroll} />
         </Box>
-        {/* Get Started Intro Section */}
+        {/* Quick Guide Intro Section */}
         <Box id="title container" width="100%" height='100%' textAlign="center" position="relative" top="30%">
-          <WindowiOS backgroundImageLoaded={backgroundImage === Helmholtz_TheisLab_Naturecover_2021} onGetStartedClick={onGetStartedClicked} />
+          <WindowiOS backgroundImageLoaded={backgroundImage === Helmholtz_TheisLab_Naturecover_2021} onGuideClick={onGuideClicked} />
         </Box>
       </Box>
       {/* the Eclipse */}
@@ -180,7 +180,7 @@ const Home = () => {
             </Box>
           </Box>
         </Box>
-        {/* Getting Started */}
+        {/* Quick Guide */}
         <Box sx={{
           width: "100%",
           marginTop: "5em",
@@ -191,7 +191,7 @@ const Home = () => {
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           position: "relative"
         }}>
-          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">Getting Started</Typography>
+          <Typography sx={{ textAlign: "center" }} fontSize="2em" fontWeight="bold">Quick Guide</Typography>
 
           {/* Log In or Start Uploading */}
           <Box sx={{ position: "relative", gap: "1em", display: "flex", flexDirection: { xs: "column", sm: "row", md: "row", lg: "row", xl: "row" }, justifyContent: "space-between", alignItems: "center", width: "90%", margin: "auto", padding: "5% 10% 0% 10%" }}>
@@ -214,7 +214,7 @@ const Home = () => {
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" } }}>
               <Typography fontSize="1.2em" fontWeight="bold" paddingBottom='2%'>Step 1: Select Atlas and Model</Typography>
-              <Typography color={colors.neutral[500]}>Start by choosing a reference atlas and a one of the available pre-trained models.</Typography>
+              <Typography color={colors.neutral[500]}>Start by choosing a reference atlas and one of the available pre-trained models.</Typography>
             </Box>
             <Box sx={{ width: { xs: "100%", sm: "50%", md: "50%", lg: "50%", xl: "50%" }, backgroundColor: "white", borderRadius: "20px" }}>
               <img style={{ width: "100%" }} src={graphic2} alt="Upload" />

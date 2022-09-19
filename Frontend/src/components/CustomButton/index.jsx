@@ -7,6 +7,19 @@ import styles from './custombutton.module.css';
 
 function getStyles(type) {
   switch (type) {
+    case 'primary2':
+      return ({
+        backgroundColor: 'white',
+        borderRadius: '100px',
+        padding: '0.5em 1em 0.5em 1em',
+        fontSize: '1em',
+        color: colors.primary[500],
+        ':hover': {
+          backgroundColor: colors.primary[200], transition: '0.4s',
+        },
+        ':active': { backgroundColor: `${colors.primary[200]} !important`, transition: '0.4s', color: colors.primary[500] },
+        ':disabled': { backgroundColor: colors.primary[200], transition: '0.4s', color: colors.primary[500] },
+      });
     case 'secondary':
       return ({
         backgroundColor: colors.secondary1[400],
@@ -54,7 +67,6 @@ function getStyles(type) {
           backgroundColor: colors.primary[500], transition: '0.4s', color: 'white', boxShadow: '0px 4px 20px rgba(24, 64, 96, 0.2)',
         },
         ':active': { backgroundColor: `${colors.primary[600]} !important`, transition: '0.4s', color: 'white' },
-        ':focus': { backgroundColor: colors.primary[300], transition: '0.4s', color: 'white' },
         ':disabled': { backgroundColor: '#EBEFFF', transition: '0.4s', color: colors.primary[600] },
       });
   }
