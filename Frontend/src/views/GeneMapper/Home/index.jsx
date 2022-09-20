@@ -175,8 +175,7 @@ function GeneMapperHome({ style, loggedIn }) {
           && (
             <Alert severity="info">
               You have not created any mappings yet.
-              Create one by clicking the Plus-Icon
-              or learn more about ScArches by clicking the Help-Icon next to the title.
+              Create one by clicking the Plus Icon.
             </Alert>
           )}
         {projects

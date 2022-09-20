@@ -31,15 +31,15 @@ function RegistrationForm(props) {
     password: '',
     passwordAgain: '',
   });
-  
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
   const [checkYourEmail, setCheckYourEmail] = useState(false);
   const [LegalNotice, setLegalNotice] = useState(false);
   const [isAcceptedTermsSnackbar, setIsAcceptedTermsSnackbar] = useState(false);
-  
-  const { registerClose: onClose, registerVisible: visible, switchLogin:  switchForm } = useContext(LoginContext);
+
+  const { registerClose: onClose, registerVisible: visible, switchLogin: switchForm } = useContext(LoginContext);
 
   const history = useHistory();
 
@@ -274,7 +274,7 @@ function RegistrationForm(props) {
                         disableRipple
                         disableFocusRipple
                       />
-                  )}
+                    )}
                     label="Accept terms and conditions"
                   />
                   <Box>
@@ -329,21 +329,20 @@ function RegistrationForm(props) {
             : 'You must accept terms and conditions!'}
         </Alert>
       </Snackbar>
-      <Snackbar
+      {errors.response && <Snackbar
         open={isSnackbarVisible}
         autoHideDuration={10000}
         onClose={() => setSnackbarVisible(false)}
       >
         <Alert
-          severity={errors.response ? 'error' : 'success'}
+          severity={'error'}
           sx={{ width: '100%' }}
           onClose={() => setSnackbarVisible(false)}
         >
-          {errors.response
-            ? errors.response
-            : 'Successful registration, check your e-mails for verification!'}
+          {errors.response}
         </Alert>
       </Snackbar>
+      }
     </div>
   );
 }
