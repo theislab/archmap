@@ -165,13 +165,15 @@ function GeneMapperHome({ style, loggedIn }) {
             />
           </Box>
         </Box>
-        {projects === null
+        {/* Check if jwt token exists to make sure that checking the projects is even necessary */}
+        {localStorage.getItem('jwt') && projects === null
           && (
             <Box sx={{ textAlign: 'center' }}>
               <CircularProgress />
             </Box>
           )}
-        {projects?.length === 0
+        {/* If jwt token doesn't exist, no projects exist either  */}
+        {(!localStorage.getItem('jwt') || projects?.length === 0)
           && (
             <Alert severity="info">
               You have not created any mappings yet.
