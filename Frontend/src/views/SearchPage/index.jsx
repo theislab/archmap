@@ -71,7 +71,9 @@ const SearchPage = () => {
       const filterParams = Object.fromEntries(urlParams);
       switch (searchCategory) {
         case 'users':
-          searchResponse = await UserService.getUsers(filterParams);
+          let res = await UserService.getUsers(filterParams);
+          // only show users that are not temporary
+          searchResponse = res.filter(obj => obj.note !== "temporary_user");
           break;
         case 'teams':
           searchResponse = await TeamService.getTeams(filterParams);
@@ -128,18 +130,18 @@ const SearchPage = () => {
           path={path}
         />
         {isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
         )}
         {!isLoading && (
-        <SearchContent
-          searchResult={searchRequestResult}
-          searchCategory={searchCategory}
-          searchedKeyword={searchedKeyword}
-          user={user}
-          fetchSearchHandler={fetchSearchHandler}
-        />
+          <SearchContent
+            searchResult={searchRequestResult}
+            searchCategory={searchCategory}
+            searchedKeyword={searchedKeyword}
+            user={user}
+            fetchSearchHandler={fetchSearchHandler}
+          />
         )}
       </Box>
     </HeaderView>

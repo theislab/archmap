@@ -53,29 +53,51 @@ function RegistrationForm(props) {
     [setUserDetails],
   );
 
+  /**
+   * Function for input validation.
+   * Validates every input given by user. 
+   * @returns 
+   */
   function validateInput() {
     let currentErrors = {};
+    
+    // email input validation
     if (!validator.isEmail(userDetails.email)) {
       currentErrors = {
         ...currentErrors,
         email: 'A valid e-mail is required!',
       };
     }
+
+    // first name input validation
     if (userDetails.firstname === '') {
       currentErrors = {
         ...currentErrors,
         firstname: 'Please enter your first name!',
       };
     }
+
+    // last name input validation
     if (userDetails.lastname === '') {
       currentErrors = {
         ...currentErrors,
         lastname: 'Please enter your last name!',
       };
     }
+
+    // note input validation. 
+    // Verificationt that the note is not "temporary user"
+    // so that the user is not automatically deleted after 24 hours
+    if(userDetails.note === 'temporary_user'){
+      currentErrors = { ...currentErrors, note: 'Invalidn Affiliation'};
+    }
+
+    // password input validation
     if (userDetails.password === '') {
       currentErrors = { ...currentErrors, password: 'Password is required!' };
     }
+
+    // repeat password input validation
     if (userDetails.passwordAgain !== userDetails.password) {
       currentErrors = {
         ...currentErrors,
