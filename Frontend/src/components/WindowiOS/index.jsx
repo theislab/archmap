@@ -25,15 +25,15 @@ const WindowiOS = ({ onGuideClick, backgroundImageLoaded }) => {
             Reference-Based Analysis of Single-Cell Omics Data Powered by scArches
           </Typography>
         </Box>
-        <Box sx={{ display: 'inline-block', padding: '30px', borderRadius: '20px', margin: "3em 2em 2em 2em" }}>
-          <CustomButton sx={{ marginRight: '10px' }} onClick={() => history.push('/genemapper')} type="primary">
+        <Box sx={{ display: 'inline-block', borderRadius: '20px', margin: "3em 2em 2em 2em" }}>
+          <CustomButton sx={{ margin: '10px'}} onClick={() => history.push('/genemapper')} type="primary">
             <Typography fontSize="17px" fontWeight="400" >
               Get started
             </Typography>
           </CustomButton>
           <CustomButton
             onClick={() => onGuideClick()}
-            sx={{ marginLeft: '10px' }}
+            sx={{ margin: '10px' }}
             type="primary2">
             <Typography>Quick Guide</Typography>
           </CustomButton>
