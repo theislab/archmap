@@ -186,18 +186,18 @@ function GeneMapperHome({ style, loggedIn }) {
             />
           </Box>
         </Box>
-        {/* Check if jwt token exists to make sure that checking the projects is even necessary */}
-        {localStorage.getItem('jwt') && projects === null
+        {/* Check if project cache exists to make sure that checking the projects is even necessary */}
+        {localStorage.getItem('cached_projects') && projects === null
           && (
             <Box sx={{ textAlign: 'center' }}>
               <CircularProgress />
             </Box>
           )}
-        {/* If jwt token doesn't exist, no projects exist either  */}
-        {(!localStorage.getItem('jwt') || projects?.length === 0)
+        {/* If there is no project cached, there are no projects exist either.   */}
+        {(!localStorage.getItem('cached_projects') || projects?.length === 0)
           && (
             <Alert severity="info">
-              You have not created any mappings yet.
+              You have not created any mappings yet. There are
               Create one by clicking the Plus Icon.
             </Alert>
           )}
