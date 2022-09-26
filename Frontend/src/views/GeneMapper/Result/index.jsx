@@ -41,9 +41,9 @@ function GeneMapperResultView({ loggedIn = true }) {
   }
 
   useEffect(() => {
-    // check if the project data is stored in the cache
     let projectInCache = JSON.parse(localStorage.getItem("cached_projects"))[projectId];
-    console.log(projectInCache);
+    
+    // check if the project data is stored in the cache
     if (projectInCache) {
       updateDemos(projectInCache);
     } // fetch the project if the result is not in the cache

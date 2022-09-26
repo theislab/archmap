@@ -71,6 +71,7 @@ function GeneMapperHome({ style, loggedIn }) {
   };
 
   // function to handle deletion of project
+  // todo: update the cache check like for getProjects
   const handleDeleteProject = (id) => {
     DemoService.getDemos().then((demos) => {
       ProjectService.deleteProject(id).then(() => {
@@ -89,6 +90,7 @@ function GeneMapperHome({ style, loggedIn }) {
   };
 
   // function to handle restoration of project
+  // TODO: update the function with the cache check like for getProjects
   const handleRestoreProject = (id) => {
     DemoService.getDemos().then((demos) => {
       ProjectService.restoreProject(id).then(() => {
@@ -193,7 +195,7 @@ function GeneMapperHome({ style, loggedIn }) {
               <CircularProgress />
             </Box>
           )}
-        {/* If there is no project cached, there are no projects exist either.   */}
+        {/* If there is no project cached, no projects exist either. */}
         {(!localStorage.getItem('cached_projects') || projects?.length === 0)
           && (
             <Alert severity="info">
