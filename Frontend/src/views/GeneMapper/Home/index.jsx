@@ -106,10 +106,6 @@ function GeneMapperHome({ style, loggedIn }) {
     });
   };
 
-  // todo: store the projects in the cache as well
-  // in the cache, store an array of projects using the following object structure
-  // {_id, owner, name, modelId, atlasId, fileName, fileSize, status, resultSize, _v, uploadId, location}
-  // Function to get projects and update the necessary info about the demo datasets
   const getProjects = () => {
     // fetch demos
     DemoService.getDemos().then((demos) => {
@@ -117,7 +113,32 @@ function GeneMapperHome({ style, loggedIn }) {
         // search for demos and set the information stored about them
         findDemos(data, demos);
         setDemoDatasets(demos);
-        setProjects(data);
+
+        // check if indexedDB is available for caching the projects
+        if (!window.indexedDB) {
+          setProjects(data);
+          return;
+        }
+        // Save an object that consists of the projects in the local storage.
+        if (localStorage.getItem("cached_projects") === null) {
+          localStorage.setItem("cached_projects", JSON.stringify({}));
+        }
+        let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+
+        // filter out duplicate projects
+        data.forEach((obj) => {
+          let id = obj._id;
+          // If the cached project object doesn't have a project with a matching id,
+          // add it to the cache. 
+          if (!cachedProjects.hasOwnProperty(id)) {
+            cachedProjects[id] = obj;
+          }
+        });
+        // turn cached project object to array and reverse the order
+        let projectArr = Object.keys(cachedProjects).map((key) => cachedProjects[key]).reverse();
+        setProjects(projectArr);
+        // update the local storage
+        localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
       });
     });
   };
