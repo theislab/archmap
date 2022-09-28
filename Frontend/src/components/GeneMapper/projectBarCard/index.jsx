@@ -264,7 +264,7 @@ export default function ProjectBarCard({
                   </IconButton>
                 </>
                 )}
-                {/* delete and restore button */}
+                {/* delete and restore button available if logged in*/}
                 {
                   loggedIn ? (
                     <IconButton onClick={() => handleDelete()}>
@@ -272,16 +272,7 @@ export default function ProjectBarCard({
                         ? <ReplayIcon />
                         : <DeleteOutlineIcon color="error" />}
                     </IconButton>
-                  ) : (
-                    // delete button when not logged in.
-                    // In the non-logged in version,
-                    // restoring the project is not possible
-                    !deleted && (
-                    <IconButton onClick={() => handleDelete()}>
-                      <DeleteOutlineIcon color="error" />
-                    </IconButton>
-                    )
-                  )
+                  ) : null
                 }
               </Box>
             </Grid>

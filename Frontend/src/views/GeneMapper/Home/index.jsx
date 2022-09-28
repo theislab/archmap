@@ -71,32 +71,43 @@ function GeneMapperHome({ style, loggedIn }) {
   };
 
   // function to handle deletion of project
-  // todo: update the cache check like for getProjects
   const handleDeleteProject = (id) => {
     DemoService.getDemos().then((demos) => {
-      ProjectService.deleteProject(id).then(() => {
-        ProjectService.getOwnProjects().then((data) => {
-          // search for demos and set the information stored about them
-          findDemos(data, demos);
-          setProjects(data);
+      // delete project from cache permanently
+      let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+      console.log(`Cached projects: ${JSON.stringify(cachedProjects)}`);
+      delete cachedProjects[id];
+      localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
+
+      // delete project stored on the remotely
+      if (loggedIn) {
+        // update the projects that are not deleted
+        ProjectService.deleteProject(id).then(() => {
+          ProjectService.getOwnProjects().then((data) => {
+            // search for demos and set the information stored about them
+            findDemos(data, demos);
+            setProjects(data);
+          });
+          // update the projects that are deleted
+          ProjectService.getDeletedProjects().then((data) => {
+            // search for demos and set the information stored about them
+            findDemos(data, demos);
+            console.log(data);
+            setDeletedProjects(data);
+          });
         });
-        ProjectService.getDeletedProjects().then((data) => {
-          // search for demos and set the information stored about them
-          findDemos(data, demos);
-          setDeletedProjects(data);
-        });
-      });
+      }
     });
   };
 
   // function to handle restoration of project
-  // TODO: update the function with the cache check like for getProjects
   const handleRestoreProject = (id) => {
     DemoService.getDemos().then((demos) => {
       ProjectService.restoreProject(id).then(() => {
         ProjectService.getOwnProjects().then((data) => {
           // search for demos and set the information stored about them
           findDemos(data, demos);
+          // update the information about the demos
           setProjects(data);
         });
         ProjectService.getDeletedProjects().then((data) => {
@@ -130,7 +141,7 @@ function GeneMapperHome({ style, loggedIn }) {
         // filter out duplicate projects
         data.forEach((obj) => {
           let id = obj._id;
-          // If the cached project object doesn't have a project with a matching id,
+          // If the cached projects object doesn't have a project with a matching id,
           // add it to the cache. 
           if (!cachedProjects.hasOwnProperty(id)) {
             cachedProjects[id] = obj;
@@ -159,7 +170,12 @@ function GeneMapperHome({ style, loggedIn }) {
     ModelService.getModels().then((data) => setModels(data));
     if (loggedIn) {
       TeamService.getMyTeams().then((teams) => setUserTeams(teams));
-      ProjectService.getDeletedProjects().then((data) => setDeletedProjects(data));
+      DemoService.getDemos().then((demos) => {
+        ProjectService.getDeletedProjects().then((data) => {
+          findDemos(data, demos);
+          setDeletedProjects(data);
+        });
+      });
     }
   }, []);
 
@@ -220,7 +236,7 @@ function GeneMapperHome({ style, loggedIn }) {
                 ))}
             </div>
           )}
-        {deletedProjects.length > 0
+        {loggedIn && deletedProjects.length > 0
           && (
             <Box>
               <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>Deleted Projects</Typography>
