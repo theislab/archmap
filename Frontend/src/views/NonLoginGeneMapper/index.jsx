@@ -15,7 +15,7 @@ import { LoginContext } from 'shared/context/loginContext';
 function NonLoginGeneMapper() {
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-  // get jwt token for temporary upload access
+  // Get jwt token for temporary upload access
   useEffect(() => {
     // check if token exists && current token is not expired
     if (localStorage.getItem('jwt')) {

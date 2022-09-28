@@ -18,31 +18,45 @@ function GeneMapperResultView({ loggedIn = true }) {
 
   const { projectId } = useParams();
 
-  useEffect(() => {
-    // fetch the projects
-    ProjectService.getProject(projectId)
-      .then((data) => {
-        let updatedData = data;
-        console.log(JSON.stringify(data));
-        DemoService.getDemos().then((demos) => {
-          // loop over demo datasets and check whether the project is a demo
-          demos.forEach((demo) => {
-            const id = data.fileName.split('_')[2];
-            if (id && id === demo._id) {
-              // updating the demo dataset
-              updatedData = {
-                ...data,
-                status: PROJECT_STATUS.DONE,
-                location: demo.csvURL,
-              };
-            }
-          });
-          setProject(updatedData);
-        });
-      })
-      .catch(() => {
-        ProjectMock.getProject(projectId).then((data) => setProject(data));
+  /** Function to update information about demos
+   * @param {*} data the array of projects  
+   */
+  function updateDemos(data) {
+    let updatedData = data;
+    DemoService.getDemos().then((demos) => {
+      // loop over demo datasets and check whether the project is a demo
+      demos.forEach((demo) => {
+        const id = data.fileName.split('_')[2];
+        if (id && id === demo._id) {
+          // updating the demo dataset
+          updatedData = {
+            ...data,
+            status: PROJECT_STATUS.DONE,
+            location: demo.csvURL,
+          };
+        }
       });
+      setProject(updatedData);
+    });
+  }
+
+  useEffect(() => {
+    let projectInCache = JSON.parse(localStorage.getItem("cached_projects"))[projectId];
+    
+    // check if the project data is stored in the cache
+    if (projectInCache) {
+      updateDemos(projectInCache);
+    } // fetch the project if the result is not in the cache
+    else {
+      ProjectService.getProject(projectId)
+        .then((data) => {
+          // update information about the demo datasets
+          updateDemos(data);
+        })
+        .catch(() => {
+          ProjectMock.getProject(projectId).then((data) => setProject(data));
+        });
+    }
   }, [projectId]);
 
   return (
