@@ -27,7 +27,7 @@ This repository includes both the frontend, backend, and machine learning pipeli
 To install any of these parts locally, please follow the steps in the READMEs of each of the respective sections.
 
 ## Usage
-ArchMap is currently being deployed live at: www.genecruncher.com. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](www.genecruncher.com).  
+ArchMap is currently being deployed live at: www.genecruncher.com. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](https://www.genecruncher.com).  
 
 
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
