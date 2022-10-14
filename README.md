@@ -35,4 +35,4 @@ Small note: If editing the Readme, please conform to the [standard-readme](https
 ## License
 MIT License
 
-[Copyright © 2022, Theislab, Helmholtz Center Munich](../LICENSE)
+[Copyright © 2022, Theislab, Helmholtz Center Munich](../main/LICENSE)
