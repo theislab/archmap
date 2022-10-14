@@ -1,7 +1,3 @@
-
-% Include an image here of the archmap with the logo. 
-
-[![license](https://img.shields.io/github/license/:user/:repo.svg)](LICENSE)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 ## ArchMap
@@ -33,10 +29,8 @@ To install any of these parts locally, please follow the steps in the READMEs of
 ## Usage
 ArchMap is currently being deployed live at: www.archmap.bio. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](www.genecruncher.com).  
 
-Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
-
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
 
-[MIT © TheisLAb](../LICENSE)
+[MIT © Theislab, Helmholtz Center Munich, Germany](../LICENSE)
