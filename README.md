@@ -13,56 +13,32 @@ ArchMap is currently hosted at: www.genecruncher.com (domain to be replaced soon
 
 ## Table of Contents
 
-- [Security](#security)
-- [Background](#background)
+- [Background and Main Features](#background-and-main-features)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Security
+## Background and Main Features
+ArchMap is meant to enable scientists to easily use innovative advances in single-cell mapping. 
+ArchMap provides many useful features for users. The core functionality that is provided is mapping of query user datasets to reference atlases, using [scArches](https://github.com/theislab/scarches). Multiple reference atlases are provided.
 
-### Any optional sections
+In addition to the mapping functionality, another key feature is collaboration. Users can collaborate in teams together to share their visualizations in an instant and secure way, without reuploading and remapping again. 
 
-## Background
-
-### Any optional sections
+Users have two options to upload files. A user can either log in and have their results stored on the cloud for future use, or map without logging in. Without logging in, a user's results will only be stored in the cache for future use.
 
 ## Install
-
-This module depends upon a knowledge of [Markdown]().
-
-```
-```
-
-### Any optional sections
+This repository includes both the frontend, backend, and machine learning pipeline code. 
+To install any of these parts locally, please follow the steps in the READMEs in each of the respective folders.
 
 ## Usage
-
-```
-```
+ArchMap is currently being deployed live at: www.archmap.bio. Please follow the [ArchMap docs](https://genecruncher.readthedocs.io/en/latest/) for in-depth explanation of how to use the platform. A brief explanation is also included on the landing page.  
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
 
-### Any optional sections
-
-## API
-
-### Any optional sections
-
-## More optional sections
-
-## Contributing
-
-See [the contributing file](CONTRIBUTING.md)!
-
-PRs accepted.
-
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
-
-### Any optional sections
 
 ## License
 
-[MIT © Richard McRichface.](../LICENSE)
+[MIT © TH](../LICENSE)
