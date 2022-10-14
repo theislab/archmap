@@ -29,7 +29,7 @@ To install any of these parts locally, please follow the steps in the READMEs of
 ## Usage
 ArchMap is currently being deployed live at: www.archmap.bio. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](www.genecruncher.com).  
 
-## Readme Edit
+
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
