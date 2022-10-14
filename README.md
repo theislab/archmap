@@ -33,4 +33,4 @@ Small note: If editing the Readme, please conform to the [standard-readme](https
 
 ## License
 
-[MIT © Theislab, Helmholtz Center Munich, Germany](../LICENSE)
+[MIT © Theislab, Helmholtz Center Munich, Germany](../LICENSE.md)
