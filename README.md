@@ -32,5 +32,5 @@ ArchMap is currently being deployed live at: www.archmap.bio. See [here](https:/
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
-
-[MIT © Theislab, Helmholtz Center Munich, Germany](../LICENSE.md)
+MIT License
+[Copyright © 2022, Theislab, Helmholtz Center Munich](../LICENSE)
