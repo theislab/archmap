@@ -16,8 +16,6 @@ ArchMap is currently hosted at: www.genecruncher.com (domain to be replaced soon
 - [Background and Main Features](#background-and-main-features)
 - [Install](#install)
 - [Usage](#usage)
-- [API](#api)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Background and Main Features
@@ -33,7 +31,7 @@ This repository includes both the frontend, backend, and machine learning pipeli
 To install any of these parts locally, please follow the steps in the READMEs in each of the respective folders.
 
 ## Usage
-ArchMap is currently being deployed live at: www.archmap.bio. Please follow the [ArchMap docs](https://genecruncher.readthedocs.io/en/latest/) for in-depth explanation of how to use the platform. A brief explanation is also included on the landing page.  
+ArchMap is currently being deployed live at: www.archmap.bio. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](www.genecruncher.com).  
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
 
@@ -41,4 +39,4 @@ Small note: If editing the Readme, please conform to the [standard-readme](https
 
 ## License
 
-[MIT © TH](../LICENSE)
+[MIT © TheisLAb](../LICENSE)
