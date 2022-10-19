@@ -56,7 +56,6 @@ export const ModelCard = ({ width = "100%", height = "100%", title, description,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        backgroundColor: 'yellow'
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -138,11 +137,11 @@ export const ModelCard = ({ width = "100%", height = "100%", title, description,
           </Box>
         </Box>
       }
-      {
+      { // Card view when not disabled and no hover.
         !disabled &&
         <Box sx={{
           width: '100%',
-          height: "100%",
+          height: "225px",
           display: "flex",
           flexDirection: "column",
           p: "1.2rem",
@@ -153,24 +152,36 @@ export const ModelCard = ({ width = "100%", height = "100%", title, description,
           borderWidth: "4px",
         }}
         >
-          <Typography sx={{ fontSize: "1.4rem", fontWeight: "bold" }}>{`Model ${title}`}</Typography>
-          <Typography sx={{ fontSize: "1rem", color: colors.neutral[800] }}>{description}</Typography>
-        </Box>}
-      {
-        disabled &&
-        <Box sx={{
-          width: '100%',
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          p: "1.2rem",
-          borderRadius: "1.2rem",
-        }}
-        >
-          <Typography sx={{ fontSize: "1.4rem", fontWeight: "bold" }}>{title}</Typography>
-          <Typography sx={{ fontSize: "1rem", color: colors.neutral[800] }}>{description}</Typography>
-        </Box>
-      }
+          <Typography sx={{ fontSize: "1.4rem", fontWeight: "bold" }}>{`${title}`}</Typography>
+          <Typography
+              className="modelDescription"
+              sx={{
+                paddingTop: '10px',
+                fontSize: "1rem",
+                color: colors.neutral[800],
+                display: '-webkit-box',
+                overflow: 'hidden',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+              }}>{description}</Typography>
+          
+          {/* <Typography sx={{ fontSize: "1rem", color: colors.neutral[800] }}>{description}</Typography> */}
+    </Box>}
+{ // Card view when the model is not compatible with the chosen atlas
+  disabled &&
+    <Box sx={{
+      width: '100%',
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      p: "1.2rem",
+      borderRadius: "1.2rem",
+    }}
+    >
+      <Typography sx={{ fontSize: "1.4rem", fontWeight: "bold" }}>{title}</Typography>
+      <Typography sx={{ fontSize: "1rem", color: colors.neutral[800] }}>{description}</Typography>
     </Box>
+}
+    </Box >
   )
 }
