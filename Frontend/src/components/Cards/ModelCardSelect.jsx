@@ -66,7 +66,7 @@ export const ModelCardSelect = ({
     <Box
       sx={{
         width: width,
-        height: height
+        height: height,
       }}
     >
       <Box
@@ -131,7 +131,8 @@ export const ModelCardSelect = ({
         <Typography sx={{ fontSize: "1.4rem", fontWeight: "bold", color: "#000000"}}>{title}</Typography>
         <Typography 
           className="modelDescription" 
-          sx={{ 
+          sx={{
+            paddingTop: '10px', 
             fontSize: "1rem", 
             color: colors.neutral[800],
             display: '-webkit-box',
