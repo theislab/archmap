@@ -5,7 +5,7 @@ ArchMap is an open-source web platform that enables anybody to use [scArches](ht
 Currently, ArchMap only provides mapping capabilities, but this will be expanded in the future. 
 
 
-ArchMap is currently hosted at: www.genecruncher.com (domain to be replaced soon). Feel free to check it out. 
+ArchMap is currently hosted at: www.archmap.bio. Feel free to check it out. 
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ This repository includes both the frontend, backend, and machine learning pipeli
 To install any of these parts locally, please follow the steps in the READMEs of each of the respective sections.
 
 ## Usage
-ArchMap is currently being deployed live at: www.genecruncher.com. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](https://www.genecruncher.com).  
+ArchMap is currently being deployed live at: www.archmap.bio. See [here](https://genecruncher.readthedocs.io/en/latest/) for platform documentation. A brief, 30 second guide is also included on the [landing page](https://www.archmap.bio).  
 
 
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
