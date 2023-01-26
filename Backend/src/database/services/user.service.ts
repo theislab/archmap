@@ -104,7 +104,7 @@ export default class UserService {
     // time 20 hours ago
     let time = new Date(new Date().getTime() -(20*60*60*1000));
     // delete all temporary users that were created more than 20 hours ago
-    return await userModel.deleteMany({ createdAt: { $lt: time }, note: "temporary_user"});
+    return await userModel.deleteMany({createdAt: { $lt: time }, note: "temporary_user"});
   }
 
   /**

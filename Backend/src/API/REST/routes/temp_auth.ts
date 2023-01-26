@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "";
  * Temporary authentication route for the non-login version.
  * To be used as a one-time access for creating a project and processing it. 
  */
-export default function get_temp_auth(): Router {
+export default function temp_auth(): Router {
     let router = express.Router();
     
     router.get("/temp_auth", async (req: any, res) => {

@@ -12,7 +12,7 @@ import get_profile_route from "./routes/get_profile";
 //import get_project_route from "./routes/get_project";
 //import get_projects_route from "./routes/get_projects";
 import get_unauthorized_users_route from "./routes/get_unauthorized_users";
-import get_temp_auth_route from "./routes/temp_auth";
+import temp_auth_route from "./routes/temp_auth";
 import authorize_user_route from "./routes/authorize_user";
 import verify_email_route from "./routes/verify_email";
 import password_reset_route from "./routes/password_reset";
@@ -110,7 +110,7 @@ export function express_routes(): Router {
   router.use(password_reset_route());
   
   // temporary user routes
-  router.use(get_temp_auth_route());
+  router.use(temp_auth_route());
   router.use(delete_temp_users());
 
   // authenticated routes
