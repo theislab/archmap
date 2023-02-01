@@ -20,7 +20,7 @@ export function init_env_vars() {
     "JWT_SECRET",
     "CONTACT_US",
     "PROJECT_RECYCLE_BIN_LIFETIME_DAYS",
-    "STATIC_FILES_URL"
+    "STATIC_FILES_URL", 
   ];
   required_env_vars.forEach((required_env_var) => {
     if (!(required_env_var in process.env))
@@ -46,4 +46,5 @@ export function init_env_vars() {
   setStdEnvValue("S3_SECRET_ACCESS_KEY", "minioadmin");
   setStdEnvValue("PROJECT_RECYCLE_BIN_LIFETIME_DAYS", "3");
   setStdEnvValue("STATIC_FILES_URL", "");
+  setStdEnvValue("CXG_LOAD_BALANCER_URL", "https://cellxgene-load-balancer-4obuqt4kuq-ey.a.run.app");
 }

@@ -24,10 +24,10 @@ import upload_get_upload_url_route from "./routes/file_upload/get_upload_url";
 import download_results_route from "./routes/file_download/results";
 import upload_user_avatar_route from "./routes/upload_user_avatar";
 
-
 import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
 import { get_atlas, get_atlas_visualization, get_allAtlases } from "./routes/atlas/atlasRouter";
+import { get_cellxgene_instance } from "./routes/cellxgeneRouter/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
 
@@ -177,6 +177,9 @@ export function express_routes(): Router {
 
   // demo routes
   router.use(get_allDemos());
+
+  // cellxgene proxy route
+  router.use(get_cellxgene_instance());
 
   // upload routes
   router.use(upload_get_upload_url_route());
