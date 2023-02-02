@@ -21,6 +21,7 @@ COPY . .
 
 # gcloud-specific configuration
 RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+
 CMD node app.js
 
 
