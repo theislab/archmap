@@ -20,10 +20,12 @@ let gCloudRunDeploy = (name, file_location) => {
   if (!name) name = `cellxgene-${file_location}`;
   // convert URL to URI used by gsutils
   const gcs_file_location = getGSURI(file_location);
-
   if (!gcs_file_location) return -1;
 
-  let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION} --allow-unauthenticated --port=${process.env.PORT} --no-cpu-throttling --cpu-boost --set-env-vars GCS_FILE_LOCATION=${gcs_file_location}`;
+  let gcloudCommand = `gcloud beta run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
+  gcloudCommand+=` --allow-unauthenticated --port=${process.env.PORT} --no-cpu-throttling --cpu-boost --init`;
+  gcloudCommand+=` --set-env-vars GCS_FILE_LOCATION=${gcs_file_location} --set-env-var TIMEOUT=${process.env.LIFETIME}`;
+  
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
   // execute gcloud command in the shell
@@ -36,6 +38,11 @@ let gCloudRunDeploy = (name, file_location) => {
       }
       // stdout contains the deployment steps
       console.log(stdout);
+
+      // Set the IAM if it could not be set properly. 
+      if(stderr.includes("WARNING: The IAM could not be set properly."))
+        gCloudSetIAM(name);
+
       // stderr contains the final status
       console.log(`stderr: ${stderr}`);
 
@@ -46,7 +53,7 @@ let gCloudRunDeploy = (name, file_location) => {
 };
 
 /**
- * Set the IAM policy to allow all traffic for the service. 
+ * Set the IAM policy to allow all traffic for the service.
  * @param {*} service_name - The name of the service.
  */
 let gCloudSetIAM = (service_name) => {
@@ -68,7 +75,7 @@ let gCloudSetIAM = (service_name) => {
       resolve(getServiceURL(stderr));
     });
   });
-}
+};
 
 // the GCR URL begins with "https://" and ends with .app domain
 let getServiceURL = (str) => {
@@ -145,14 +152,7 @@ function getGSURI(publicURL) {
   // TODO: find a less faulty way to find out the gsutils URI. This could break if the file hierarchy changes.
   // Public URL structure: domain.com/BUCKET/FOLDER/SUBFOLDER/FILE
   let relativePath = publicURL.slice(publicURL.search(".com") + 4);
-  let arr = relativePath.split("/");
-  const BUCKET = arr[1];
-  const FOLDER = arr[2];
-  const SUBFOLDER = arr[3];
-
-  if (!BUCKET || !FOLDER || !SUBFOLDER) return null;
-
-  return `gs://${BUCKET}/${FOLDER}/${SUBFOLDER}`;
+  return `gs://${relativePath}`;
 }
 
 module.exports = { gCloudRunDeploy, gCloudSetIAM, getAllServices, getService };
