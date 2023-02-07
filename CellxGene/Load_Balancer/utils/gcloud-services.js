@@ -23,7 +23,7 @@ let gCloudRunDeploy = (name, file_location) => {
 
   if (!gcs_file_location) return -1;
 
-  let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION} --allow-unauthenticated --port=${process.env.PORT} --set-env-vars=GATEWAY_PORT=${process.env.PORT},GCS_FILE_LOCATION=${gcs_file_location}`;
+  let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION} --allow-unauthenticated --port=${process.env.PORT} --no-cpu-throttling --cpu-boost --set-env-vars GCS_FILE_LOCATION=${gcs_file_location}`;
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
   // execute gcloud command in the shell
@@ -44,6 +44,31 @@ let gCloudRunDeploy = (name, file_location) => {
     });
   });
 };
+
+/**
+ * Set the IAM policy to allow all traffic for the service. 
+ * @param {*} service_name - The name of the service.
+ */
+let gCloudSetIAM = (service_name) => {
+  let gcloudCommand = `gcloud beta run services add-iam-policy-binding --region=europe-west3 --member=allUsers --role=roles/run.invoker ${service_name}`;
+  console.log(`Executing command: \n${gcloudCommand}\n`);
+
+  return new Promise((resolve) => {
+    exec(gcloudCommand, (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        resolve(-1);
+      }
+      // stdout contains the deployment steps
+      console.log(stdout);
+      // stderr contains the final status
+      console.log(`stderr: ${stderr}`);
+
+      // return the service URL
+      resolve(getServiceURL(stderr));
+    });
+  });
+}
 
 // the GCR URL begins with "https://" and ends with .app domain
 let getServiceURL = (str) => {
@@ -130,4 +155,4 @@ function getGSURI(publicURL) {
   return `gs://${BUCKET}/${FOLDER}/${SUBFOLDER}`;
 }
 
-module.exports = { gCloudRunDeploy, getAllServices, getService };
+module.exports = { gCloudRunDeploy, gCloudSetIAM, getAllServices, getService };
