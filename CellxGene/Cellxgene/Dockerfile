@@ -1,9 +1,9 @@
 FROM python:3.9 as cellxgene-build
 
-COPY . .
-
 RUN pip install cellxgene\
     gcsfs
+
+COPY . .
     
 FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:latest 
 
@@ -16,10 +16,12 @@ ENV CELLXGENE_DATA=/data
 ENV GCS_FILE_LOCATION=""
 #"gs://jst-2021-bucket-2022-dev/test_cxg_read_from_bucket"
 ENV CELLXGENE_LOCATION=/usr/local/bin/cellxgene
-ENV GATEWAY_PORT=5005
+ENV PORT=5005
+
+EXPOSE ${PORT}
 
 # Container timeout 
-ENV TIMEOUT=600
+ENV TIMEOUT=60
 
 #GCloud-specific environmental variables
 ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
@@ -30,6 +32,8 @@ ENV PROJECT_ID="custom-helix-329116"
 RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
 # CMD gsutil rsync ${GCS_FILE_LOCATION}  data; timeout ${TIMEOUT}
-CMD timeout ${TIMEOUT} cellxgene launch --host 0.0.0.0 ${GCS_FILE_LOCATION}
+CMD sh timeout.sh & cellxgene launch --host 0.0.0.0 ${GCS_FILE_LOCATION}
+
+# Removed the  --host 0.0.0.0 flag in cellxgene launch
 
 #TODO: use gsutil rsync to sync the annotated data with the google cloud storage. 
