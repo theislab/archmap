@@ -4,7 +4,7 @@ import { ExtRequest } from "../../../../definitions/ext_request";
 import ProjectService from "../../../../database/services/project.service";
 import TeamService from "../../../../database/services/team.service";
 import InstitutionService from "../../../../database/services/institution.service";
-import { ObjectId } from "mongoose";
+import { ObjectId, SortOrder } from "mongoose";
 import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import DeletedProjectService from "../../../../database/services/deletedProject.service";
@@ -42,7 +42,7 @@ const get_userProjects = (): Router => {
   router.get("/ownprojects", check_auth(), async (req: ExtRequest, res: any) => {
     try {
       const { sort, ...rest } = req.params;
-      let sortParam: number;
+      let sortParam: SortOrder;
       if (sort === "1") sortParam = 1;
       else sortParam = -1;
       const projects =

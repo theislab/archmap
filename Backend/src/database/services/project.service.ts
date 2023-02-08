@@ -60,7 +60,7 @@ export default class ProjectService {
    */
   static async getProjectByOwner(
     user_id: ObjectId,
-    sort: SortOrder = 1 // check what the issue 
+    sort: SortOrder = 1
   ): Promise<(IProject & { _id: ObjectId })[]> {
     return await projectModel.find({ owner: user_id }).sort({uploadDate: sort});
   }
