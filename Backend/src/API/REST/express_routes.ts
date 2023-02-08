@@ -27,7 +27,7 @@ import upload_user_avatar_route from "./routes/upload_user_avatar";
 import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
 import { get_atlas, get_atlas_visualization, get_allAtlases } from "./routes/atlas/atlasRouter";
-import { get_cellxgene_instance } from "./routes/cellxgeneRouter/cellxgeneRouter";
+import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
 
