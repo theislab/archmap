@@ -22,7 +22,7 @@ The content is provided to frontend via API routes.
 
 # Storage
 The Node.js server is also connected to an S3 compatible storage system with multiple buckets. 
-For the deployed version on [genecruncher.com](https://genecruncher.com), Google Cloud Storage is used.
+For the deployed version on [archmap.bio](https://www.archmap.bio), Google Cloud Storage is used.
 
 ## Projects
 The users projects are stored on a private bucket. 

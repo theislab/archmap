@@ -15,6 +15,8 @@ router.post("/service", async function (req, res) {
   const SERVICE_NAME = `cellxgene-${Date.now()}${Math.random()*999999 | 0}`;
   // call gcloud command to deploy new service
   let serviceURL = await gcloud.gCloudRunDeploy(SERVICE_NAME, LOCATION);
+  // Set the IAM if it could not be set properly. 
+  await gcloud.gCloudSetIAM(SERVICE_NAME);
 
   if (serviceURL == -1)
     return res.status(400).send("Could not create cellxgene service.");
