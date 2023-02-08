@@ -183,7 +183,7 @@ const delete_project = (): Router => {
   router.delete("/project/:id", check_auth(), validationMdw, async (req, res) => {
     try {
       const projectId = req.params.id;
-      const project = (await ProjectService.getProjectById(projectId));
+      const project = (await (await ProjectService.getProjectById(projectId) as any).lean());
       if (project == null) return res.status(404).send("Project not found");
 
       const deletedProject = {
@@ -229,7 +229,7 @@ const restore_deleted_project = (): Router => {
     validationMdw,
     async (req: ExtRequest, res) => {
       try {
-        let project = await DeletedProjectService.getDeletedProjectById(req.params.id);
+        let project = (await (await DeletedProjectService.getDeletedProjectById(req.params.id) as any).lean());
         if (!project) {
           return res.status(404).send("Project not found");
         }
