@@ -1,6 +1,6 @@
 import { IProject, projectModel } from "../models/project";
 import { AddProjectDTO, UpdateProjectDTO } from "../dtos/project.dto";
-import { ObjectId } from "mongoose";
+import { ObjectId, SortOrder } from "mongoose";
 
 /**
  *  @class ProjectService
@@ -60,9 +60,9 @@ export default class ProjectService {
    */
   static async getProjectByOwner(
     user_id: ObjectId,
-    sort: number = 0 // check what the issue 
+    sort: SortOrder = 1 // check what the issue 
   ): Promise<(IProject & { _id: ObjectId })[]> {
-    return await projectModel.find({ owner: user_id });
+    return await projectModel.find({ owner: user_id }).sort({uploadDate: sort});
   }
 
   /**
