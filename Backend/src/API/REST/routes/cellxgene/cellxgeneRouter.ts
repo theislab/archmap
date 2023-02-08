@@ -8,7 +8,7 @@ const get_cellxgene_instance = (): Router => {
     router.post("/cellxgene", check_auth(), async(req: ExtRequest, res: any) => {
       try{
         const endpoint = `${process.env.CXG_LOAD_BALANCER_URL}/service`;
-        console.log(`endpoint: ${endpoint}`)
+        console.log(`endpoint: ${endpoint}`);
         const response = await axios.post(endpoint, req.body);
         console.log(`response: ${response}`);
         res.status(response.status).send(response.data);
