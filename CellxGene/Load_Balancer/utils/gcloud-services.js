@@ -23,8 +23,8 @@ let gCloudRunDeploy = (name, file_location) => {
   if (!gcs_file_location) return -1;
 
   let gcloudCommand = `gcloud beta run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand+=` --allow-unauthenticated --port=${process.env.PORT} --no-cpu-throttling --cpu-boost --init`;
-  gcloudCommand+=` --set-env-vars GCS_FILE_LOCATION=${gcs_file_location} --set-env-var TIMEOUT=${process.env.LIFETIME}`;
+  gcloudCommand+=` --allow-unauthenticated --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand+=` --set-env-vars GCS_FILE_LOCATION=${gcs_file_location} --set-env-vars TIMEOUT=${process.env.TIMEOUT}`;
   
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
@@ -38,10 +38,6 @@ let gCloudRunDeploy = (name, file_location) => {
       }
       // stdout contains the deployment steps
       console.log(stdout);
-
-      // Set the IAM if it could not be set properly. 
-      if(stderr.includes("WARNING: The IAM could not be set properly."))
-        gCloudSetIAM(name);
 
       // stderr contains the final status
       console.log(`stderr: ${stderr}`);

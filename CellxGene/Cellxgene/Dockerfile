@@ -20,7 +20,7 @@ ENV PORT=5005
 
 EXPOSE ${PORT}
 
-# Container timeout 
+# Container timeout in seconds 
 ENV TIMEOUT=60
 
 #GCloud-specific environmental variables

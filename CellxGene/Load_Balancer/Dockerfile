@@ -11,11 +11,13 @@ RUN apt-get update \
 ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
 ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-fb3fb8908455.json"
 ENV PROJECT_ID="custom-helix-329116"
-ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene@sha256:25982cb1d2f5dca402817a7500cc7d2f03db7939fb385b5b821affdfef0e97ae"
+ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene@sha256:721950437f85a91399ef96e17dad26d83089980b18e2bbfccf2ed674da75a889"
 ENV REGION="europe-west3"
-ENV PORT="8080"
+# The port that cellxgene will be running on
+ENV CELLXGENE_PORT="5005"
 
-EXPOSE ${PORT}
+#Cellxgene container timeout, set to one hour by default
+ENV TIMEOUT=3600
 
 COPY . . 
 
@@ -31,3 +33,5 @@ CMD node app.js
 
 # to set the gcloud project to work in:
 # gcloud config set project custom-helix-329116
+
+
