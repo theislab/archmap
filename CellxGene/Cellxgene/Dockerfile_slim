@@ -1,23 +1,15 @@
 FROM python:3.9 as cellxgene-build
 
-RUN pip install cellxgene\
-    gcsfs
+RUN pip install cellxgene gcsfs
 
 COPY . .
     
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:latest 
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+# TODO: Maybe you don't need to install anything and auth is already installed 
+# RUN gcloud components install auth
 
 # Copy everything from the first layer
 COPY --from=cellxgene-build . .
-
-# Cellxgene-gateway-specific environmental variables
-ENV CELLXGENE_DATA=/data
-# GCS_FILE_LOCATION
-ENV GCS_FILE_LOCATION=""
-#"gs://jst-2021-bucket-2022-dev/test_cxg_read_from_bucket"
-ENV CELLXGENE_LOCATION=/usr/local/bin/cellxgene
-ENV PORT=5005
-
 EXPOSE ${PORT}
 # Container timeout in seconds 
 ENV TIMEOUT=60
