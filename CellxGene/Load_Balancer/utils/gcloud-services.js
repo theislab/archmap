@@ -23,9 +23,9 @@ let gCloudRunDeploy = (name, file_location) => {
   if (!gcs_file_location) return -1;
 
   let gcloudCommand = `gcloud beta run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand+=` --allow-unauthenticated --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
-  gcloudCommand+=` --set-env-vars GCS_FILE_LOCATION=${gcs_file_location} --set-env-vars TIMEOUT=${process.env.TIMEOUT}`;
-  
+  gcloudCommand += ` --allow-unauthenticated --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand += ` --set-env-vars GCS_FILE_LOCATION=${gcs_file_location} --set-env-vars TIMEOUT=${process.env.TIMEOUT}`;
+
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
   // execute gcloud command in the shell
@@ -53,7 +53,7 @@ let gCloudRunDeploy = (name, file_location) => {
  * @param {*} service_name - The name of the service.
  */
 let gCloudSetIAM = (service_name) => {
-  let gcloudCommand = `gcloud beta run services add-iam-policy-binding --region=europe-west3 --member=allUsers --role=roles/run.invoker ${service_name}`;
+  let gcloudCommand = `gcloud beta run services add-iam-policy-binding --region=${process.env.REGION} --member=allUsers --role=roles/run.invoker ${service_name}`;
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
   return new Promise((resolve) => {
@@ -100,7 +100,6 @@ async function getAllServices() {
   const request = {
     parent,
   };
-
   // Run request
   const iterable = await runClient.listServicesAsync(request);
   let services = [];
@@ -114,6 +113,45 @@ async function getAllServices() {
   }
 
   return services;
+}
+
+/**
+ * A function to delete all Cellxgene Annotate services with the specified project and region.
+ * @return number of deleted services. 
+ */
+async function deleteAllCellxgeneServices() {
+  // Construct request
+  const request = {
+    parent,
+  };
+  // Run request
+  const iterable = await runClient.listServicesAsync(request);
+  let deletedServices = [];
+
+  for await (const service of iterable) {
+    let createTime = service["createTime"];
+    // Get the current time in seconds
+    let currentTime = Date.now()/1000;
+    elapsedTime = currentTime - createTime["seconds"];
+    let timeout = process.env.TIMEOUT;
+    // Delete the service if the elapsed time is greater than the timeout
+    if(service["name"].includes("cellxgene-annotate") && elapsedTime>timeout){
+      deletedServices.push({name: service["name"], createTime, elapsedTime});
+      let serviceName = service["name"].split('/').pop();
+      // Delete command
+      let gcloudDelete = `gcloud run services delete --region=${process.env.REGION} ${serviceName} --quiet`;
+      // Execute gcloud delete command
+      exec(gcloudDelete, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+        }
+        console.log(stdout);
+        console.log(`stderr: ${stderr}`);
+      });
+    }
+  }
+
+  return deletedServices;
 }
 
 /**
@@ -145,10 +183,9 @@ async function getService(name) {
  * returns gsutil URI.
  */
 function getGSURI(publicURL) {
-  // TODO: find a less faulty way to find out the gsutils URI. This could break if the file hierarchy changes.
   // Public URL structure: domain.com/BUCKET/FOLDER/SUBFOLDER/FILE
   let relativePath = publicURL.slice(publicURL.search(".com") + 4);
   return `gs://${relativePath}`;
 }
 
-module.exports = { gCloudRunDeploy, gCloudSetIAM, getAllServices, getService };
+module.exports = { gCloudRunDeploy, gCloudSetIAM, getAllServices, getService, deleteAllCellxgeneServices };
