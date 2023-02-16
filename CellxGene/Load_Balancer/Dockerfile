@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
 
 RUN apt-get update \
     && apt-get install sudo\
@@ -11,8 +11,10 @@ RUN apt-get update \
 ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
 ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-fb3fb8908455.json"
 ENV PROJECT_ID="custom-helix-329116"
-ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene@sha256:721950437f85a91399ef96e17dad26d83089980b18e2bbfccf2ed674da75a889"
+ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene:latest"
 ENV REGION="europe-west3"
+# For faster cold starts, use the first version of cloud run. 
+ENV PLATFORM="managed"
 # The port that cellxgene will be running on
 ENV CELLXGENE_PORT="5005"
 
