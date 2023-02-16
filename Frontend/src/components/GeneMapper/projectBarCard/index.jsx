@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import {
-  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Alert, Button,
+  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button,
 } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -22,11 +22,11 @@ import { Modal, ModalTitle } from 'components/Modal';
 import TeamService from 'shared/services/Team.service';
 import CustomButton from 'components/CustomButton';
 import { TabCard } from '../TabCard';
+import { colors } from 'shared/theme/colors';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { GeneralCard } from 'components/Cards/GeneralCard';
 import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
-import { LoadingButton } from '@mui/lab';
 
 function ProcessingStatus() {
   return (
@@ -278,11 +278,19 @@ export default function ProjectBarCard({
                             onClick={() => launchCellxgene()}
                             disabled={project.status !== 'DONE'}
                           >
-                            <Typography>Launch Results</Typography>
+                            <Typography>Launch</Typography>
                           </CustomButton>
                           // View Results Button. Redirect to the cellxgene URL
                           : <CustomButton>
-                            <Typography>View Results</Typography>
+                            <Typography>
+                              <Link
+                                target="_blank"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "white",
+                                }} href={cellxgeneStatus.url}>View Results
+                              </Link>
+                            </Typography>
                           </CustomButton>
                       }
                       {/* Snackbar after launching cellxgene */}
@@ -296,7 +304,7 @@ export default function ProjectBarCard({
                         }}
                       >
                         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.type} sx={{ width: '100%' }}>
-                          {snackbar.type === "success" ? 'Starting a CellxGene instance. This may take a while...' : 'Error occurred!'}
+                          {snackbar.type === "success" ? 'Launching a CellxGene instance. This may take a while...' : 'Error occurred!'}
                         </Alert>
                       </Snackbar>
                       <IconButton
