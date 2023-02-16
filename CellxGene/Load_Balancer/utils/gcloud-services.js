@@ -184,7 +184,7 @@ async function getService(name) {
  */
 function getGSURI(publicURL) {
   // Public URL structure: domain.com/BUCKET/FOLDER/SUBFOLDER/FILE
-  let relativePath = publicURL.slice(publicURL.search(".com") + 4);
+  let relativePath = publicURL.slice(publicURL.search(".com") + 5);
   return `gs://${relativePath}`;
 }
 
