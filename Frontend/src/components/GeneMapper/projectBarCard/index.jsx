@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import {
-  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button,
+  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button, CircularProgress,
 } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import { Modal, ModalTitle } from 'components/Modal';
 import TeamService from 'shared/services/Team.service';
+import CellxgeneService from 'shared/services/Cellxgene.service';
 import CustomButton from 'components/CustomButton';
 import { TabCard } from '../TabCard';
 import { colors } from 'shared/theme/colors';
@@ -114,18 +115,19 @@ export default function ProjectBarCard({
   };
 
   // Cellxgene-specific variables
-  const launchCellxgene = () => {
-    // TODO: call the endpoint and get the result for launching the 
-
-    // setCellxgeneTimeout(res.timeout);
-    // setURL of the result for visualization
-
-    // set snack bar
-    setSnackbar({ open: true, type: "success" });
-  }
-
-  const [cellxgeneStatus, setCellxgeneStatus] = useState(null);
+  // Status types: launching, ready, or null 
+  const [cellxgene, setCellxgene] = useState({ status: null });
   const [snackbar, setSnackbar] = useState({ open: false, type: "error" });
+
+  const launchCellxgene = async (fileURL) => {
+    // Create Cellxgene instance
+    setSnackbar({ open: true, type: "success" });
+    setCellxgene({ ...cellxgene, status: "launching" });
+    let res = await CellxgeneService.postCellxgeneService(fileURL);
+    // setURL of the result for visualization
+    setCellxgene({ ...res, status: "ready" });
+    setSnackbar({ open: true, type: "success", message: "Cellxgene instance started. Press View to see results." });
+  }
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -261,7 +263,9 @@ export default function ProjectBarCard({
                             </Button>
                           ))
                       }
-                      <CustomButton
+
+                      {/* TODO: Left button for previous visualization for additional testing. Remove it later */}
+                      {/* <CustomButton
                         type="primary"
                         onClick={() => history.push((loggedIn ? '/sequencer/genemapper/result/' : 'genemapper/result/') + project._id)}
                         disabled={project.status !== 'DONE'}
@@ -269,29 +273,41 @@ export default function ProjectBarCard({
                         <Typography>
                           View Results
                         </Typography>
-                      </CustomButton>
-                      {
-                        (!cellxgeneStatus || Date.now() > cellxgeneStatus.timeout) ?
-                          // Launch Visualization Button
-                          <CustomButton
-                            type="primary"
-                            onClick={() => launchCellxgene()}
-                            disabled={project.status !== 'DONE'}
-                          >
-                            <Typography>Launch</Typography>
-                          </CustomButton>
-                          // View Results Button. Redirect to the cellxgene URL
-                          : <CustomButton>
-                            <Typography>
-                              <Link
-                                target="_blank"
-                                style={{
-                                  textDecoration: "none",
-                                  color: "white",
-                                }} href={cellxgeneStatus.url}>View Results
-                              </Link>
-                            </Typography>
-                          </CustomButton>
+                      </CustomButton> */}
+
+                      {/* Launch Button */}
+                      {(!cellxgene.status || Date.now() > cellxgene.timeout)
+                        && (<CustomButton
+                          type="primary"
+                          onClick={() => launchCellxgene(project.location)}
+                          disabled={project.status !== 'DONE'}
+                        >
+                          <Typography>Launch</Typography>
+                        </CustomButton>)
+                      }
+                      {/* View Button */}
+                      {cellxgene.status === "launching"
+                        && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"}>
+                          <Typography>Launching...</Typography>
+                        </CustomButton>
+                        )}
+                      {cellxgene.status === "ready" && Date.now() <= cellxgene.timeout
+                        && (<CustomButton
+                          type="primary"
+                          disabled={cellxgene.status !== "ready"}>
+                          <Typography>
+                            <Link
+                              target="_blank"
+                              style={{
+                                textDecoration: "none",
+                                color: "white",
+                              }}
+                              rel="noopener noreferrer"
+                              href={cellxgene.url}>
+                              View Results
+                            </Link>
+                          </Typography>
+                        </CustomButton>)
                       }
                       {/* Snackbar after launching cellxgene */}
                       <Snackbar
@@ -304,7 +320,23 @@ export default function ProjectBarCard({
                         }}
                       >
                         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.type} sx={{ width: '100%' }}>
-                          {snackbar.type === "success" ? 'Launching a CellxGene instance. This may take a while...' : 'Error occurred!'}
+                          {
+                            // let setMessage = () => {
+                            //   if (snackbar.type === "success") {
+                            //     if (snackbar.message)
+                            //       return 'snackbar.message';
+
+                            //     return 'Launching a CellxGene instance. This may take a while...';
+                            //   }
+                            //   return 'Error occurred!';
+                            // }
+                            // setMessage();
+
+                          }
+                          {snackbar.message ? snackbar.message :
+                            (snackbar.type === "success"
+                              ? 'Launching a CellxGene instance. This may take a while...' : 'Error occurred!')
+                          }
                         </Alert>
                       </Snackbar>
                       <IconButton
