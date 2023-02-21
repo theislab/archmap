@@ -126,7 +126,7 @@ export default function ProjectBarCard({
     let res = await CellxgeneService.postCellxgeneService(fileURL);
     // setURL of the result for visualization
     setCellxgene({ ...res, status: "ready" });
-    setSnackbar({ open: true, type: "success", message: "Cellxgene instance started. Press View to see results." });
+    setSnackbar({ open: true, type: "success", message: "Cellxgene instance launched. Timeout set to 1 hr." });
   }
 
   return (
