@@ -63,7 +63,7 @@ function GeneMapperHome({ style, loggedIn }) {
           data[i] = {
             ...data[i],
             status: PROJECT_STATUS.DONE,
-            location: demos[j].csvURL,
+            location: demos[j].h5adURL,
           };
         }
       }

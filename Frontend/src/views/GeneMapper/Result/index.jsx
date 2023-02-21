@@ -32,7 +32,7 @@ function GeneMapperResultView({ loggedIn = true }) {
           updatedData = {
             ...data,
             status: PROJECT_STATUS.DONE,
-            location: demo.csvURL,
+            location: demo.h5adURL,
           };
         }
       });
