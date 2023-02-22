@@ -71,7 +71,7 @@ function Settings() {
     firstName: user.firstName,
     lastName: user.lastName,
     emailAddress: user.email,
-    academicAffiliation: user.note,
+    affiliation: user.note,
   });
 
   const onUserInfoChange = useCallback((e) => {
@@ -208,11 +208,11 @@ function Settings() {
           </div>
 
           <div className={styles.inputComponent}>
-            <div className={styles.inputText}>Academic Affiliation</div>
+            <div className={styles.inputText}>Affiliation</div>
             <TextField
-              id="academicAffiliation"
-              value={userInfo.academicAffiliation}
-              label="Academic Affiliation (e.g. University)"
+              id="affiliation"
+              value={userInfo.affiliation}
+              label="Affiliation (e.g. University or research institute)"
               type="text"
               style={{ width: '600px', background: 'white' }}
               onChange={onUserInfoChange}

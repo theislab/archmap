@@ -24,7 +24,7 @@ const ProfileService = MOCK_PROFILE ? MockProfileService : {
       first_name: userData.firstName,
       last_name: userData.lastName,
       // email: userData.emailAddress,
-      note: userData.academicAffiliation,
+      note: userData.affiliation,
     };
     if (!!newPassword && newPassword !== '') {
       body.password = newPassword;
@@ -39,7 +39,7 @@ const ProfileService = MOCK_PROFILE ? MockProfileService : {
           firstName: userData.firstName,
           lastName: userData.lastName,
           email: userData.emailAddress,
-          note: userData.academicAffiliation,
+          note: userData.affiliation,
         }));
       });
   },
