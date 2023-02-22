@@ -1,7 +1,7 @@
 {
   "name": "archmap_front",
   "version": "0.1.0",
-  "homepage": "https://www.genecruncher.com",
+  "homepage": "https://www.archmap.bio",
   "private": true,
   "dependencies": {
     "@emailjs/browser": "^3.6.2",
@@ -65,7 +65,6 @@
   "devDependencies": {
     "@babel/traverse": "^7.16.3",
     "@babel/types": "^7.16.0",
-    "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
