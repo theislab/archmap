@@ -8,8 +8,8 @@ RUN apt-get update \
     && apt-get update
 
 #ENV vars for GCloud
-ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
-ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-fb3fb8908455.json"
+ENV SERVICE_ACCOUNT_EMAIL="cellxgene@custom-helix-329116.iam.gserviceaccount.com"
+ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-9428b8c55b7f.json"
 ENV PROJECT_ID="custom-helix-329116"
 ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene:latest"
 ENV REGION="europe-west3"
