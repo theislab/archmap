@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import {
   Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button, CircularProgress,
@@ -263,18 +262,6 @@ export default function ProjectBarCard({
                             </Button>
                           ))
                       }
-
-                      {/* TODO: Left button for previous visualization for additional testing. Remove it later */}
-                      {/* <CustomButton
-                        type="primary"
-                        onClick={() => history.push((loggedIn ? '/sequencer/genemapper/result/' : 'genemapper/result/') + project._id)}
-                        disabled={project.status !== 'DONE'}
-                      >
-                        <Typography>
-                          View Results
-                        </Typography>
-                      </CustomButton> */}
-
                       {/* Launch Button */}
                       {(!cellxgene.status || Date.now() > cellxgene.timeout)
                         && (<CustomButton
