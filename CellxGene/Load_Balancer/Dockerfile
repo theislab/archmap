@@ -2,10 +2,9 @@ FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
 
 RUN apt-get update \
     && apt-get install sudo\
-    && apt install curl\ 
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -\
-    && sudo apt install nodejs\
-    && apt-get update
+    && apt-get install curl\ 
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -\
+    && sudo apt-get install -y nodejs
 
 #ENV vars for GCloud
 ENV SERVICE_ACCOUNT_EMAIL="cellxgene@custom-helix-329116.iam.gserviceaccount.com"
@@ -21,12 +20,15 @@ ENV CELLXGENE_PORT="5005"
 #Cellxgene container timeout, set to one hour by default
 ENV TIMEOUT=3600
 
-COPY . . 
+COPY . .
+RUN npm install
 
 # gcloud-specific configuration
 RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
 CMD node app.js
+
+
 
 
 
