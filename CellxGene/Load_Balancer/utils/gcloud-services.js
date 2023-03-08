@@ -23,7 +23,7 @@ let gCloudRunDeploy = (name, file_location) => {
   if (!gcs_file_location) return -1;
 
   let gcloudCommand = `gcloud beta run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand += ` --allow-unauthenticated --priviledged --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand += ` --allow-unauthenticated --privileged --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
   gcloudCommand += ` --platform=${process.env.PLATFORM} --set-env-vars GCS_FILE_LOCATION=${gcs_file_location}`;
 
   console.log(`Executing command: \n${gcloudCommand}\n`);
