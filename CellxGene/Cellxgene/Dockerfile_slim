@@ -7,7 +7,6 @@ RUN apt-get update \
 # install gcsfuse
 RUN set -e; \
     apt-get update -y && apt-get install -y \
-    tini \
     lsb-release; \
     gcsFuseRepo=gcsfuse-`lsb_release -c -s`; \
     echo "deb http://packages.cloud.google.com/apt $gcsFuseRepo main" | \
@@ -17,15 +16,6 @@ RUN set -e; \
     apt-get update; \
     apt-get install -y gcsfuse \
     && apt-get clean
-
-# RUN which gcsfuse
-
-# add SYS_ADMIN capability
-RUN apt-get update \
-    && apt-get install sudo \
-    && apt-get install -y libcap2-bin \
-    && setcap cap_sys_admin+ep /bin/fusermount \
-    && chmod u+s /bin/fusermount
 
 COPY . .
 
@@ -38,14 +28,7 @@ ENV PROJECT_ID="custom-helix-329116"
 # authenticate with GCP
 RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
-# create the /annotations directory in the project
-# RUN gsutil ls gs://{BUCKET}/annotations/ || gsutil mb gs://{BUCKET}/annotations/
 RUN mkdir -p ./bucket
 
-# CMD gcsfuse ${BUCKET} /; \
-#     ls -al; \
-#     cd bucket; \
-#     ls -al; \
-#     cellxgene launch --host 0.0.0.0 --annotations-dir ${FULL_PATH}/annotations ${GCS_FILE_LOCATION} 
-
-# --annotations-dir ${ANNOTATIONS_DIR}
+CMD gcsfuse ${BUCKET} /bucket; \
+    cellxgene launch --host 0.0.0.0 --annotations-dir /bucket/${FULL_PATH}/annotations ${GCS_FILE_LOCATION}
