@@ -7,7 +7,6 @@ import {
 import HomePage from './views/Home';
 import About from './views/About';
 import LegalNotice from './views/LegalNotice';
-import Terms from './views/Terms';
 import Privacy from './views/Privacy';
 import Docs from './views/Docs';
 import Contact from './views/Contact';
@@ -41,7 +40,6 @@ function App() {
           {/* Gene mapper page without login */}
           <Route path="/genemapper" render={() => <NonLoginGeneMapper />} />
           <Route path="/legalnotice" render={() => <LegalNotice />} />
-          <Route path="/terms" render={() => <Terms />} />
           <Route path="/privacy" render={() => <Privacy />} />
           <Route path="*" render={()=> <NotFound />}/>
         </Switch>

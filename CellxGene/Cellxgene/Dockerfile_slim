@@ -1,0 +1,19 @@
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+RUN apt-get update
+RUN apt-get install -y python3
+RUN pip install cellxgene gcsfs
+
+COPY . .
+
+EXPOSE ${PORT}
+#GCloud-specific environmental variables
+ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
+ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-fb3fb8908455.json"
+ENV PROJECT_ID="custom-helix-329116"
+
+# gcloud-specific configuration
+RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+
+CMD cellxgene launch --host 0.0.0.0 ${GCS_FILE_LOCATION}
+
+#TODO: use gsutil rsync to sync the annotated data with the google cloud storage. 

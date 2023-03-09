@@ -36,7 +36,7 @@ function RegistrationForm(props) {
   const [loading, setLoading] = useState(false);
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
   const [checkYourEmail, setCheckYourEmail] = useState(false);
-  const [LegalNotice, setLegalNotice] = useState(false);
+  const [privacyPolicy, setPrivacyPolicy] = useState(false);
   const [isAcceptedTermsSnackbar, setIsAcceptedTermsSnackbar] = useState(false);
 
   const { registerClose: onClose, registerVisible: visible, switchLogin: switchForm } = useContext(LoginContext);
@@ -156,7 +156,7 @@ function RegistrationForm(props) {
     if (!validateInput()) {
       return;
     }
-    if (LegalNotice === false) {
+    if (privacyPolicy === false) {
       setIsAcceptedTermsSnackbar(true);
       return;
     }
@@ -191,7 +191,7 @@ function RegistrationForm(props) {
     props,
     setSnackbarVisible,
     setUser,
-    LegalNotice,
+    privacyPolicy,
   ]);
 
 
@@ -262,7 +262,7 @@ function RegistrationForm(props) {
                   id="affiliation"
                   error={!!errors.affiliation}
                   helperText={errors.affiliation}
-                  label="Academic affiliation"
+                  label="Affiliation"
                   type="text"
                   placeholder="Enter your university, company or etc."
                   onChangeEvent={handleTextChange}
@@ -292,7 +292,7 @@ function RegistrationForm(props) {
                     control={(
                       <Checkbox
                         id="remember"
-                        onChange={() => setLegalNotice(!LegalNotice)}
+                        onChange={() => setPrivacyPolicy(!privacyPolicy)}
                         disableRipple
                         disableFocusRipple
                       />
@@ -302,7 +302,7 @@ function RegistrationForm(props) {
                   <Box>
                     <ChromeReaderModeIcon
                       sx={{ marginTop: 0.5, '&:hover': { cursor: 'pointer' } }}
-                      onClick={() => history.push('/legalnotice')}
+                      onClick={() => history.push('/privacy')}
                       color="primary"
                     />
                   </Box>
@@ -312,7 +312,7 @@ function RegistrationForm(props) {
                     type="primary"
                     sx={{ mr: 'auto', width: '100%' }}
                     onClick={doRegistration}
-                    disabled={!LegalNotice}
+                    disabled={!privacyPolicy}
                   >
                     <Typography>Sign up</Typography>
                   </CustomButton>

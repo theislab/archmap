@@ -66,12 +66,6 @@ export default function Footer({ sx }) {
         <LinkBox to="/legalnotice" style={{ textDecoration: "none" }}>
           <Typography fontSize="12px" color="black">Legal Notice</Typography>
         </LinkBox>
-        { /*
-        <Typography fontSize="16px" sx={{ margin: '0 4px' }}> - </Typography>
-        <LinkBox to="/terms" style={{ textDecoration: "none" }}>
-          <Typography fontSize="16px" color="black">Terms of Usage</Typography>
-        </LinkBox>
-        */ }
         <Typography fontSize="12px" sx={{ margin: '0 4px' }}> - </Typography>
         <LinkBox to="/privacy" style={{ textDecoration: "none" }}>
           <Typography fontSize="12px" color="black">Privacy Policy</Typography>
