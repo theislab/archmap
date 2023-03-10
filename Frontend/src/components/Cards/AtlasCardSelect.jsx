@@ -121,9 +121,9 @@ export default function AtlasCardSelect({
 
           <Box component="img" src={imgLink} alt="Atlas preview img"
             sx={{
-              width: "90%",
-              height: "50%",
-              margin: "auto"
+              width: "80%",
+              margin: "auto",
+              objectFit: "cover"
             }}
           />
 
