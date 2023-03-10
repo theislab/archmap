@@ -115,7 +115,7 @@ function AtlasModelChoice({
             }
           </Grid>
         </Box>
-        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
           {/* Demo datasets */}
           <Box sx={{ width: '100%', marginBottom: "1.5em" }}>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }} marginTop="32px">
