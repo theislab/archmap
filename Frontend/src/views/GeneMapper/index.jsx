@@ -32,19 +32,19 @@ function GeneMapper({ sidebarShown, loggedIn = true }) {
     <div>
       <HeaderView
         sidebarShown={sidebarShown}
-        title="ScArches Gene Mapper"
-        rightOfTitle={(
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            &nbsp;
-            <HelpIcon
-              onClick={() => setShowScarchesInfo(true)}
-              color="primary"
-              sx={{
-                cursor: 'pointer',
-              }}
-            />
-          </Box>
-        )}
+        // title="ScArches Gene Mapper"
+        // rightOfTitle={(
+        //   <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        //     &nbsp;
+        //     <HelpIcon
+        //       onClick={() => setShowScarchesInfo(true)}
+        //       color="primary"
+        //       sx={{
+        //         cursor: 'pointer',
+        //       }}
+        //     />
+        //   </Box>
+        // )}
         loggedIn={loggedIn}
       >
         <Switch>
