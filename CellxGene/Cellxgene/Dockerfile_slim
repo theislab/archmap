@@ -1,19 +1,34 @@
 FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
-RUN apt-get update
-RUN apt-get install -y python3
-RUN pip install cellxgene gcsfs
+RUN apt-get update \
+    && apt-get install -y python3 \
+    && pip install cellxgene gcsfs \
+    && apt-get clean
+
+# install gcsfuse
+RUN set -e; \
+    apt-get update -y && apt-get install -y \
+    lsb-release; \
+    gcsFuseRepo=gcsfuse-`lsb_release -c -s`; \
+    echo "deb http://packages.cloud.google.com/apt $gcsFuseRepo main" | \
+    tee /etc/apt/sources.list.d/gcsfuse.list; \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+    apt-key add -; \
+    apt-get update; \
+    apt-get install -y gcsfuse \
+    && apt-get clean
 
 COPY . .
 
 EXPOSE ${PORT}
 #GCloud-specific environmental variables
-ENV SERVICE_ACCOUNT_EMAIL="google-cloud-run-service-local@custom-helix-329116.iam.gserviceaccount.com"
-ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-fb3fb8908455.json"
+ENV SERVICE_ACCOUNT_EMAIL="cellxgene@custom-helix-329116.iam.gserviceaccount.com"
+ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-9428b8c55b7f.json"
 ENV PROJECT_ID="custom-helix-329116"
 
-# gcloud-specific configuration
+# authenticate with GCP
 RUN gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
-CMD cellxgene launch --host 0.0.0.0 ${GCS_FILE_LOCATION}
+RUN mkdir -p ./bucket
 
-#TODO: use gsutil rsync to sync the annotated data with the google cloud storage. 
+CMD gcsfuse ${BUCKET} /bucket; \
+    cellxgene launch --host 0.0.0.0 --annotations-dir /bucket/${FULL_PATH}/annotations ${GCS_FILE_LOCATION}
