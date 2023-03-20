@@ -21,6 +21,7 @@ export interface IProject extends Document {
   uploadId: string;
   location: string;
   fileName: string;
+  fileExtension: string;
   fileSize: number; // (of bytes)
   uploadDate: Date;
 
@@ -49,6 +50,7 @@ const projectSchema = new Schema<IProject>({
   // file
   uploadId: { type: String, require: false },
   fileName: { type: String, require: false },
+  fileExtension: { type: String, require: false },
   location: { type: String, require: false },
   fileSize: { type: Schema.Types.Number, require: false, default: -1 },
   uploadDate: { type: Schema.Types.Date, require: true },

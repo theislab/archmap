@@ -15,7 +15,7 @@ export default function upload_start_upload_route() {
     validationMdw,
     check_auth(),
     async (req: ExtRequest, res) => {
-      let { projectName, atlasId, modelId, fileName } = req.body;
+      let { projectName, atlasId, modelId, fileName, fileExtension } = req.body;
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
@@ -29,25 +29,42 @@ export default function upload_start_upload_route() {
           fileName: String(fileName),
           uploadDate: new Date(),
           status: ProjectStatus.UPLOAD_PENDING,
+          fileExtension: String(fileExtension),
         };
+        console.log("Creating project", projectToAdd);
         const project = await ProjectService.addProject(projectToAdd);
-        let params: S3.CreateMultipartUploadRequest = {
-          Bucket: process.env.S3_BUCKET_NAME,
-          Key: `projects/${project._id}/query.h5ad`,
-        };
+        console.log("Project added", project);
+        let params: S3.CreateMultipartUploadRequest = null;
+        if(fileExtension === "h5ad"){
+          params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: `projects/${project._id}/query.h5ad`,
+          };
+        }
+        else if (fileExtension === "rds"){
+          params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: `projects/${project._id}/query.rds`,
+          };
+        }
+        if(params === null){
+          return res.status(500).send("File extension not supported");
+        }
+        console.log("Creating multipart upload", params);
         s3.createMultipartUpload(params, async (err, uploadData) => {
           if (err) {
-            console.error(err, err.stack || "Error when requesting uploadId");
+            console.error("Error while creating multipart upload", err, err.stack || "Error when requesting uploadId");
             res.status(500).send(err);
           } else {
             if (uploadData.UploadId !== undefined)
               await ProjectService.updateUploadId(project._id, uploadData.UploadId);
             let updatedProject = await ProjectService.getProjectById(project._id);
+            console.log("Updated project", updatedProject)
             res.status(200).send(updatedProject);
           }
         });
       } catch (err) {
-        console.log(err);
+        console.log("Error in uploading", err);
         res.status(500).send(err);
       }
     }

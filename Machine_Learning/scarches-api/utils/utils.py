@@ -367,6 +367,20 @@ def read_h5ad_file_from_s3(key):
     delete_file(filename)
     return data
 
+def read_rds_file_from_s3(key):
+    """
+    downloads an .rds file from s3, reads the data and deletes the file
+    :param key:
+    :return:
+    """
+    if key is None or len(key) == 0:
+        return None
+    filename = tempfile.mktemp(suffix=".rds")
+    fetch_file_from_s3(key, filename)
+    data = scanpy.read(filename)
+    delete_file(filename)
+    return data
+    
 
 def check_model_atlas_compatibility(model, atlas):
     """
