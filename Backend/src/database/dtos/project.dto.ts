@@ -16,6 +16,7 @@ export interface AddProjectDTO {
     owner: ObjectId,
     name: string,
     fileName: string,
+    fileExtension: string,
     uploadDate: Date,
     status: string,
     modelId: ObjectId,
