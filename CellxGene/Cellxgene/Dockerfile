@@ -1,5 +1,11 @@
-FROM python:3.7.7-buster
+FROM python:3.10-buster
 ENV PYTHONUNBUFFERED 1
+
+# gcloud run deploy cellxgene-mounted --source . \
+#     --execution-environment gen2 \
+#     --allow-unauthenticated \
+#     --service-account fs-identity \
+#     --update-env-vars BUCKET=jst-2021-bucket-static,GCS_FILE_LOCATION=gs://jst-2021-bucket-static/demos/result_pancreas_scanvi_cxg/result_pancreas_scANVI_cxg.h5ad,FULL_PATH=demos/result_pancreas_scanvi_cxg,USER_GENERATED_DATA_DIR=data2
 
 
 # Install system dependencies
@@ -14,12 +20,20 @@ RUN set -e; \
     apt-key add -; \
     apt-get update; \
     apt-get install -y gcsfuse \
-    && apt-get clean \
-    && pip install gcsfs \
-    && pip install cellxgene
+    && apt-get clean 
 
-# Set fallback mount directory
+
+RUN python -m pip install --upgrade pip
+
+RUN  pip install cellxgene
+
+RUN pip install gcsfs
+
+# # Set fallback mount directory
 ENV MNT_DIR /mnt/gcs
+# ENV SERVICE_ACCOUNT_EMAIL="archmap-ml-runner@custom-helix-329116.iam.gserviceaccount.com"
+# ENV GOOGLE_APPLICATION_CREDENTIALS="/app/custom-helix-329116-fd2cd11e3ebb.json"
+# ENV PROJECT_ID="custom-helix-329116"
 
 ENV APP_HOME /app/
 WORKDIR $APP_HOME
@@ -27,15 +41,13 @@ COPY . ./
 
 
 
-
-
-RUN chmod +x ${APP_HOME}/gcsfuse_run.sh
+RUN chmod +x ${APP_HOME}gcsfuse_run.sh
 
 # Use tini to manage zombie processes and signal forwarding
 # https://github.com/krallin/tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
-CMD [${APP_HOME}"/gcsfuse_run.sh"]
+CMD ["./gcsfuse_run.sh"]
 
 # CMD gcloud auth activate-service-account ${SERVICE_ACCOUNT_EMAIL} --project=${PROJECT_ID} --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && \
 #     gcsfuse --foreground --only-dir demos ${BUCKET} ./data; \
