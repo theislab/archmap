@@ -4,6 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
+  - pip
   - scanpy~=1.9.1
   - numpy~=1.21.6
   - gdown~=4.4.0
@@ -16,10 +17,12 @@ dependencies:
   - gunicorn==20.1.0
   - boto3==1.22.1
   - r-sceasy
-  - pip
+  - r-seurat
   - rpy2
   - loompy
   - pip:
       - scarches~=0.5.2
       - scvi-tools==0.16.1
       - torch~=1.11.0
+      - anndata
+      - pandas
