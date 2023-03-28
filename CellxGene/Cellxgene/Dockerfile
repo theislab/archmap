@@ -1,12 +1,11 @@
 FROM python:3.10-buster
 ENV PYTHONUNBUFFERED 1
 
-# gcloud run deploy cellxgene-mounted --source . \
+# gcloud run deploy cellxgene-mounted --port 8080 --source . \
 #     --execution-environment gen2 \
 #     --allow-unauthenticated \
 #     --service-account fs-identity \
-#     --update-env-vars BUCKET=jst-2021-bucket-static,GCS_FILE_LOCATION=gs://jst-2021-bucket-static/demos/result_pancreas_scanvi_cxg/result_pancreas_scANVI_cxg.h5ad,FULL_PATH=demos/result_pancreas_scanvi_cxg,USER_GENERATED_DATA_DIR=data2
-
+#     --update-env-vars BUCKET=jst-2021-bucket-static,GCS_FILE_LOCATION=/mnt/gcs/demos/result_pancreas_scanvi_cxg/result_pancreas_scANVI_cxg.h5ad,FULL_PATH=demos/result_pancreas_scanvi_cxg
 
 # Install system dependencies
 RUN set -e; \
