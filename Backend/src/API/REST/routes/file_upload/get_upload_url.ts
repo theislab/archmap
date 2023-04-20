@@ -17,12 +17,24 @@ export default function upload_get_upload_url_route() {
 
       if (!project) return res.status(400).send("Upload not found");
 
-      let params: UploadPartRequest = {
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: `projects/${project._id}/query.h5ad`,
-        PartNumber: Number(partNumber),
-        UploadId: String(uploadId),
-      };
+      let params: UploadPartRequest = null;
+
+      if(project.fileExtension === "rds"){
+        params = {
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: `projects/${project._id}/query.rds`,
+          PartNumber: Number(partNumber),
+          UploadId: String(uploadId),
+        };
+        
+      }else if (project.fileExtension === "h5ad"){
+        params = {
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: `projects/${project._id}/query.h5ad`,
+          PartNumber: Number(partNumber),
+          UploadId: String(uploadId),
+        };
+      }
       let presignedUrl = await s3.getSignedUrlPromise("uploadPart", params);
       res.status(200).send({ presignedUrl });
     } catch (err) {

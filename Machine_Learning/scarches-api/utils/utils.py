@@ -14,6 +14,8 @@ import scanpy
 from pathlib import Path
 import pandas as pd
 from scarches.dataset.trvae.data_handling import remove_sparsity
+from convert_rds_to_h5ad import make_anndata
+
 import traceback
 
 UNWANTED_LABELS = ['leiden', '', '_scvi_labels', '_scvi_batch']
@@ -377,8 +379,10 @@ def read_rds_file_from_s3(key):
         return None
     filename = tempfile.mktemp(suffix=".rds")
     fetch_file_from_s3(key, filename)
-    data = scanpy.read(filename)
+    new_filename_h5ad = make_anndata(filename)
+    data = scanpy.read(new_filename_h5ad)
     delete_file(filename)
+    delete_file(new_filename_h5ad)
     return data
     
 
@@ -395,6 +399,8 @@ def check_model_atlas_compatibility(model, atlas):
         compatible_atlases = ['pmbc', 'bone_marrow']
     return atlas in compatible_atlases
 
+    
+
 
 def pre_process_data(configuration):
     """
@@ -403,7 +409,10 @@ def pre_process_data(configuration):
     and reintroduces the counts layer if it has been deleted during sparsity removal.
     """
     source_adata = read_h5ad_file_from_s3(get_from_config(configuration, parameters.REFERENCE_DATA_PATH))
-    target_adata = read_h5ad_file_from_s3(get_from_config(configuration, parameters.QUERY_DATA_PATH))
+    if get_from_config(configuration, parameters.FILE_EXTENSION) == 'rds':
+        target_adata = read_rds_file_from_s3(get_from_config(configuration, parameters.QUERY_DATA_PATH))
+    else:
+        target_adata = read_h5ad_file_from_s3(get_from_config(configuration, parameters.QUERY_DATA_PATH))
     source_adata.obs["type"] = "reference"
     target_adata.obs["type"] = "query"
     #TODO: HARDCODING---------------------------------------------------

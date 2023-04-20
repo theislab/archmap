@@ -20,9 +20,9 @@ const ProjectService = MOCK_PROJECTS ? MockProjectService : {
     return data;
   },
 
-  createProject: async (projectName, atlasId, modelId, fileName) => {
+  createProject: async (projectName, atlasId, modelId, fileName, fileExtension) => {
     const { data } = await axiosInstance.post('/file_upload/start_upload', {
-      projectName, atlasId, modelId, fileName,
+      projectName, atlasId, modelId, fileName, fileExtension
     });
     return data;
   },

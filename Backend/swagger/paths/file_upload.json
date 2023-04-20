@@ -88,9 +88,12 @@
                 },
                 "atlasId": {
                   "type": "string"
+                },
+                "fileExtension": {
+                  "type": "string"
                 }
               },
-              "required": ["fileName", "modelId", "atlasId", "projectName"],
+              "required": ["fileName", "modelId", "atlasId", "projectName", "fileExtension"],
               "additionalProperties": false
             }
           }

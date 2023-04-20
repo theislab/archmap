@@ -40,7 +40,7 @@ export default function upload_complete_upload_route() {
         //Complete multipart upload
         let params: CompleteMultipartUploadRequest = {
           Bucket: process.env.S3_BUCKET_NAME,
-          Key: query_path(project._id),
+          Key: query_path(project._id, project.fileExtension),
           MultipartUpload: { Parts: parts },
           UploadId: String(uploadId),
         };
@@ -51,8 +51,9 @@ export default function upload_complete_upload_route() {
           console.error(err, err.stack || "Error when completing multipart upload");
           return res.status(500).send(err);
         }
+        console.log("Completed multipart upload", data)
         if (!data || !data.Key || !data.Bucket || !data.Location) {
-          try_delete_object_from_s3(query_path(project._id));
+          try_delete_object_from_s3(query_path(project._id, project.fileExtension));
           return res.status(500).send("Error getting Multipart-Upload object data");
         }
 
@@ -65,6 +66,7 @@ export default function upload_complete_upload_route() {
             status: ProjectStatus.PROCESSING_PENDING,
           };
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
+          console.log("Updated project with file size and status")
           if (process.env.CLOUD_RUN_URL) {
             let [model, atlas] = await Promise.all([
               ModelService.getModelById(project.modelId),
@@ -74,7 +76,7 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectById(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              try_delete_object_from_s3(query_path(project._id))
+              try_delete_object_from_s3(query_path(project._id, project.fileExtension))
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
 
@@ -85,7 +87,7 @@ export default function upload_complete_upload_route() {
             let queryInfo = {
               model: model.name,
               atlas: atlas.name,
-              query_data: query_path(project.id),
+              query_data: query_path(project.id, project.fileExtension),
               output_path: result_path(project.id),
               model_path: result_model_path(project.id),
               reference_data: `atlas/${project.atlasId}/data.h5ad`,
@@ -93,9 +95,9 @@ export default function upload_complete_upload_route() {
               async: false,
               webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
             };
-            console.log("sending: ");
-            console.log(queryInfo);
+            
             const url = `${process.env.CLOUD_RUN_URL}/query`;
+            console.log("Sending request to ML", queryInfo, "to", url)
             const auth = new GoogleAuth();
             const client = await auth.getIdTokenClient(url);
             //Send response before processing
@@ -117,7 +119,7 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              try_delete_object_from_s3(query_path(project.id));
+              try_delete_object_from_s3(query_path(project.id, project.fileExtension));
               return;
             }
           } else if (process.env.NODE_ENV != "production") {
@@ -159,13 +161,13 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              try_delete_object_from_s3(query_path(project._id));
+              try_delete_object_from_s3(query_path(project._id, project.fileExtension));
               return;
             }
           } else {
             const updateStatus: UpdateProjectDTO = { status: ProjectStatus.PROCESSING_FAILED };
             await ProjectService.updateProjectByUploadId(params.UploadId, updateStatus);
-            try_delete_object_from_s3(query_path(project._id));
+            try_delete_object_from_s3(query_path(project._id, project.fileExtension));
             return res.status(500).send("Processing failed!");
           }
         } catch (err) {

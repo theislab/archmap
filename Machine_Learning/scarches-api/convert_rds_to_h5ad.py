@@ -22,7 +22,3 @@ def make_anndata(local_filename):
         raise RuntimeError(msg) from ex
 
     return local_filename.replace(".rds", ".h5ad")
-
-if __name__ == "__main__":
-    file_name = "test_1.rds"
-    make_anndata(file_name)

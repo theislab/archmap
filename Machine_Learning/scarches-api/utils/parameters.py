@@ -80,3 +80,5 @@ DEV_DEBUG = 'development-mode'
 USE_GPU = 'use_gpu'
 # sets the used atlas
 ATLAS = 'atlas'
+# sets the file extension
+FILE_EXTENSION = 'file_extension'

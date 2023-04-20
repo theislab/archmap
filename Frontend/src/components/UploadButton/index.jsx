@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-const Input = styled('input')({
-  display: 'none',
+const Input = styled("input")({
+  display: "none",
 });
 
 function UploadButton({ onChange, disabled }) {
@@ -28,7 +28,7 @@ function UploadButton({ onChange, disabled }) {
   return (
     <label htmlFor="contained-button-file">
       <Input
-        accept=".h5ad"
+        accept=".h5ad, .rds" // added .rds to accept RDS files
         id="contained-button-file"
         multiple
         type="file"

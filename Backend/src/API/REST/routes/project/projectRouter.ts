@@ -168,7 +168,7 @@ const update_project_results = (): Router => {
       } else {
         console.log(`Trying to update project with token, but status is already ${project.status}`)
       }
-      try_delete_object_from_s3(query_path(project.id));
+      try_delete_object_from_s3(query_path(project.id, project.fileExtension));
       return res.status(200).send("OK");
     } catch (e) {
       console.error(e);
@@ -254,7 +254,7 @@ const cleanup_old_projects = (): Router => {
       for (const project of oldprojects) {
         try_delete_object_from_s3(result_path(project.id));
         try_delete_object_from_s3(result_model_path(project.id));
-        try_delete_object_from_s3(query_path(project.id));
+        try_delete_object_from_s3(query_path(project.id, project.fileExtension));
       }
       let ids = oldprojects.map((p) => p.id);
       await DeletedProjectService.deleteProjectsByIds(ids);
