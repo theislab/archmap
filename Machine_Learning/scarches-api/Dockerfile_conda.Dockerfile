@@ -18,8 +18,6 @@ RUN echo "conda activate myenv" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
 #Set the cran location
-
-
 # Install the remotes package and use it to install seurat-disk
 RUN R -e "if (!requireNamespace('remotes', quietly = TRUE)) install.packages('remotes', repos = 'http://cran.us.r-project.org')" \
     && R -e "remotes::install_github('mojaveazure/seurat-disk')"

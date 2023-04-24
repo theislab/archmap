@@ -25,4 +25,4 @@ dependencies:
       - scvi-tools==0.16.1
       - torch~=1.11.0
       - anndata
-      - pandas
+      - pandas==1.5.3

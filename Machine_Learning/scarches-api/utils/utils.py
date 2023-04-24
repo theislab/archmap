@@ -409,7 +409,7 @@ def pre_process_data(configuration):
     and reintroduces the counts layer if it has been deleted during sparsity removal.
     """
     source_adata = read_h5ad_file_from_s3(get_from_config(configuration, parameters.REFERENCE_DATA_PATH))
-    if get_from_config(configuration, parameters.FILE_EXTENSION) == 'rds':
+    if get_from_config(configuration, parameters.FILE_EXTENSION) == '.rds':
         target_adata = read_rds_file_from_s3(get_from_config(configuration, parameters.QUERY_DATA_PATH))
     else:
         target_adata = read_h5ad_file_from_s3(get_from_config(configuration, parameters.QUERY_DATA_PATH))

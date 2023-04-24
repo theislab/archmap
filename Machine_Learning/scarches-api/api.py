@@ -25,7 +25,7 @@ def get_from_config(configuration, key):
 def query():
     try:
         config = request.get_json(force=True)
-        config[parameters.FILE_EXTENSION] = return_file_extension(get_from_config(config, parameters.QUERY_DATASET))
+        config[parameters.FILE_EXTENSION] = return_file_extension(get_from_config(config, parameters.QUERY_DATA_PATH))
         run_async = get_from_config(config, parameters.RUN_ASYNCHRONOUSLY)
         if run_async is not None and run_async:
             actual_config = scarches.merge_configs(config)

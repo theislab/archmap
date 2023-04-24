@@ -58,6 +58,7 @@ def default_config():
         parameters.TOTALVI_MAX_EPOCHS_2: 200,
 
         parameters.DEV_DEBUG: False,
+        parameters.FILE_EXTENSION: '.h5ad',
     }
 
 
@@ -79,7 +80,9 @@ def merge_configs(user_config):
     :param user_config: input from the rest api
     :return: dict
     """
-    return default_config() | user_config
+    default_config_dict = default_config()
+    default_config_dict.update(user_config)
+    return default_config_dict
 
 
 # def query(reference_dataset, query_dataset, model_path, surgery_path,  model_type):
