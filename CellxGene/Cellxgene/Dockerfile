@@ -28,6 +28,9 @@ RUN  pip install cellxgene
 
 RUN pip install gcsfs
 
+# werkzeug version 2.2.3 is required for cellxgene to run without error
+RUN pip install werkzeug==2.2.3 
+
 # # Set fallback mount directory
 ENV MNT_DIR /mnt/gcs
 # ENV SERVICE_ACCOUNT_EMAIL="archmap-ml-runner@custom-helix-329116.iam.gserviceaccount.com"
