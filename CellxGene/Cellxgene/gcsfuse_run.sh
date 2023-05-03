@@ -31,6 +31,6 @@ pwd;
 
 
 # Run cellxgene
-cellxgene launch --host 0.0.0.0 --port 8080  --annotations-dir annotations  ${GCS_FILE_LOCATION} 
+cellxgene launch --host 0.0.0.0 --port 8080   --annotations-file ${ANNOTATION_FILE}  ${GCS_FILE_LOCATION} 
 
 wait -n

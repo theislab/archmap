@@ -33,6 +33,8 @@ RUN pip install werkzeug==2.2.3
 
 # # Set fallback mount directory
 ENV MNT_DIR /mnt/gcs
+# SET default annotation file; can be overridden at runtime
+ENV ANNOTATION_FILE annotation_file 
 # ENV SERVICE_ACCOUNT_EMAIL="archmap-ml-runner@custom-helix-329116.iam.gserviceaccount.com"
 # ENV GOOGLE_APPLICATION_CREDENTIALS="/app/custom-helix-329116-fd2cd11e3ebb.json"
 # ENV PROJECT_ID="custom-helix-329116"
