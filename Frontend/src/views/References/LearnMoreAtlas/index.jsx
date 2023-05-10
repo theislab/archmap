@@ -45,7 +45,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.species}
+          {atlas?.species ? atlas.species : "Not available"}
         </Typography>
       </Box>
       {/* Number of Samples/Individuals */}
@@ -55,7 +55,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.samples}
+          {atlas?.samples ? atlas.samples : "Not available"}
         </Typography>
       </Box>
       {/* Number of Studies/Datasets */}
@@ -65,7 +65,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.studies}
+          {atlas?.studies ? atlas.studies : "Not available"}
         </Typography>
       </Box>
       {/* Cells in reference */}
@@ -75,7 +75,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.numberOfCells}
+          {atlas?.numberOfCells ? atlas.numberOfCells : "Not available"}
         </Typography>
       </Box>
       {/* Modalities */}
@@ -85,7 +85,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.modalities}
+          {atlas?.modalities ? atlas.modalities : "Not available"}
         </Typography>
       </Box>
       {/* DOI */}
@@ -95,7 +95,17 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.doi}
+          {atlas?.doi ? atlas.doi : "Not available"}
+        </Typography>
+      </Box>
+      {/* Atlas URL */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          URL:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.url ? atlas.url : "Not available"}
         </Typography>
       </Box>
       {/* Atlas cell_type_key */}
@@ -105,7 +115,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.cell_type_key}
+          {atlas?.cell_type_key ? atlas?.cell_type_key : "Not available"}
         </Typography>
       </Box>
       {/* Atlas batch_key */}
@@ -115,7 +125,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.atlas_batch_key}
+          {atlas?.atlas_batch_key ? atlas?.atlas_batch_key : "Not available"}
         </Typography>
       </Box>
       {
