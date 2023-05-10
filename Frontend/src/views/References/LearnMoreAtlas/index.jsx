@@ -33,20 +33,42 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
       }}
       >
-        <Typography sx={{ fontSize: '36px', fontWeigth: 700 }}>{atlas?.name} {atlas?.rating && [...Array(atlas?.rating)].map((e, i)=><StarIcon sx={{color: 'gold'}}/>)}</Typography>
+        <Typography sx={{ fontSize: '36px', fontWeigth: 700 }}>{atlas?.name} {atlas?.rating && [...Array(atlas?.rating)].map((e, i) => <StarIcon sx={{ color: 'gold' }} />)}</Typography>
       </Box>
       <Box>
         <Typography sx={{ fontSize: '20px', fontWeight: 600, borderBottom: '1px solid black' }}>Overview</Typography>
       </Box>
+      {/* Species */}
       <Box sx={{ display: 'flex', flexDirection: 'row', paddingTop: '16px' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
-          Modalities:
+          Species:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.modalities}
+          {atlas?.species}
         </Typography>
       </Box>
+      {/* Number of Samples/Individuals */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Number of samples/individuals:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.samples}
+        </Typography>
+      </Box>
+      {/* Number of Studies/Datasets */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Number of Studies:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.studies}
+        </Typography>
+      </Box>
+      {/* Cells in reference */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
           Cells in Reference:
@@ -56,13 +78,44 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {atlas?.numberOfCells}
         </Typography>
       </Box>
+      {/* Modalities */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
-          Species:
+          Modalities:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.species}
+          {atlas?.modalities}
+        </Typography>
+      </Box>
+      {/* DOI */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          DOI:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.doi}
+        </Typography>
+      </Box>
+      {/* Atlas cell_type_key */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Atlas cell type key:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.cell_type_key}
+        </Typography>
+      </Box>
+      {/* Atlas batch_key */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Atlas batch key:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.atlas_batch_key}
         </Typography>
       </Box>
       {
