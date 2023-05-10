@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import CustomButton from 'components/CustomButton';
 import AtlasService from 'shared/services/Atlas.service';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
+import StarIcon from '@mui/icons-material/Star';
 import { colors } from 'shared/theme/colors';
 
 export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPage = false }) => {
@@ -27,12 +28,12 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
       justifyContent: 'space-between',
     }}
     >
-      {isSearchPage && <Typography onClick={history.goBack} sx={{ cursor: "pointer", fontSize: "18px", fontWeight: 500,  color: colors.neutral[800], ":hover": { color: colors.primary[500] }}}>Go Back</Typography>}
+      {isSearchPage && <Typography onClick={history.goBack} sx={{ cursor: "pointer", fontSize: "18px", fontWeight: 500, color: colors.neutral[800], ":hover": { color: colors.primary[500] } }}>Go Back</Typography>}
       <Box sx={{
         display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
       }}
       >
-        <Typography sx={{ fontSize: '36px', fontWeigth: 700 }}>{atlas?.name}</Typography>
+        <Typography sx={{ fontSize: '36px', fontWeigth: 700 }}>{atlas?.name} {atlas?.rating && [...Array(atlas?.rating)].map((e, i)=><StarIcon sx={{color: 'gold'}}/>)}</Typography>
       </Box>
       <Box>
         <Typography sx={{ fontSize: '20px', fontWeight: 600, borderBottom: '1px solid black' }}>Overview</Typography>
@@ -67,10 +68,9 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
       {
         isMap
         &&
-        !isSearchPage 
+        !isSearchPage
         &&
         <>
-          <CustomButton sx={{ marginTop: '1em', padding: '0.5em 2em 0.5em 2em' }} type="secondary" onClick={() => history.push(`${path}/visualization`)}>Visualize</CustomButton>
           <CustomButton sx={{ marginTop: '1em', padding: "0.5em 2em 0.5em 2em" }} type="primary" onClick={() => onClick(atlas)}>Select</CustomButton>
         </>
       }
@@ -81,7 +81,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
 export default function LearnMore({ handleSelect }) {
   const path = useLocation();
   const { id } = useParams();
-  
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <Box sx={{
@@ -90,7 +90,7 @@ export default function LearnMore({ handleSelect }) {
         height: '80vh'
       }}
       >
-        <LearnMoreAtlasComponent id={id} isMap={true} onClick={handleSelect} isSearchPage={path.pathname.includes("search")}/>
+        <LearnMoreAtlasComponent id={id} isMap={true} onClick={handleSelect} isSearchPage={path.pathname.includes("search")} />
       </Box>
     </Box>
   );
