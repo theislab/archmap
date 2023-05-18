@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Link, Tooltip } from '@mui/material';
 import CustomButton from 'components/CustomButton';
 import AtlasService from 'shared/services/Atlas.service';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
@@ -33,7 +33,11 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
       }}
       >
-        <Typography sx={{ fontSize: '36px', fontWeigth: 700 }}>{atlas?.name} {atlas?.rating && [...Array(atlas?.rating)].map((e, i) => <StarIcon sx={{ color: 'gold' }} />)}</Typography>
+        <Tooltip title="atlas rating, 3 stars highest" placement="bottom-end">
+          <Typography sx={{ fontSize: '36px', fontWeight: 700 }}>
+            {atlas?.name} {atlas?.rating && [...Array(atlas?.rating)].map((e, i) => <StarIcon sx={{ color: 'gold' }} />)}
+          </Typography>
+        </Tooltip>
       </Box>
       <Box>
         <Typography sx={{ fontSize: '20px', fontWeight: 600, borderBottom: '1px solid black' }}>Overview</Typography>
@@ -95,7 +99,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.doi ? atlas.doi : "Not available"}
+          {atlas?.doi ? <Link href={atlas.doi} sx={{ textDecoration: 'none' }} target="_blank" rel="noopener">{atlas.doi}</Link> : "Not available"}
         </Typography>
       </Box>
       {/* Atlas URL */}
@@ -105,7 +109,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.url ? atlas.url : "Not available"}
+          {atlas?.url ? <Link href={atlas.url} sx={{ textDecoration: 'none' }} target="_blank" rel="noopener">{atlas.url}</Link> : "Not available"}
         </Typography>
       </Box>
       {/* Atlas cell_type_key */}
