@@ -11,6 +11,11 @@ build
 # NPM
 node_modules/
 
+#add service_account_key folder
+service_account_key/
+
+tmp_upload/
+
 .env
 ./.env
 ./src/.env

@@ -104,7 +104,8 @@ function LoginForm(props) {
         password: loginDetails.password,
       }),
     };
-    fetch(`${BACKEND_ADDRESS}/auth`, loginRequest)
+    try{
+      fetch(`${BACKEND_ADDRESS}/auth`, loginRequest)
       .then((response) => {
         setLoading(false);
         setSnackbarVisible(true);
@@ -119,6 +120,11 @@ function LoginForm(props) {
           await onSuccessfulLogin(data);
         }
       });
+    }catch(error){
+      console.log("error in loginform", error);
+      alert("Error in login");
+    }
+    
   }, [setLoading, loginDetails, setErrors]);
 
   const boxStyle = {

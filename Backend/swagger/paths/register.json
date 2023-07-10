@@ -25,6 +25,9 @@
                 },
                 "note": {
                   "type": "string"
+                },
+                "permissionRequested": {
+                  "type": "boolean"
                 }
               },
               "required": ["email", "password"],

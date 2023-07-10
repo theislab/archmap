@@ -40,18 +40,16 @@ export default class UserService {
     if (keyword && keyword.length > 0) {
       keywordFilter = { $or: [{ firstName: { $regex : "^" +  keyword, $options : 'i'}}, { lastName: { $regex : "^" +  keyword, $options : 'i'}}] };
     }
-
-    return await userModel
-      .find(keywordFilter, {
-        _id: 1,
-        email: 0,
-        password: 0,
-        isEmailVerified: 0,
-        isAdministrator: 0,
-        createdAt: 0,
-        updatedAt: 0,
-      })
-      .sort(sort);
+    const returnResult = await userModel
+    .find(keywordFilter, {
+      _id: 1,
+      password: 0,
+      isEmailVerified: 0,
+      createdAt: 0,
+      updatedAt: 0,
+    })
+    .sort(sort);
+    return returnResult
   }
 
   /**

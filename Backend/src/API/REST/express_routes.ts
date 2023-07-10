@@ -26,7 +26,7 @@ import upload_user_avatar_route from "./routes/upload_user_avatar";
 
 import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
-import { get_atlas, get_atlas_visualization, get_allAtlases } from "./routes/atlas/atlasRouter";
+import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas } from "./routes/atlas/atlasRouter";
 import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -95,6 +95,7 @@ import reset_user_avatar_route from "./routes/reset_user_avatar";
 import { contact_us } from "./routes/contact/contactRoute";
 
 import { get_allDemos } from "./routes/demo/demoRouter";
+import { change_permission } from "./routes/admin/adminRouter";
 
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {
@@ -155,6 +156,9 @@ export function express_routes(): Router {
   router.use(get_users());
   router.use(get_user_by_id());
 
+  //admin routes
+  router.use(change_permission());
+
   // project routes
   router.use(get_projects());
   router.use(get_userProjects());
@@ -174,6 +178,9 @@ export function express_routes(): Router {
   router.use(get_atlas());
   router.use(get_atlas_visualization());
   router.use(get_allAtlases());
+  router.use(upload_atlas())
+  router.use(edit_atlas());
+  router.use(delete_atlas());
 
   // demo routes
   router.use(get_allDemos());

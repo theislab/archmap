@@ -34,6 +34,7 @@ function NonLoginGeneMapper() {
         return response.json();
       }) // set token
       .then((data) => {
+        if(data === null) { console.log("Temp auth is null"); return;  }
         localStorage.setItem('jwt', data.jwt);
         localStorage.setItem('temp_jwt_expiresAt', data.exp);
       });

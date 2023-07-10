@@ -16,17 +16,29 @@ import References from 'views/References';
 import InstitutionPage from 'views/InstitutionPage';
 import TeamPage from 'views/TeamPage';
 import { InstitutionProvider } from 'shared/context/institutionContext';
+import AdminPanel from 'views/AdminPanel';
+import AtlasUpload from 'views/AtlasUpload';
 
 const DashboardContent = () => {
   const [sidebarShown] = useState(true);
-  const [, setUser] = useAuth();
+  const [user, setUser] = useAuth();
 
   const { path, url } = useRouteMatch();
 
   return (
     <div>
-      <Sidebar setUser={setUser} />
+      <Sidebar setUser={setUser} user={user} />
       <Switch>
+
+        {/* create the admmin route which is protected */}
+        <Route path={`${path}/admin`}>
+          <AdminPanel />
+        </Route>
+
+        <Route path={`${path}/upload`}>
+         <AtlasUpload />
+        </Route>
+
         <Route exact path={`${path}/`}>
           <Redirect to={`${url}/genemapper`} />
         </Route>
@@ -51,6 +63,8 @@ const DashboardContent = () => {
           <UserProfile />
         </Route>
 
+        
+
         <Route path={`${path}/documentation`}>
           <Documentation />
         </Route>
@@ -62,6 +76,8 @@ const DashboardContent = () => {
         <Route path={`${path}/search/:searchCategory`}>
           <SearchPage sidebarShown={sidebarShown} />
         </Route>
+
+       
 
         <Route path={`${path}/references`} render={() => <References />} />
 

@@ -30,6 +30,7 @@ function RegistrationForm(props) {
     affiliation: '',
     password: '',
     passwordAgain: '',
+    permissionRequested: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -37,11 +38,21 @@ function RegistrationForm(props) {
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
   const [checkYourEmail, setCheckYourEmail] = useState(false);
   const [privacyPolicy, setPrivacyPolicy] = useState(false);
+
   const [isAcceptedTermsSnackbar, setIsAcceptedTermsSnackbar] = useState(false);
 
   const { registerClose: onClose, registerVisible: visible, switchLogin: switchForm } = useContext(LoginContext);
 
   const history = useHistory();
+
+
+  const handleCheckboxChange = (event) => {
+    setUserDetails((prevState) => ({
+      ...prevState,
+      permissionRequested: event.target.checked,
+    }));
+  };
+
 
   const handleTextChange = useCallback(
     (e) => {
@@ -116,6 +127,7 @@ function RegistrationForm(props) {
       affiliation: '',
       password: '',
       passwordAgain: '',
+      permissionRequested: false,
     });
     setErrors({});
     setLoading(false);
@@ -154,6 +166,8 @@ function RegistrationForm(props) {
 
   const doRegistration = useCallback(() => {
     if (!validateInput()) {
+      console.log(errors)
+      console.log("Validation failed")
       return;
     }
     if (privacyPolicy === false) {
@@ -161,7 +175,8 @@ function RegistrationForm(props) {
       return;
     }
     setLoading(true);
-
+    
+    
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -171,6 +186,7 @@ function RegistrationForm(props) {
         email: userDetails.email,
         password: userDetails.password,
         note: userDetails.affiliation,
+        permissionRequested: userDetails.permissionRequested,
       }),
     };
     fetch(`${BACKEND_ADDRESS}/register`, requestOptions).then((response) => {
@@ -307,6 +323,19 @@ function RegistrationForm(props) {
                     />
                   </Box>
                 </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FormControlLabel
+                    control={(
+                      <Checkbox
+                        id="permissionRequested"
+                        onChange={handleCheckboxChange}
+                      />
+                    )}
+                    label="Request for Beta feature"
+                  />
+                  
+                </Box>
+
                 <Box mt={1}>
                   <CustomButton
                     type="primary"
