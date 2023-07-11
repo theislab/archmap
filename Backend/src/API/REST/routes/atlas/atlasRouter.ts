@@ -16,7 +16,7 @@ import { upload_permission_auth } from "../../middleware/check_institution_auth"
 
 
 
-const uploadDirectory = "./tmp_upload/";
+const uploadDirectory = "/tmp/"; // for gcp 
 
 if(!fs.existsSync(uploadDirectory)){
   fs.mkdirSync(uploadDirectory);
