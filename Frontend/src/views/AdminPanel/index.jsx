@@ -5,11 +5,12 @@ import axiosInstance from "shared/services/axiosInstance";
 import { BACKEND_ADDRESS } from "shared/utils/common/constants";
 import { getAuthAndJsonHeader } from "shared/utils/common/utils";
 
-const { Container, Typography } = require("@mui/material");
+const { Container, Typography, CircularProgress, Box } = require("@mui/material");
 const { useEffect, useState } = require("react");
 
 const AdminPanel = () => {
   const [user, setUser] = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [dataForTable, setDataForTable] = useState();
   const navigate = useHistory();
   if (user.isAdministrator === false) {
@@ -88,10 +89,14 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchPermissions();
+    setIsLoading(false);
 
     console.log("useEffect");
   }, []);
+
+  
 
   return (
     <Container>
@@ -113,7 +118,10 @@ const AdminPanel = () => {
       {dataForTable ? (
         <CustomTable {...dataForTable} togglePermission={togglePermission} />
       ) : (
-        <p> Loading</p>
+        <Box sx={{ display: "flex" }}>
+          <CircularProgress />
+        </Box>
+
       )}
       <></>
     </Container>

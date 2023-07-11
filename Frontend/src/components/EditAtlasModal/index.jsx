@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import axiosInstance from "shared/services/axiosInstance";
 
 const { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } = require("@mui/material")
@@ -8,6 +9,7 @@ const { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } =
 
 const EditAtlasModal = (props) => {
 
+    const navigate = useHistory();
     const {isEditModalOpen, setIsEditModalOpen, atlasDetailsForm, setAtlasDetailsForm} = props;
     const [atlasInDialog, setAtlasInDialog] = useState({...atlasDetailsForm});
     const handleEdit = () => {
@@ -19,7 +21,8 @@ const EditAtlasModal = (props) => {
           .put(`/api/atlases/${atlasDetailsForm._id}`, atlasInDialog)
           .then(() => {
             setIsEditModalOpen(false);
-            navigate("/");
+            navigate.goBack()
+            window.location.reload();
             setAtlasDetailsForm(atlasInDialog);
           })
           .catch((error) => {

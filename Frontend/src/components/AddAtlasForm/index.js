@@ -1,6 +1,6 @@
 import { grey, teal } from "@mui/material/colors";
 
-const {  Button, DialogContent, Grid, Typography, TextField } = require("@mui/material");
+const {  Button, DialogContent, Grid, Typography, TextField, CircularProgress } = require("@mui/material");
 const { useState } = require("react");
 const { default: axiosInstance } = require("shared/services/axiosInstance");
 import { makeStyles } from "@mui/styles";
@@ -40,7 +40,7 @@ const styles = {
 
 
   const AddAtlasForm = (props) => {
-    const { setIsAddModalOpen, setIsLoading, user } = props;
+    const { setIsAddModalOpen, setIsLoading, user, isLoading } = props;
     const [atlasName, setAtlasName] = useState("");
     const [previewPictureURL, setPreviewPictureURL] = useState("");
     const [modalities, setModalities] = useState([]);
@@ -111,15 +111,29 @@ const styles = {
       setUrl(e.target.value);
       setFile(null);
     };
-  
+    
     return (
-      <form
-        onSubmit={(e) => {
-          handleFormSubmit(e);
-        }}
-      >
-        <DialogContent className={classes.padding}>
-          <Grid container>
+      <>
+        {isLoading ? (
+          <DialogContent className={classes.padding}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              margin={5}
+            >
+                <CircularProgress />
+            </Grid>
+          </DialogContent>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              handleFormSubmit(e);
+            }}
+          >
+            <DialogContent className={classes.padding}>
+            <Grid container>
             <Grid item xs={12}>
               <Grid container direction="row" className={classes.mainHeader}>
                 <Grid item xs={12}>
@@ -308,8 +322,10 @@ const styles = {
               </Grid>
             </Grid>
           </Grid>
-        </DialogContent>
-      </form>
+            </DialogContent>
+          </form>
+        )}
+      </>
     );
   };
 

@@ -10,6 +10,7 @@ import axiosInstance from 'shared/services/axiosInstance';
 import EditAtlasModal from 'components/EditAtlasModal';
 
 export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPage = false }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [atlas, setAtlas] = useState(null);
   const history = useHistory();
 
@@ -20,18 +21,22 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
 
 
   const handleDelete = () => {
-    
+    setIsLoading(true);
     axiosInstance
       .delete(`/api/atlases/${id}`)
       .then(() => {
         setIsDeleteModalOpen(false);
-        navigate("/");
+        setIsLoading(false);
+        history.goBack();
         alert("Atlas  deleted successfully");
       })
       .catch((error) => {
         console.error(error);
+        setIsLoading(false);
       });
+      setIsLoading(false);
   };
+  
 
   useEffect(() => {
     if (id) {
@@ -189,10 +194,11 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {"Do you want to delete this atlas?"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+        {isLoading ? <CircularProgress /> : <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this atlas?
           </DialogContentText>
-        </DialogContent>
+        }
+        </DialogContent>  
         <DialogActions>
           <Button onClick={() => setIsDeleteModalOpen(false)}>
             Cancel

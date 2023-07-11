@@ -21,3 +21,11 @@ tmp_upload/
 ./src/.env
 
 app.secret.yaml
+
+#ignore the DS_Store file created by Mac OS
+.DS_Store
+
+#ignore the .rds files , .h5ad, and .csv files
+*.rds
+*.h5ad
+*.csv

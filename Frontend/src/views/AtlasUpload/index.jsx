@@ -3,19 +3,17 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CircularProgress,
   Dialog,
   Grid,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddAtlasForm from "components/AddAtlasForm";
-import AtlasCard from "components/Cards/AtlasCard";
-import AtlasesGrid from "components/Grids/AtlasesGrid";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useAuth } from "shared/context/authContext";
 import AtlasService from "shared/services/Atlas.service";
-import { applyAtlasFilters } from "shared/utils/filter";
 
 const { default: CustomButton } = require("components/CustomButton");
 
@@ -36,7 +34,7 @@ const filterByUploadedPerson = (atlases, user) => {
     if (user.isAdministrator === true) {
       return true;
     }
-    return atlas.userId === user._id;
+    return atlas.uploadedBy === user._id;
   });
   return filteredAtlases;
 };
@@ -173,10 +171,12 @@ const AtlasUpload = () => {
         maxWidth="md"
         onClose={handleModalClose}
       >
+      
         <AddAtlasForm
           setIsAddModalOpen={setIsAddModalOpen}
           setIsLoading={setIsLoading}
           user={user}
+          isLoading={isLoading}
         />
       </Dialog>
     </>
