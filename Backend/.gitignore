@@ -11,8 +11,21 @@ build
 # NPM
 node_modules/
 
+#add service_account_key folder
+service_account_key/
+
+tmp_upload/
+
 .env
 ./.env
 ./src/.env
 
 app.secret.yaml
+
+#ignore the DS_Store file created by Mac OS
+.DS_Store
+
+#ignore the .rds files , .h5ad, and .csv files
+*.rds
+*.h5ad
+*.csv

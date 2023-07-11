@@ -12,9 +12,11 @@ export default function auth_route() {
 
   router.post("/auth", validationMdw, async (req, res) => {
     const { email, password } = req.body;
-
     UserService.getUserByEmail(email, true).then((user) => {
-      if (!user) return incorrectCredentialsResp(res);
+      if (!user) {
+        console.log("User not found")
+        return incorrectCredentialsResp(res);
+      }
 
       bcrypt.compare(password, <string>user.password, (err, match) => {
         console.log({ err, match });
@@ -28,12 +30,13 @@ export default function auth_route() {
         }
 
         delete user.password;
-        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+        const token = jwt.sign({ id: user._id, email: user.email, isAdmin: user.isAdministrator? user.isAdministrator : false, permissionToUpload: user.hasPermission ? user.hasPermission: false }, JWT_SECRET, {
           expiresIn: "20h",
         });
 
         /* user without the password field */
         const { password, ...userSecure } = user.toObject();
+        console.log(userSecure)
 
         return res.status(200).json({
           msg: "Login success",

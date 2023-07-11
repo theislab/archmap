@@ -7,6 +7,8 @@ export interface IAtlas extends Document {
   numberOfCells: number;
   species: Array<string>;
   compatibleModels: Array<Schema.Types.ObjectId>;
+  uploadedBy: string;
+  atlasUrl: string;
 }
 
 const atlasSchema = new Schema<IAtlas>(
@@ -46,6 +48,8 @@ const atlasSchema = new Schema<IAtlas>(
         required: true,
       },
     ],
+    uploadedBy: { type: String, required: false },
+    atlasUrl: { type: String, required: false },
   },
   {
     timestamps: true,

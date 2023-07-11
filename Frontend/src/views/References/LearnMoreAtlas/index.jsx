@@ -1,15 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Link, Tooltip } from '@mui/material';
+import { Box, Typography, Link, Tooltip, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
 import CustomButton from 'components/CustomButton';
 import AtlasService from 'shared/services/Atlas.service';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import StarIcon from '@mui/icons-material/Star';
 import { colors } from 'shared/theme/colors';
+import { useAuth } from 'shared/context/authContext';
+import axiosInstance from 'shared/services/axiosInstance';
+import EditAtlasModal from 'components/EditAtlasModal';
 
 export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPage = false }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [atlas, setAtlas] = useState(null);
   const history = useHistory();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const path = useLocation().pathname;
+  const [user, setUser] = useAuth();
+
+
+  const handleDelete = () => {
+    setIsLoading(true);
+    axiosInstance
+      .delete(`/api/atlases/${id}`)
+      .then(() => {
+        setIsDeleteModalOpen(false);
+        setIsLoading(false);
+        history.goBack();
+        alert("Atlas  deleted successfully");
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
+      setIsLoading(false);
+  };
+  
 
   useEffect(() => {
     if (id) {
@@ -20,7 +47,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
   }, [id]);
 
   return (
-
+    <>
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
@@ -132,6 +159,19 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {atlas?.atlas_batch_key ? atlas?.atlas_batch_key : "Not available"}
         </Typography>
       </Box>
+      {/* Create an Edit and Delete Button */}
+      {user && user.isAdministrator && 
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary"  onClick={ () => setIsEditModalOpen(true) }>Edit</Button>
+        <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary" onClick={ () => setIsDeleteModalOpen(true) } >Delete</Button>
+      </Box> }
+      
+
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        
+      </Box>
+
+
       {
         isMap
         &&
@@ -142,6 +182,33 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         </>
       }
     </Box>
+    
+    <EditAtlasModal atlasDetailsForm= {atlas} setAtlasDetailsForm={setAtlas} isEditModalOpen={isEditModalOpen} setIsEditModalOpen={setIsEditModalOpen}></EditAtlasModal>
+    <Dialog
+      open={isDeleteModalOpen}
+      onClose={() => setIsDeleteModalOpen(false)}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">
+          {"Do you want to delete this atlas?"}
+        </DialogTitle>
+        <DialogContent>
+        {isLoading ? <CircularProgress /> : <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this atlas?
+          </DialogContentText>
+        }
+        </DialogContent>  
+        <DialogActions>
+          <Button onClick={() => setIsDeleteModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} autoFocus>
+            Yes, Delete it!
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

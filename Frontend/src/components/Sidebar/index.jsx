@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import { Link as NavLink, useRouteMatch, useLocation } from 'react-router-dom';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PolicyIcon from '@mui/icons-material/Policy';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import LogoutIcon from '@mui/icons-material/Logout';
 import geneIcon from 'assets/gene.png';
 import styles from './sidebar.module.css';
@@ -29,15 +31,34 @@ function indexIcon(index) {
       return (<SearchIcon className={styles.coloredIcon} />);
     case 3:
       return (<MenuBookIcon className={styles.coloredIcon} />);
+    case 5:
+      return (<CloudUploadIcon className={styles.coloredIcon} />);
+    case 6:
+      return (<AdminPanelSettingsIcon className={styles.coloredIcon} />);
+    
     default:
       return (<LiveHelpIcon className={styles.coloredIcon} />);
   }
 }
 
 export default function Sidebar(props) {
-  const { setUser } = props;
-  const routes = ['genemapper', 'community', 'search/atlases', 'documentation', 'help'];
-  const titles = ['Gene Mapper', 'Community', 'Search', 'Documentation', 'Help'];
+  const { user, setUser } = props;
+  const hasAdminPermission = user && user.isAdministrator === true;
+  const hasUploadPermission = user && user.hasPermission === true;
+
+  const commonRoutes = ['genemapper', 'community', 'search/atlases', 'documentation', 'help'];
+  const commonTitles = ['Gene Mapper', 'Community', 'Search', 'Documentation', 'Help'];
+
+  const adminRoutes = hasAdminPermission ? ['upload', 'admin'] : [];
+  const adminTitles = hasAdminPermission ? ['Upload', 'Admin'] : [];
+
+  const userRoutes = hasUploadPermission && !hasAdminPermission ? ['upload'] : [];
+  const userTitles = hasUploadPermission && !hasAdminPermission ? ['Upload'] : [];
+
+  const routes = [...commonRoutes, ...adminRoutes, ...userRoutes];
+  const titles = [...commonTitles, ...adminTitles, ...userTitles];
+  
+  
   const { url } = useRouteMatch();
   const location = useLocation();
   const path = location.pathname;

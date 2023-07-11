@@ -8,6 +8,7 @@ export interface AddUserDTO {
   password: string;
   note: string;
   avatarUrl?: string;
+  permissionRequested?: boolean;
 }
 
 /**
@@ -20,4 +21,5 @@ export interface UpdateUserDTO {
   password?: string;
   note?: string;
   avatarUrl?: string;
+  permissionRequested?: boolean;
 }

@@ -21,7 +21,7 @@ import { useAuth } from "shared/context/authContext";
 import { Modal, ModalTitle } from "components/Modal";
 import Input from "components/Input/Input";
 import CustomButton from "components/CustomButton";
-import { colors } from 'shared/theme/colors';
+import { colors } from "shared/theme/colors";
 import { LoginContext } from "shared/context/loginContext";
 
 function LoginForm(props) {
@@ -37,16 +37,24 @@ function LoginForm(props) {
   const [loading, setLoading] = useState(false);
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-  const { loginClose: onClose, loginVisible: visible, switchRegister: switchForm, switchForget: onForgetPassword } = useContext(LoginContext);
+  const {
+    loginClose: onClose,
+    loginVisible: visible,
+    switchRegister: switchForm,
+    switchForget: onForgetPassword,
+  } = useContext(LoginContext);
 
   const history = useHistory();
 
   useEffect(() => {
-    if(localStorage.getItem("email")&&localStorage.getItem("email").length !==0) {
-      setLoginDetails({email:localStorage.getItem("email")})
+    if (
+      localStorage.getItem("email") &&
+      localStorage.getItem("email").length !== 0
+    ) {
+      setLoginDetails({ email: localStorage.getItem("email") });
     }
-  },[])
-  
+  }, []);
+
   const clearForm = () => {
     setLoginDetails({
       email: "",
@@ -56,7 +64,7 @@ function LoginForm(props) {
     setErrors({});
     setLoading(false);
     onClose();
-  }
+  };
 
   const handleTextChange = useCallback(
     (e) => {
@@ -96,8 +104,8 @@ function LoginForm(props) {
   async function onSuccessfulLogin(data) {
     localStorage.setItem("jwt", data.jwt);
     localStorage.setItem("user", JSON.stringify(data.user));
-    if(loginDetails.remember) {
-      localStorage.setItem("email",loginDetails.email);
+    if (loginDetails.remember) {
+      localStorage.setItem("email", loginDetails.email);
     }
     onClose();
     history.go(0);
@@ -165,8 +173,6 @@ function LoginForm(props) {
     history.push("/");
   }, [setLoading, loginDetails, setErrors]);
 
-
-  
   return (
     <div>
       <Modal setOpen={(o) => !o && onClose()} isOpen={visible}>
@@ -177,7 +183,6 @@ function LoginForm(props) {
               id="email"
               type="email"
               defaultValue={localStorage.getItem("email")}
-              
               error={!!errors.email}
               helperText={errors.email}
               label="E-mail"
@@ -195,12 +200,22 @@ function LoginForm(props) {
               isRequired={true}
               onChangeEvent={handleTextChange}
             />
-            <Box sx={{ paddingLeft: 1, display: "flex", flexDirection: "column", gap: "4   px" }}>
+            <Box
+              sx={{
+                paddingLeft: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: "4   px",
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
                     id="remember"
-                    sx={{ color: colors.primary[400], '& .MuiSvgIcon-root': { color: colors.primary[400] } }}
+                    sx={{
+                      color: colors.primary[400],
+                      "& .MuiSvgIcon-root": { color: colors.primary[400] },
+                    }}
                     onChange={handleCheckedChange}
                     disableRipple
                     disableFocusRipple
@@ -214,24 +229,29 @@ function LoginForm(props) {
               <Typography mt={1} textAlign="center">
                 <Link
                   href="#"
-                  onClick={() => { onForgetPassword(true); clearForm(); }}
+                  onClick={() => {
+                    onForgetPassword(true);
+                    clearForm();
+                  }}
                 >
                   Forgot password?
                 </Link>
               </Typography>
               <Typography mt={1} textAlign="center">
-                Don't have an account yet? Sign up {" "}
+                Don't have an account yet? Sign up{" "}
                 <Link
                   href="#"
-                  onClick={() => { switchForm(true); clearForm(); }} 
-                > 
+                  onClick={() => {
+                    switchForm(true);
+                    clearForm();
+                  }}
+                >
                   here
                 </Link>
                 {"."}
               </Typography>
             </Box>
           </Grid>
-
         </Box>
       </Modal>
       <Snackbar

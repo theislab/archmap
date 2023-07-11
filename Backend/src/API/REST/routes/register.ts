@@ -12,7 +12,7 @@ export default function register_route(): Router {
   let router = express.Router();
 
   router.post("/register", validationMdw, async (req: any, res) => {
-    const { first_name, last_name, email, password, note } = req.body;
+    const { first_name, last_name, email, password, note, permissionRequested} = req.body;
 
     if (!(first_name && email && password)) return res.status(400).send("Missing parameters");
 
@@ -27,18 +27,18 @@ export default function register_route(): Router {
       email,
       password: saltHashedPassword,
       note,
+      permissionRequested: permissionRequested,
     };
-
     let userAdded: IUser | undefined = undefined;
 
     try {
       userAdded = await UserService.addUser(userToAdd);
-
       /* user without the password field */
       const { password, ...userSecure } = userAdded.toObject();
 
       const tokenToAdd: AddTokenDTO = { _userId: userAdded._id };
       const token = await TokenService.addToken(tokenToAdd);
+      // Make sure to uncomment this line
       mailer.send_verification_mail(first_name, email, token.token);
       return res.status(201).json(userSecure);
     } catch (err) {
