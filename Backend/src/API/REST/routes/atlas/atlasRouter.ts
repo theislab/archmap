@@ -91,6 +91,28 @@ const get_allAtlases = (): Router => {
   router.get("/atlases", validationMdw, async (req: any, res) => {
     try {
       const atlases = await AtlasService.getAllAtlases();
+      // check if the atlases are present in the GCP bucket
+      // Delete the atlas from GCP
+      const storage = new Storage({
+        projectId: process.env.GCP_PROJECT_ID,
+        credentials: {
+          client_email: process.env.GCP_CLIENT_EMAIL,
+          private_key: process.env.GCP_PRIVATE_KEY,
+          client_id: process.env.GCP_CLIENT_ID,
+        },
+
+      });
+      const bucketName = process.env.S3_BUCKET_NAME;
+      atlases.filter(async (atlas) => {
+        const fileName = `atlas/${atlas._id}/data.h5ad`;
+        const file = storage.bucket(bucketName).file(fileName);
+        const [exists] = await file.exists();
+        // if not exists , dont return the atlas
+        if (!exists) {
+          console.log("Atlas not found in GCP");
+        }
+        return exists;
+      });
       return res.status(200).json(atlases);
     } catch (err) {
       console.error("Error accessing the atlases!");
