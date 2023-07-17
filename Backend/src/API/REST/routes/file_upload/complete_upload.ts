@@ -150,7 +150,6 @@ export default function upload_complete_upload_route() {
               };
 
             }
-            
             console.log("sending: ");
             console.log(queryInfo);
             const url = `${process.env.CLOUD_RUN_URL}/query`;
@@ -171,6 +170,7 @@ export default function upload_complete_upload_route() {
               console.log(e);
               result = null;
             }
+            console.log('Result object', result);
             if (!result || result.status != 200) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
