@@ -31,6 +31,8 @@ export default function upload_complete_upload_route() {
     check_auth(),
     async (req: ExtRequest, res) => {
       let { parts, uploadId } = req.body;
+      console.log("Complete upload request");
+      console.log("req.body is ", req.body);
       if (!process.env.S3_BUCKET_NAME)
         return res.status(500).send("Server was not set up correctly");
 
@@ -49,6 +51,7 @@ export default function upload_complete_upload_route() {
         let data;
         try {
           data = await s3.completeMultipartUpload(params).promise();
+          console.log("data from completeMultipart ", data)
         } catch (err: any) {
           console.error(err, err.stack || "Error when completing multipart upload");
           return res.status(500).send(err);
@@ -61,6 +64,7 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
+          console.log("request inside complete upload is ", request)
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
@@ -77,6 +81,7 @@ export default function upload_complete_upload_route() {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
               try_delete_object_from_s3(query_path(project._id))
+              console.log("Deleteing the file from s3 with path ", query_path(project._id))
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
 
