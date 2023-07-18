@@ -178,6 +178,7 @@ export default function upload_complete_upload_route() {
               result = await client.request({
                 url,
                 method: "POST",
+                timeout: 60*60*1000, // 60 min timeout
                 body: JSON.stringify(queryInfo),
               });
             } catch (e) {
