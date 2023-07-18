@@ -165,7 +165,7 @@ export default function upload_complete_upload_route() {
               const liveness_url = `${process.env.CLOUD_RUN_URL}/liveness`;
               result = await client.request({
                 url: liveness_url,
-                method: "POST",
+                method: "GET",
               });
               console.log(result);
             } catch (e) {
