@@ -2,6 +2,7 @@ import { red, green, yellow, grey, blue } from "@mui/material/colors";
 
 const DEV_BACKEND_ADDRESS =
   "https://devversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
+const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
 const PRODUCTION_BACKEND_ADDRESS =
   "https://custom-helix-329116.ey.r.appspot.com/v1";
 export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS;

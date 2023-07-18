@@ -10,12 +10,14 @@ import { result_path } from "../file_upload/bucket_filepaths";
 export default function download_results_route() {
   let router = express.Router();
   router.post("/file_download/results", validationMdw, check_auth(), async (req: ExtRequest, res) => {
+    console.log("POST /file_download/results");
     let { id } = req.body;
     try {
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
       const project = await ProjectService.getProjectById(id);
+      console.log("Project: ", project)
       if (!project) {
         return res.status(404).send("Project not found.");
       }

@@ -103,17 +103,22 @@ const get_allAtlases = (): Router => {
 
       });
       const bucketName = process.env.S3_BUCKET_NAME;
-      atlases.filter(async (atlas) => {
+      
+
+      const atlases_filtered = await Promise.all(atlases.map(async (atlas) => {
         const fileName = `atlas/${atlas._id}/data.h5ad`;
         const file = storage.bucket(bucketName).file(fileName);
         const [exists] = await file.exists();
-        // if not exists , dont return the atlas
+        
         if (!exists) {
-          console.log("Atlas not found in GCP");
+          return null; // Return null for non-existing atlases
         }
-        return exists;
-      });
-      return res.status(200).json(atlases);
+      
+        return atlas; // Return the atlas object for existing atlases
+      }));
+      
+      const filteredAtlases = atlases_filtered.filter(atlas => atlas !== null);
+      return res.status(200).json(filteredAtlases);
     } catch (err) {
       console.error("Error accessing the atlases!");
       console.error(JSON.stringify(err));

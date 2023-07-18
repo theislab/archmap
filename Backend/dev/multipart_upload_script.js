@@ -126,10 +126,8 @@ async function auth(email, pwd) {
   });
   try {
     let { jwt } = JSON.parse(body);
-    if(jwt)
-    console.log("Received jwt token");
-    else
-    throw new Error("No token received");
+    if (jwt) console.log("Received jwt token");
+    else throw new Error("No token received");
     return jwt;
   } catch (e) {
     console.error("Error while parsing response");
@@ -232,6 +230,7 @@ async function get_from_presigned_url(url) {
   console.log("=================================");
   console.log("Downloading Result file...");
   let { body } = await request("GET", url);
+  console.log("Body.length: " + body.length);
   if (body.length < 1000) {
     console.log(body);
   } else {

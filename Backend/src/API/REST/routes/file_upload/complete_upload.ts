@@ -191,6 +191,7 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
+              console.log("Status updated to failed")
               try_delete_object_from_s3(query_path(project.id));
               return;
             }
@@ -238,8 +239,11 @@ export default function upload_complete_upload_route() {
             }
           } else {
             const updateStatus: UpdateProjectDTO = { status: ProjectStatus.PROCESSING_FAILED };
+            console.log("Status updated to failed")
             await ProjectService.updateProjectByUploadId(params.UploadId, updateStatus);
+            console.log("Status updated to failed")
             try_delete_object_from_s3(query_path(project._id));
+            console.log("Deleting the file from s3 with path ", query_path(project._id) )
             return res.status(500).send("Processing failed!");
           }
         } catch (err) {
