@@ -159,7 +159,22 @@ export default function upload_complete_upload_route() {
             res.status(200).send("Processing started");
             //Processing is synchronous, response is sent by ML only after the result is produced, might take some time
             let result;
-            try {
+
+            // call liveness for debugging
+            try { // this leads to ECONNRESET
+              const liveness_url = `${process.env.CLOUD_RUN_URL}/liveness`;
+              result = await client.request({
+                url: liveness_url,
+                method: "POST",
+              });
+              console.log(result);
+            } catch (e) {
+              console.log("Could not send a ping to the processing container.");
+              console.log(e);
+              result = null;
+            }
+
+            try { // this leads to ECONNRESET
               result = await client.request({
                 url,
                 method: "POST",
