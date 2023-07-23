@@ -1,5 +1,5 @@
 import {
-  Grid, Typography, Stack, Alert, Box, Tooltip,
+  Grid, Typography, Stack, Alert, Box, Tooltip,Divider
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Clear from '@mui/icons-material/Clear';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import styles from '../UploadFilePage/uploadfilepage.module.css';
 
 function AtlasModelChoice({
   setActiveStep,
@@ -22,6 +23,22 @@ function AtlasModelChoice({
 }) {
   const [showWarning, setShowWarning] = useState(false);
   const history = useHistory();
+
+  //for showing Skeleton when loading
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Simulate data loading delay
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        setIsError(true);
+      }
+    };
+    loadData();
+  }, []);
 
   /* Handling the choice of the demo dataset */
   const handleDemoClick = (dataset) => {
@@ -56,6 +73,14 @@ function AtlasModelChoice({
             Select an Atlas and a fitting Model before continuing
           </Alert>
         )}
+      <Stack
+        direction="column"
+        divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
+        sx={{ gap: '1.5rem' }}
+      >
+      <Box>
+
+        
       <Typography
         variant="h5"
         sx={{
@@ -82,6 +107,7 @@ function AtlasModelChoice({
                 selected={selectedAtlas.name === a.name}
                 onSelect={setSelectedAtlas}
                 atlasObject={a}
+                isLoading={isLoading}
               />
             </Grid>
           ))
@@ -109,11 +135,16 @@ function AtlasModelChoice({
                     disabled={!compatibleModels
                       || !compatibleModels.map(
                         (m) => m.toLowerCase()
-                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} />
+                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} 
+                      isLoading={isLoading}
+                      />
                 </Grid>
               ))
             }
           </Grid>
+          </Box>
+
+        </Box>
         </Box>
         <Box sx={{width: '35%', display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
           {/* Demo datasets */}
@@ -135,11 +166,11 @@ function AtlasModelChoice({
                   minimal
                   handleOnClick={() => handleDemoClick(dataset)}
                   selected={datasetIsSelected && dataset._id === selectedDataset._id}
+                  isLoading={isLoading}
                 />
             ))}
         </Box>
-      </Box>
-
+      </Stack>
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
