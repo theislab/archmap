@@ -4,6 +4,7 @@ import { Modal } from "components/Modal"
 import { useEffect, useRef, useState } from "react"
 import { colors } from "shared/theme/colors"
 import { LearnMoreModelComponent } from "views/References/LearnMoreModel"
+import RectSkeleton from "components/Skeletons/RectSkeleton"
 
 // Outlined Button specific to Models and Atlases
 /**
@@ -45,7 +46,7 @@ export const OutlinedButtonSelect = ({ content, onSelect, disabled=false }) => {
  */
 export const ModelCardSelect = ({ 
   width = "100%", height = "100%", title, description, onSelect, 
-  selected, learnMoreLink, modelObject={}, disabled=false
+  selected, learnMoreLink, modelObject={}, disabled=false,isLoading=true
 }) => {
 
   const [hover, setHover] = useState(false)
@@ -57,12 +58,15 @@ export const ModelCardSelect = ({
 
     // checks if the parent element is wider than it is longer
     // if it is, converts the flex direction to row
-    if(ref.current.clientWidth > ref.current.clientHeight) {
+    if(!isLoading && ref.current.clientWidth > ref.current.clientHeight) {
       setFlexDir("row")
     }
   }, [])
 
   return (
+    (isLoading)? (
+      <RectSkeleton width={width} height={height} sx={{borderRadius: "1.2rem"}} />
+  ) :
     <Box
       sx={{
         width: width,
