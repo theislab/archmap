@@ -15,16 +15,20 @@ const { ServicesClient } = require("@google-cloud/run").v2;
  * @param {*} file_location - the location of the file to mount.
  * @returns the service URL or -1 if the service could not be created successfully.
  */
-let gCloudRunDeploy = (name, file_location) => {
+let gCloudRunDeploy = (name, file_location, bucket_name) => {
   // Give parameters to the gcloud command. If there is no name
   if (!name) name = `cellxgene-${file_location}`;
   // convert URL to URI used by gsutils
   const gcs_file_location = getGSURI(file_location);
   if (!gcs_file_location) return -1;
 
-  let gcloudCommand = `gcloud beta run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand += ` --allow-unauthenticated --privileged --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
-  gcloudCommand += ` --platform=${process.env.PLATFORM} --set-env-vars GCS_FILE_LOCATION=${gcs_file_location}`;
+  // gcloud run deploy cellxgene-mounted-testing --port 8080 --source . --execution-environment
+  //  gen2 --allow-unauthenticated --service-account cellxgene
+  //  --update-env-vars BUCKET=jst-2021-bucket-2022-dev,GCS_FILE_LOCATION=results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad,DISABLE_CUSTOM_COLORS=1
+
+  let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
+  gcloudCommand += ` --allow-unauthenticated --privileged --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand += ` --platform=${process.env.PLATFORM} --update-env-vars GCS_FILE_LOCATION=${gcs_file_location},BUCKET=${bucket_name}`;
 
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
@@ -117,7 +121,7 @@ async function getAllServices() {
 
 /**
  * A function to delete all Cellxgene Annotate services with the specified project and region.
- * @return number of deleted services. 
+ * @return number of deleted services.
  */
 async function deleteAllCellxgeneServices() {
   // Construct request
@@ -131,13 +135,16 @@ async function deleteAllCellxgeneServices() {
   for await (const service of iterable) {
     let createTime = service["createTime"];
     // Get the current time in seconds
-    let currentTime = Date.now()/1000;
+    let currentTime = Date.now() / 1000;
     elapsedTime = currentTime - createTime["seconds"];
     let timeout = process.env.TIMEOUT;
     // Delete the service if the elapsed time is greater than the timeout
-    if(service["name"].includes("cellxgene-annotate") && elapsedTime>timeout){
-      deletedServices.push({name: service["name"], createTime, elapsedTime});
-      let serviceName = service["name"].split('/').pop();
+    if (
+      service["name"].includes("cellxgene-annotate") &&
+      elapsedTime > timeout
+    ) {
+      deletedServices.push({ name: service["name"], createTime, elapsedTime });
+      let serviceName = service["name"].split("/").pop();
       // Delete command
       let gcloudDelete = `gcloud run services delete --region=${process.env.REGION} ${serviceName} --quiet`;
       // Execute gcloud delete command
@@ -184,8 +191,18 @@ async function getService(name) {
  */
 function getGSURI(publicURL) {
   // Public URL structure: domain.com/BUCKET/FOLDER/SUBFOLDER/FILE
-  let relativePath = publicURL.slice(publicURL.search(".com") + 5);
-  return `gs://${relativePath}`;
+  // location is  "https://storage.googleapis.com/jst-2021-bucket-2022-dev/results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=GOOG1EZSIBCPIY5SKUXITJNJJAUSZWZJHUHPAUJLUVBF3KXMGU6VPBY33J5BI%2F20230721%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230721T125100Z&X-Amz-Expires=604799&X-Amz-Signature=ba2f6f10b18df97e29edba219ca827a923b051d195b02142f212c65ec65d7cfc&X-Amz-SignedHeaders=host"
+  // remove the query string from the location
+  const url = new URL(publicURL);
+  const secondSlashIndex = url.pathname.indexOf("/", 1); // Find the second occurrence of '/'
+  const path = url.pathname.slice(secondSlashIndex + 1); // Get the rest of the path
+  return path;
 }
 
-module.exports = { gCloudRunDeploy, gCloudSetIAM, getAllServices, getService, deleteAllCellxgeneServices };
+module.exports = {
+  gCloudRunDeploy,
+  gCloudSetIAM,
+  getAllServices,
+  getService,
+  deleteAllCellxgeneServices,
+};
