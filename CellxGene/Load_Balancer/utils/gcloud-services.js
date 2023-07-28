@@ -27,7 +27,7 @@ let gCloudRunDeploy = (name, file_location, bucket_name) => {
   //  --update-env-vars BUCKET=jst-2021-bucket-2022-dev,GCS_FILE_LOCATION=results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad,DISABLE_CUSTOM_COLORS=1
 
   let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand += ` --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand += ` --memory=4Gi --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
   gcloudCommand += ` --platform=${process.env.PLATFORM} --update-env-vars GCS_FILE_LOCATION=${gcs_file_location},BUCKET=${bucket_name}`;
 
   console.log(`Executing command: \n${gcloudCommand}\n`);
