@@ -11,7 +11,7 @@ const get_cellxgene_instance = (): Router => {
         console.log(`endpoint: ${endpoint}`);
         console.log("req.body: ", req.body)
         // add bucket: bucketName to req.body
-        req.body.bucket = process.env.BUCKET_NAME;
+        req.body.bucket = process.env.S3_BUCKET_NAME;
         const response = await axios.post(endpoint, req.body);
         console.log(`response: ${response}`);
         res.status(response.status).send(response.data);
