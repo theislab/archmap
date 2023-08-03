@@ -9,6 +9,9 @@ const get_cellxgene_instance = (): Router => {
       try{
         const endpoint = `${process.env.CXG_LOAD_BALANCER_URL}/service`;
         console.log(`endpoint: ${endpoint}`);
+        console.log("req.body: ", req.body)
+        // add bucket: bucketName to req.body
+        req.body.bucket = process.env.S3_BUCKET_NAME;
         const response = await axios.post(endpoint, req.body);
         console.log(`response: ${response}`);
         res.status(response.status).send(response.data);

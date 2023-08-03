@@ -141,9 +141,10 @@ function GeneMapperHome({ style, loggedIn }) {
         // filter out duplicate projects
         data.forEach((obj) => {
           let id = obj._id;
+          let status = obj.status;
           // If the cached projects object doesn't have a project with a matching id,
           // add it to the cache. 
-          if (!cachedProjects.hasOwnProperty(id)) {
+          if (!cachedProjects.hasOwnProperty(id) || cachedProjects[id].status !== status) {
             cachedProjects[id] = obj;
           }
         });

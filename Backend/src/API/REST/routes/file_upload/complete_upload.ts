@@ -21,6 +21,8 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import { query_path, result_model_path, result_path } from "./bucket_filepaths";
 
+const MAX_EPOCH_QUERY = 2;
+
 export default function upload_complete_upload_route() {
   let router = express.Router();
   router.post(
@@ -29,6 +31,8 @@ export default function upload_complete_upload_route() {
     check_auth(),
     async (req: ExtRequest, res) => {
       let { parts, uploadId } = req.body;
+      console.log("Complete upload request");
+      console.log("req.body is ", req.body);
       if (!process.env.S3_BUCKET_NAME)
         return res.status(500).send("Server was not set up correctly");
 
@@ -47,6 +51,7 @@ export default function upload_complete_upload_route() {
         let data;
         try {
           data = await s3.completeMultipartUpload(params).promise();
+          console.log("data from completeMultipart ", data)
         } catch (err: any) {
           console.error(err, err.stack || "Error when completing multipart upload");
           return res.status(500).send(err);
@@ -59,6 +64,7 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
+          console.log("request inside complete upload is ", request)
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
@@ -75,6 +81,7 @@ export default function upload_complete_upload_route() {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
               try_delete_object_from_s3(query_path(project._id))
+              console.log("Deleteing the file from s3 with path ", query_path(project._id))
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
 
@@ -82,17 +89,67 @@ export default function upload_complete_upload_route() {
             let { token: updateToken } = await ProjectUpdateTokenService.addToken({
               _projectId: project._id,
             });
-            let queryInfo = {
-              model: model.name,
-              atlas: atlas.name,
-              query_data: query_path(project.id),
-              output_path: result_path(project.id),
-              model_path: result_model_path(project.id),
-              reference_data: `atlas/${project.atlasId}/data.h5ad`,
-              //ref_path: `models/${project.modelId}/model.pt`,
-              async: false,
-              webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
-            };
+
+            // {
+            //   "model": "scANVI",
+            //   "atlas": "Glioblastoma",
+            //   "output_path": "test_output/GB_scANVI",
+            //   "output_type": {
+            //   "csv": false,
+            //   "cxg": true
+            //   },
+            //   "model_path": "model.pt",
+            //   "pre_trained_scANVI": true,
+            //   "reference_data": "atlas/626ea3311d7d1a27de465b64/data.h5ad",
+            //   "query_data": "query_test_data/pbmc_10k_v3.rds",
+            //   "ref_path": "model.pt",
+            //   "scanvi_max_epochs_query": 2,
+            //   "cell_type_key": "cell_type_key",
+            //   "async": false
+            //   }
+
+            let queryInfo
+            if(model.name == "scVI" ){
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+                output_type: {
+                    csv: false,
+                    cxg: true
+                },
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                model_path: result_model_path(project.id),
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                pre_trained_scVI: true,
+                ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scvi_max_epochs_query: 1, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+              };
+            }else {
+
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+                output_type: {
+                    csv: false,
+                    cxg: true
+                },
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                model_path: result_model_path(project.id),
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                pre_trained_scANVI: true,
+                ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+              };
+
+            }
             console.log("sending: ");
             console.log(queryInfo);
             const url = `${process.env.CLOUD_RUN_URL}/query`;
@@ -102,10 +159,26 @@ export default function upload_complete_upload_route() {
             res.status(200).send("Processing started");
             //Processing is synchronous, response is sent by ML only after the result is produced, might take some time
             let result;
-            try {
+
+            // call liveness for debugging
+            try { // this leads to ECONNRESET
+              const liveness_url = `${process.env.CLOUD_RUN_URL}/liveness`;
+              result = await client.request({
+                url: liveness_url,
+                method: "GET",
+              });
+              console.log(result);
+            } catch (e) {
+              console.log("Could not send a ping to the processing container.");
+              console.log(e);
+              result = null;
+            }
+
+            try { // this leads to ECONNRESET
               result = await client.request({
                 url,
                 method: "POST",
+                timeout: 60*60*1000, // 60 min timeout
                 body: JSON.stringify(queryInfo),
               });
             } catch (e) {
@@ -113,10 +186,12 @@ export default function upload_complete_upload_route() {
               console.log(e);
               result = null;
             }
+            console.log('Result object', result);
             if (!result || result.status != 200) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
+              console.log("Status updated to failed")
               try_delete_object_from_s3(query_path(project.id));
               return;
             }
@@ -164,8 +239,11 @@ export default function upload_complete_upload_route() {
             }
           } else {
             const updateStatus: UpdateProjectDTO = { status: ProjectStatus.PROCESSING_FAILED };
+            console.log("Status updated to failed")
             await ProjectService.updateProjectByUploadId(params.UploadId, updateStatus);
+            console.log("Status updated to failed")
             try_delete_object_from_s3(query_path(project._id));
+            console.log("Deleting the file from s3 with path ", query_path(project._id) )
             return res.status(500).send("Processing failed!");
           }
         } catch (err) {

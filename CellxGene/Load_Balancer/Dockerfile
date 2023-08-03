@@ -10,12 +10,12 @@ RUN apt-get update \
 ENV SERVICE_ACCOUNT_EMAIL="cellxgene@custom-helix-329116.iam.gserviceaccount.com"
 ENV GOOGLE_APPLICATION_CREDENTIALS="/service_account_key/custom-helix-329116-9428b8c55b7f.json"
 ENV PROJECT_ID="custom-helix-329116"
-ENV CXG_IMAGE_LOCATION="eu.gcr.io/custom-helix-329116/cellxgene:latest"
+ENV CXG_IMAGE_LOCATION="europe-west3-docker.pkg.dev/custom-helix-329116/cellxgene/cellxgene:latest"
 ENV REGION="europe-west3"
 # For faster cold starts, use the first version of cloud run. 
 ENV PLATFORM="managed"
 # The port that cellxgene will be running on
-ENV CELLXGENE_PORT="5005"
+ENV CELLXGENE_PORT="8080"
 
 #Cellxgene container timeout, set to one hour by default
 ENV TIMEOUT=3600

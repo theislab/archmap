@@ -10,13 +10,19 @@ router.post("/service", async function (req, res) {
   if (!req.body.location)
     return res.status(400).json({ error: "Bad request body." });
 
-  const LOCATION = req.body.location;
+  const LOCATION = req.body.location; // location is  "https://storage.googleapis.com/jst-2021-bucket-2022-dev/results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=GOOG1EZSIBCPIY5SKUXITJNJJAUSZWZJHUHPAUJLUVBF3KXMGU6VPBY33J5BI%2F20230721%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230721T125100Z&X-Amz-Expires=604799&X-Amz-SignatureedHeaders=host"
+  const BUCKET_NAME = req.body.bucket;
+
   // Unique name based on timestamp and a random 6-digit number.
   const SERVICE_NAME = `cellxgene-annotate-${Date.now()}${
     (Math.random() * 999999) | 0
   }`;
   // call gcloud command to deploy new service
-  let serviceURL = await gcloud.gCloudRunDeploy(SERVICE_NAME, LOCATION);
+  let serviceURL = await gcloud.gCloudRunDeploy(
+    SERVICE_NAME,
+    LOCATION,
+    BUCKET_NAME
+  );
 
   if (serviceURL == -1)
     return res.status(400).send("Could not create cellxgene service.");
