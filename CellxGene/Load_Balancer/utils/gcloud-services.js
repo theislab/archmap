@@ -15,11 +15,13 @@ const { ServicesClient } = require("@google-cloud/run").v2;
  * @param {*} file_location - the location of the file to mount.
  * @returns the service URL or -1 if the service could not be created successfully.
  */
-let gCloudRunDeploy = (name, file_location, bucket_name) => {
+let gCloudRunDeploy = (name, file_location) => {
   // Give parameters to the gcloud command. If there is no name
   if (!name) name = `cellxgene-${file_location}`;
   // convert URL to URI used by gsutils
   const gcs_file_location = getGSURI(file_location);
+  const bucket_name = getBucketName(file_location);
+  console.log(bucket_name);
   if (!gcs_file_location) return -1;
 
   // gcloud run deploy cellxgene-mounted-testing --port 8080 --source . --execution-environment
@@ -27,7 +29,7 @@ let gCloudRunDeploy = (name, file_location, bucket_name) => {
   //  --update-env-vars BUCKET=jst-2021-bucket-2022-dev,GCS_FILE_LOCATION=results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad,DISABLE_CUSTOM_COLORS=1
 
   let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand += ` --memory=4Gi --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
+  gcloudCommand += ` --memory=16Gi --cpu=4 --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
   gcloudCommand += ` --platform=${process.env.PLATFORM} --update-env-vars GCS_FILE_LOCATION=${gcs_file_location},BUCKET=${bucket_name}`;
 
   console.log(`Executing command: \n${gcloudCommand}\n`);
@@ -198,6 +200,20 @@ function getGSURI(publicURL) {
   const path = url.pathname.slice(secondSlashIndex + 1); // Get the rest of the path
   return path;
 }
+
+/**
+ * Extracts the bucket name from the given public URL.
+ * @param {string} publicURL - The public URL to extract the bucket name from.
+ * @returns {string} - The bucket name extracted from the public URL.
+ */
+function getBucketName(publicURL) {
+  const url = new URL(publicURL);
+  const parts = url.pathname.split('/');
+  // Get the second part of the path, which represents the bucket name.
+  const bucketName = parts[1];
+  return bucketName;
+}
+
 
 module.exports = {
   gCloudRunDeploy,
