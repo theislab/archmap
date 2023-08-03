@@ -21,7 +21,6 @@ let gCloudRunDeploy = (name, file_location) => {
   // convert URL to URI used by gsutils
   const gcs_file_location = getGSURI(file_location);
   const bucket_name = getBucketName(file_location);
-  console.log(bucket_name);
   if (!gcs_file_location) return -1;
 
   // gcloud run deploy cellxgene-mounted-testing --port 8080 --source . --execution-environment
