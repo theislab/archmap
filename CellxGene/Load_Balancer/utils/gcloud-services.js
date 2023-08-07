@@ -21,6 +21,8 @@ let gCloudRunDeploy = (name, file_location) => {
   // convert URL to URI used by gsutils
   const gcs_file_location = getGSURI(file_location);
   const bucket_name = getBucketName(file_location);
+  // Get the location where to store the annotation file
+  const annotation_file = getAnnotationLocation(file_location);
   if (!gcs_file_location) return -1;
 
   // gcloud run deploy cellxgene-mounted-testing --port 8080 --source . --execution-environment
@@ -28,8 +30,9 @@ let gCloudRunDeploy = (name, file_location) => {
   //  --update-env-vars BUCKET=jst-2021-bucket-2022-dev,GCS_FILE_LOCATION=results/64ba7ef41cdf2e0829d355e3/query_cxg.h5ad,DISABLE_CUSTOM_COLORS=1
 
   let gcloudCommand = `gcloud run deploy ${name} --image=${process.env.CXG_IMAGE_LOCATION} --region=${process.env.REGION}`;
-  gcloudCommand += ` --memory=16Gi --cpu=4 --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost`;
-  gcloudCommand += ` --platform=${process.env.PLATFORM} --update-env-vars GCS_FILE_LOCATION=${gcs_file_location},BUCKET=${bucket_name}`;
+  gcloudCommand += ` --memory=16Gi --cpu=4 --allow-unauthenticated  --execution-environment gen2 --service-account cellxgene`; 
+  gcloudCommand += ` --port=${process.env.CELLXGENE_PORT} --no-cpu-throttling --cpu-boost --platform=${process.env.PLATFORM} `;
+  gcloudCommand += ` --update-env-vars GCS_FILE_LOCATION=${gcs_file_location},BUCKET=${bucket_name},ANNOTATION_FILE=${annotation_file}`; // Removed: ,ANNOTATION_FILE=${annotation_file}
 
   console.log(`Executing command: \n${gcloudCommand}\n`);
 
@@ -212,6 +215,19 @@ function getBucketName(publicURL) {
   const bucketName = parts[1];
   return bucketName;
 }
+
+/**
+ * Extracts the location where the annotations should be saved from the given public URL.
+ * @param {string} publicURL - The public URL to extract the location from.
+ * @returns {string} - The location where the annotations should be saved.
+ */
+function getAnnotationLocation(publicURL) {
+  const annotation_file = 'annotation_file';
+  const sub_path = getGSURI(publicURL).split('/');
+  sub_path.pop();
+  return sub_path.join('/') + '/' + annotation_file;
+}
+
 
 
 module.exports = {
