@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { colors } from 'shared/theme/colors';
+import RectSkeleton from "components/Skeletons/RectSkeleton"
 
 /**
  * TabCard for TabGroup Component / List of cards with select feature used in FileUpload page
@@ -16,8 +17,11 @@ import { colors } from 'shared/theme/colors';
  * @param minimal makes the tabcard view minimal and shows only the most essential information
 */
 export const TabCard = ({
-  width, height, data, handleOnClick, selected, minimal
+  width, height, data, handleOnClick, selected, minimal, isLoading=true
 }) => (
+  (isLoading)? (
+    <RectSkeleton width={width} height={height} sx={{borderRadius: '0.625rem', marginBottom: '0.67em'}} />
+) :
   <Box
     onClick={handleOnClick}
     sx={{

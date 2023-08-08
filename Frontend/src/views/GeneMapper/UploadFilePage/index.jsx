@@ -7,6 +7,7 @@ import {
 import { GeneralCard as Card } from 'components/Cards/GeneralCard';
 import CustomButton from 'components/CustomButton';
 import FileUpload from 'components/FileUpload';
+import DemoService from 'shared/services/Demo.service';
 import { Modal, ModalTitle } from 'components/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -25,7 +26,7 @@ import styles from './uploadfilepage.module.css';
  * @param selectedDataset indicates the dataset that has been selected.
  */
 function UploadFilePage({
-  path, selectedAtlas, selectedModel, setActiveStep, demos,
+  path, selectedAtlas, selectedModel, setActiveStep,
   selectedDataset, setSelectedDataset,
   datasetIsSelected, setDatasetIsSelected,
 }) {
@@ -41,11 +42,30 @@ function UploadFilePage({
   const [showAcceptedFile, setShowAcceptedFile] = useState(false);
   const history = useHistory();
   const [availableDemos, setAvailableDemos] = useState([]);
-  const [demoDatasets, setDemoDatasets] = useState(demos);
+  const [demoDatasets, setDemoDatasets] = useState([]);
 
   useEffect(() => {
     setRequirements(selectedModel.requirements);
   }, [selectedModel]);
+
+  // Show available demos
+  useEffect(() => {
+    if (demoDatasets) {
+      const matchingDemos = demoDatasets.filter(
+        (d) =>
+          d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
+          d.model.toLowerCase() === selectedModel.name.toLowerCase()
+      );
+  
+      setAvailableDemos(matchingDemos);
+    }
+  }, [demoDatasets, selectedAtlas.name, selectedModel.name]);
+  
+  useEffect(() => {
+    DemoService.getDemos().then((a) => {
+      setDemoDatasets(a);
+    });
+  }, []);
 
   const handleOnDropChange = (file) => {
     setUploadedFile(file);
@@ -125,19 +145,6 @@ function UploadFilePage({
         uploadedFile ? uploadedFile[0] : selectedDataset);
     }
   };
-
-  // finding all matching demos for the current choice combination
-  useEffect(() => {
-    if (demoDatasets) {
-      const matchingDemos = demoDatasets
-        .filter((d) => d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase()
-        && d.model.toLowerCase() === selectedModel.name.toLowerCase());
-
-      setAvailableDemos(matchingDemos);
-    } else {
-      setAvailableDemos([]);
-    }
-  }, []);
 
   return (
     <Box sx={{ marginTop: '2.5em' }}>
@@ -344,6 +351,7 @@ function UploadFilePage({
                       model: dataset.model,
                       isDemo: true,
                     }}
+                    isLoading={false}
                     handleOnClick={() => handleDemoClick(dataset)}
                     selected={
                         !uploadedFile

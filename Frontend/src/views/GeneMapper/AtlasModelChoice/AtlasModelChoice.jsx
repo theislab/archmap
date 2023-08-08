@@ -1,5 +1,5 @@
 import {
-  Grid, Typography, Stack, Alert, Box, Tooltip,
+  Grid, Typography, Stack, Alert, Box, Tooltip,Divider
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -10,43 +10,32 @@ import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Clear from '@mui/icons-material/Clear';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import styles from '../UploadFilePage/uploadfilepage.module.css';
 
 function AtlasModelChoice({
   setActiveStep,
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
   compatibleModels, atlases, models,
-  selectedDataset, setSelectedDataset,
-  datasetIsSelected, setDatasetIsSelected,
-  demos,
 }) {
   const [showWarning, setShowWarning] = useState(false);
   const history = useHistory();
 
-  /* Handling the choice of the demo dataset */
-  const handleDemoClick = (dataset) => {
-    // only set selected dataset if not already selected or null
-    if (!selectedDataset || selectedDataset._id !== dataset._id) {
-      setSelectedDataset(dataset);
-      setDatasetIsSelected(true);
-      // find the objects corresponding to the atlas and model in the array
-      const atlasObj = atlases.filter(
-        (a) => a.name.toLowerCase() === dataset.atlas.toLowerCase(),
-      )[0];
-      const modelObj = models.filter(
-        (m) => m.name.toLowerCase() === dataset.model.toLowerCase(),
-      )[0];
-
-      setSelectedAtlas(atlasObj);
-      setSelectedModel(modelObj);
-    } else {
-      setDatasetIsSelected(false);
-      setSelectedDataset(null);
-      // deselect the atlas and model
-      setSelectedAtlas({});
-      setSelectedModel({});
-    }
-  };
+  //for showing Skeleton when loading
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Simulate data loading delay
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        setIsError(true);
+      }
+    };
+    loadData();
+  }, []);
 
   return (
     <div>
@@ -56,6 +45,12 @@ function AtlasModelChoice({
             Select an Atlas and a fitting Model before continuing
           </Alert>
         )}
+      <Stack
+        direction="column"
+        divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
+        sx={{ gap: '1.5rem' }}
+      >
+      <Box>
       <Typography
         variant="h5"
         sx={{
@@ -82,6 +77,7 @@ function AtlasModelChoice({
                 selected={selectedAtlas.name === a.name}
                 onSelect={setSelectedAtlas}
                 atlasObject={a}
+                isLoading={isLoading}
               />
             </Grid>
           ))
@@ -109,37 +105,17 @@ function AtlasModelChoice({
                     disabled={!compatibleModels
                       || !compatibleModels.map(
                         (m) => m.toLowerCase()
-                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} />
+                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} 
+                      isLoading={isLoading}
+                      />
                 </Grid>
               ))
             }
           </Grid>
-        </Box>
-        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
-          {/* Demo datasets */}
-          <Box sx={{ width: '100%', marginBottom: "1.5em" }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }} marginTop="32px">
-              Or try out one of the demos
-            </Typography>
           </Box>
-          {/* Loop over demo datasets */}
-            {demos && demos.map((dataset) => (
-                <TabCard
-                  width="97%"
-                  data={{
-                    name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
-                    atlas: dataset.atlas,
-                    model: dataset.model,
-                    isDemo: true,
-                  }}
-                  minimal
-                  handleOnClick={() => handleDemoClick(dataset)}
-                  selected={datasetIsSelected && dataset._id === selectedDataset._id}
-                />
-            ))}
         </Box>
-      </Box>
-
+        </Box>
+      </Stack>
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
