@@ -62,13 +62,6 @@ function GeneMapperState({ path }) {
     }
   };
 
-  // get demo projects
-  useEffect(() => {
-    DemoService.getDemos().then((a) => {
-      setDemoDatasets(a);
-    });
-  }, []);
-
   useEffect(() => {
     AtlasService.getAtlases().then((a) => {
       a.map((a) => {
@@ -167,7 +160,6 @@ function GeneMapperState({ path }) {
               compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []}
               atlases={atlases}
               models={models}
-              demos={demoDatasets}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
               datasetIsSelected={demoDatasetIsSelected}
@@ -180,7 +172,6 @@ function GeneMapperState({ path }) {
               selectedAtlas={selectedAtlas}
               selectedModel={selectedModel}
               setActiveStep={handleStep}
-              demos={demoDatasets}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
               datasetIsSelected={demoDatasetIsSelected}

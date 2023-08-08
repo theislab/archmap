@@ -17,9 +17,6 @@ function AtlasModelChoice({
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
   compatibleModels, atlases, models,
-  selectedDataset, setSelectedDataset,
-  datasetIsSelected, setDatasetIsSelected,
-  demos,
 }) {
   const [showWarning, setShowWarning] = useState(false);
   const history = useHistory();
@@ -40,31 +37,6 @@ function AtlasModelChoice({
     loadData();
   }, []);
 
-  /* Handling the choice of the demo dataset */
-  const handleDemoClick = (dataset) => {
-    // only set selected dataset if not already selected or null
-    if (!selectedDataset || selectedDataset._id !== dataset._id) {
-      setSelectedDataset(dataset);
-      setDatasetIsSelected(true);
-      // find the objects corresponding to the atlas and model in the array
-      const atlasObj = atlases.filter(
-        (a) => a.name.toLowerCase() === dataset.atlas.toLowerCase(),
-      )[0];
-      const modelObj = models.filter(
-        (m) => m.name.toLowerCase() === dataset.model.toLowerCase(),
-      )[0];
-
-      setSelectedAtlas(atlasObj);
-      setSelectedModel(modelObj);
-    } else {
-      setDatasetIsSelected(false);
-      setSelectedDataset(null);
-      // deselect the atlas and model
-      setSelectedAtlas({});
-      setSelectedModel({});
-    }
-  };
-
   return (
     <div>
       {showWarning
@@ -79,8 +51,6 @@ function AtlasModelChoice({
         sx={{ gap: '1.5rem' }}
       >
       <Box>
-
-        
       <Typography
         variant="h5"
         sx={{
@@ -143,7 +113,6 @@ function AtlasModelChoice({
             }
           </Grid>
           </Box>
-
         </Box>
         </Box>
       </Stack>

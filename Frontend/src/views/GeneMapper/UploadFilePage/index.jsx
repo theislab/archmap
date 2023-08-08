@@ -26,7 +26,7 @@ import styles from './uploadfilepage.module.css';
  * @param selectedDataset indicates the dataset that has been selected.
  */
 function UploadFilePage({
-  path, selectedAtlas, selectedModel, setActiveStep, demos,
+  path, selectedAtlas, selectedModel, setActiveStep,
   selectedDataset, setSelectedDataset,
   datasetIsSelected, setDatasetIsSelected,
 }) {
