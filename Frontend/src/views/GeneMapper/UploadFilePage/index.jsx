@@ -50,23 +50,22 @@ function UploadFilePage({
 
   // Show available demos
   useEffect(() => {
+    if (demoDatasets) {
+      const matchingDemos = demoDatasets.filter(
+        (d) =>
+          d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
+          d.model.toLowerCase() === selectedModel.name.toLowerCase()
+      );
+  
+      setAvailableDemos(matchingDemos);
+    }
+  }, [demoDatasets, selectedAtlas.name, selectedModel.name]);
+  
+  useEffect(() => {
     DemoService.getDemos().then((a) => {
       setDemoDatasets(a);
     });
-    
-    if (demoDatasets) {
-      const matchingDemos = demoDatasets
-        .filter(
-          (d) =>
-            d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
-            d.model.toLowerCase() === selectedModel.name.toLowerCase()
-        );
-  
-      setAvailableDemos(matchingDemos);
-    } else {
-      setAvailableDemos([]);
-    }
-  }, [demoDatasets, selectedAtlas.name, selectedModel.name]);
+  }, []);
 
   const handleOnDropChange = (file) => {
     setUploadedFile(file);
