@@ -146,30 +146,6 @@ function AtlasModelChoice({
 
         </Box>
         </Box>
-        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
-          {/* Demo datasets */}
-          <Box sx={{ width: '100%', marginBottom: "1.5em" }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }} marginTop="32px">
-              Or try out one of the demos
-            </Typography>
-          </Box>
-          {/* Loop over demo datasets */}
-            {demos && demos.map((dataset) => (
-                <TabCard
-                  width="97%"
-                  data={{
-                    name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
-                    atlas: dataset.atlas,
-                    model: dataset.model,
-                    isDemo: true,
-                  }}
-                  minimal
-                  handleOnClick={() => handleDemoClick(dataset)}
-                  selected={datasetIsSelected && dataset._id === selectedDataset._id}
-                  isLoading={isLoading}
-                />
-            ))}
-        </Box>
       </Stack>
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
