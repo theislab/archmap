@@ -15,7 +15,7 @@ export default function upload_start_upload_route() {
     validationMdw,
     check_auth(),
     async (req: ExtRequest, res) => {
-      let { projectName, atlasId, modelId, fileName } = req.body;
+      let { projectName, atlasId, modelId, classifierId, fileName } = req.body;
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
@@ -26,6 +26,7 @@ export default function upload_start_upload_route() {
           name: projectName,
           modelId,
           atlasId,
+          classifierId,
           fileName: String(fileName),
           uploadDate: new Date(),
           status: ProjectStatus.UPLOAD_PENDING,

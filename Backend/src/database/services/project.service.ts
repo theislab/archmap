@@ -62,7 +62,7 @@ export default class ProjectService {
     user_id: ObjectId,
     sort: SortOrder = 1
   ): Promise<(IProject & { _id: ObjectId })[]> {
-    return await projectModel.find({ owner: user_id }).sort({uploadDate: sort});
+    return await projectModel.find({ owner: user_id }).sort({ uploadDate: sort });
   }
 
   /**
@@ -73,9 +73,7 @@ export default class ProjectService {
    *  @param   teamIds as ObjectId array
    *  @returns projects or null
    */
-  static async getProjectsOfTeams(
-    teamIds: ObjectId[]
-  ): Promise<(IProject & { _id: ObjectId })[]> {
+  static async getProjectsOfTeams(teamIds: ObjectId[]): Promise<(IProject & { _id: ObjectId })[]> {
     return await projectModel.find({ teamId: { $in: teamIds } }).exec();
   }
 
