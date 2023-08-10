@@ -13,11 +13,12 @@ export interface UpdateProjectDTO {
  * Stores the raw data needed to create a project.
  */
 export interface AddProjectDTO {
-    owner: ObjectId,
-    name: string,
-    fileName: string,
-    uploadDate: Date,
-    status: string,
-    modelId: ObjectId,
-    atlasId: ObjectId,
+  owner: ObjectId;
+  name: string;
+  fileName: string;
+  uploadDate: Date;
+  status: string;
+  modelId: ObjectId;
+  atlasId: ObjectId;
+  classifierId?: ObjectId;
 }
