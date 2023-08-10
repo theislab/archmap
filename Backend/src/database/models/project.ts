@@ -16,6 +16,7 @@ export interface IProject extends Document {
 
   atlasId: Schema.Types.ObjectId;
   modelId: Schema.Types.ObjectId;
+  classifierId: Schema.Types.ObjectId;
 
   // file
   uploadId: string;
@@ -45,6 +46,7 @@ const projectSchema = new Schema<IProject>({
 
   modelId: { type: Schema.Types.ObjectId, require: true },
   atlasId: { type: Schema.Types.ObjectId, require: true },
+  classifierId: { type: Schema.Types.ObjectId, require: false },
 
   // file
   uploadId: { type: String, require: false },
