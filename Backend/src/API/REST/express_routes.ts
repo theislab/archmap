@@ -24,9 +24,21 @@ import upload_get_upload_url_route from "./routes/file_upload/get_upload_url";
 import download_results_route from "./routes/file_download/results";
 import upload_user_avatar_route from "./routes/upload_user_avatar";
 
-import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
+import {
+  get_teams_of_user,
+  get_users,
+  get_user_by_id,
+  delete_temp_users,
+} from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
-import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas } from "./routes/atlas/atlasRouter";
+import {
+  get_atlas,
+  get_atlas_visualization,
+  get_allAtlases,
+  upload_atlas,
+  edit_atlas,
+  delete_atlas,
+} from "./routes/atlas/atlasRouter";
 import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -96,6 +108,7 @@ import { contact_us } from "./routes/contact/contactRoute";
 
 import { get_allDemos } from "./routes/demo/demoRouter";
 import { change_permission } from "./routes/admin/adminRouter";
+import { get_classifier, get_classifiers } from "./routes/classifier/classifierRouter";
 
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {
@@ -109,7 +122,7 @@ export function express_routes(): Router {
   router.use(resend_verification_link());
   router.use(verify_email_route());
   router.use(password_reset_route());
-  
+
   // temporary user routes
   router.use(temp_auth_route());
   router.use(delete_temp_users());
@@ -170,6 +183,10 @@ export function express_routes(): Router {
   router.use(cleanup_old_projects());
   router.use(update_project_results());
 
+  // classifiers routes
+  router.use(get_classifier());
+  router.use(get_classifiers());
+
   // model routes
   router.use(get_model());
   router.use(get_allModels());
@@ -178,7 +195,7 @@ export function express_routes(): Router {
   router.use(get_atlas());
   router.use(get_atlas_visualization());
   router.use(get_allAtlases());
-  router.use(upload_atlas())
+  router.use(upload_atlas());
   router.use(edit_atlas());
   router.use(delete_atlas());
 
