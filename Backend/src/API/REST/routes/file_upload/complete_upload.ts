@@ -66,19 +66,12 @@ export default function upload_complete_upload_route() {
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
           console.log("request inside complete upload is ", request);
-          console.log("1 Project:");
-          console.log(project);
-          project.classifierId ? console.log(project.classifierId) : console.log("NULL ID");
           let result = await s3.headObject(request).promise();
-          console.log("2");
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
             status: ProjectStatus.PROCESSING_PENDING,
           };
-          console.log("3");
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
-          console.log("4 Project:");
-          console.log(project);
           if (process.env.CLOUD_RUN_URL) {
             let [model, atlas, classifier] = await Promise.all([
               ModelService.getModelById(project.modelId),
@@ -87,10 +80,9 @@ export default function upload_complete_upload_route() {
                 ? ClassifierService.getClassifierById(project.classifierId)
                 : Promise.resolve(undefined),
             ]);
-            console.log("5");
             if (!model || !atlas || (!classifier && model.name !== "totalVI")) {
               console.log("6");
-              await ProjectService.updateProjectById(params.UploadId, {
+              await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
               try_delete_object_from_s3(query_path(project._id));
