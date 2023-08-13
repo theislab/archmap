@@ -4,6 +4,7 @@ export interface IModel extends Document {
   name: string;
   description: string;
   requirements: Array<string>;
+  compatibleClassifiers: Array<string>;
 }
 
 const modelSchema = new Schema<IModel>(
@@ -24,6 +25,12 @@ const modelSchema = new Schema<IModel>(
         type: Schema.Types.ObjectId,
         required: false,
         default: "",
+      },
+    ],
+    compatibleClassifiers: [
+      {
+        type: String,
+        required: false,
       },
     ],
   },
