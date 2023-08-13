@@ -46,7 +46,7 @@ const projectSchema = new Schema<IProject>({
 
   modelId: { type: Schema.Types.ObjectId, require: true },
   atlasId: { type: Schema.Types.ObjectId, require: true },
-  classifierId: { type: Schema.Types.ObjectId, require: false },
+  classifierId: { type: Schema.Types.ObjectId, require: false, default: "" },
 
   // file
   uploadId: { type: String, require: false },
