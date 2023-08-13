@@ -73,12 +73,12 @@ export default function upload_complete_upload_route() {
           };
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
           if (process.env.CLOUD_RUN_URL) {
-            let [model, atlas, classifer] = await Promise.all([
+            let [model, atlas, classifier] = await Promise.all([
               ModelService.getModelById(project.modelId),
               AtlasService.getAtlasById(project.atlasId),
-              ClassifierService.getClassifierById(project.classifierId),
+              project.classifierId ? ClassifierService.getClassifierById(project.classifierId) : Promise.resolve(undefined),
             ]);
-            if (!model || !atlas || (!classifer && model.name !== "totalVI")) {
+            if (!model || !atlas || (!classifier && model.name !== "totalVI")) {
               await ProjectService.updateProjectById(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
@@ -118,10 +118,10 @@ export default function upload_complete_upload_route() {
               KNN: false,
               scANVI: false,
             };
-            if (classifer.name in classifier_type) {
-              classifier_type[classifer.name] = true;
+            if (classifier.name in classifier_type) {
+              classifier_type[classifier.name] = true;
             } else {
-              console.log(`Unknown classifier: ${classifer.name}`);
+              console.log(`Unknown classifier: ${classifier.name}`);
             }
             if (model.name == "scVI") {
               queryInfo = {
