@@ -81,7 +81,6 @@ export default function upload_complete_upload_route() {
                 : Promise.resolve(undefined),
             ]);
             if (!model || !atlas || (!classifier && model.name !== "totalVI")) {
-              console.log("6");
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
@@ -91,7 +90,6 @@ export default function upload_complete_upload_route() {
                 .status(500)
                 .send(`Could not find ${!model ? "model" : !atlas ? "atlas" : "classifier"}`);
             }
-            console.log("7");
             //Create a token, which can be used later to update the projects status
             let { token: updateToken } = await ProjectUpdateTokenService.addToken({
               _projectId: project._id,
