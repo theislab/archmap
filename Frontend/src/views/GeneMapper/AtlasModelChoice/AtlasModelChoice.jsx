@@ -11,12 +11,14 @@ import React, { useState, useEffect } from 'react';
 import Clear from '@mui/icons-material/Clear';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import styles from '../UploadFilePage/uploadfilepage.module.css';
+import { ClassifierCard } from 'components/Cards/ClassifierCard';
 
 function AtlasModelChoice({
   setActiveStep,
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
   compatibleModels, atlases, models,
+  selectedClassifier, setSelectedClassifier, compatibleClassifiers, classifiers,
 }) {
   const [showWarning, setShowWarning] = useState(false);
   const history = useHistory();
@@ -56,7 +58,7 @@ function AtlasModelChoice({
         sx={{
           fontWeight: 'bold',
           pb: '1em',
-          mt: '1.5em',
+          mt: '1.0em',
         }}
       >
         Pick an Atlas
@@ -65,11 +67,11 @@ function AtlasModelChoice({
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
-            <Grid item height="320px">
+            <Grid item height="330px">
               <AtlasCardSelect
                 width="225px"
                 height="97%"
-                title={a.name}
+                title={a.name.includes("atlas") ? a.name.replace("atlas", "") : a.name} 
                 modalities={a.modalities}
                 cellsInReference={a.numberOfCells}
                 species={a.species}
@@ -84,16 +86,16 @@ function AtlasModelChoice({
         }
       </Grid>
 
-      <Box width="100%" display="flex">
-        <Box id="Grid" width="65%">
+      <Box width="100%" display="flex" marginTop="10px">
+        <Box id="Grid" width="60%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
             Pick a Model
           </Typography>
 
-          <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap">
+          <Grid container spacing={2} direction="row" wrap="nowrap">
             {
               models && models.map((m) => (
-                <Grid item height="225px">
+                <Grid item height="220px">
                   <ModelCardSelect
                     width="225px"
                     height="97%"
@@ -113,6 +115,35 @@ function AtlasModelChoice({
             }
           </Grid>
           </Box>
+
+          <Box id="Grid" width="40%" marginLeft="36px">
+              <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
+                Pick a Classifier for your Model
+              </Typography>
+
+              <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap" marginRight={2}>
+                {
+              classifiers && classifiers.map((cl) => (
+                <Grid item height="145px">
+                  <ClassifierCard
+                    width="140px"
+                    height="97%"
+                    title={cl.name}
+                    description={cl.description}
+                    selected={selectedClassifier.name === cl.name}
+                    onSelect={setSelectedClassifier}
+                    classifierObject={cl}
+                    disabled={!compatibleClassifiers
+                      || !compatibleClassifiers.map(
+                        (cc) => cc.toLowerCase(),
+                      ).includes(cl.name.toLowerCase()) || compatibleClassifiers.length === 0}
+                    isLoading={isLoading}
+                  />
+                </Grid>
+              ))
+            }
+              </Grid>
+            </Box>
         </Box>
         </Box>
       </Stack>
