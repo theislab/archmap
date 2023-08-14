@@ -1,49 +1,61 @@
-import axiosInstance from './axiosInstance';
-import MockProjectService from './mock/Project.service';
+import axiosInstance from "./axiosInstance";
+import MockProjectService from "./mock/Project.service";
 
-const MODEL = 'projects';
+const MODEL = "projects";
 const MOCK_PROJECTS = false;
 
-const ProjectService = MOCK_PROJECTS ? MockProjectService : {
-  getProjects: async (params) => {
-    const { data } = await axiosInstance.get(`/${MODEL}`, { params });
-    return data;
-  },
+const ProjectService = MOCK_PROJECTS
+  ? MockProjectService
+  : {
+      getProjects: async (params) => {
+        const { data } = await axiosInstance.get(`/${MODEL}`, { params });
+        return data;
+      },
 
-  getOwnProjects: async () => {
-    const { data } = await axiosInstance.get('/ownprojects');
-    return data;
-  },
+      getOwnProjects: async () => {
+        const { data } = await axiosInstance.get("/ownprojects");
+        return data;
+      },
 
-  getProject: async (id) => {
-    const { data } = await axiosInstance.get(`/project/${id}`);
-    return data;
-  },
+      getProject: async (id) => {
+        const { data } = await axiosInstance.get(`/project/${id}`);
+        return data;
+      },
 
-  createProject: async (projectName, atlasId, modelId, fileName) => {
-    const { data } = await axiosInstance.post('/file_upload/start_upload', {
-      projectName, atlasId, modelId, fileName,
-    });
-    return data;
-  },
+      createProject: async (
+        projectName,
+        atlasId,
+        modelId,
+        classifierId,
+        fileName
+      ) => {
+        const { data } = await axiosInstance.post("/file_upload/start_upload", {
+          projectName,
+          atlasId,
+          modelId,
+          classifierId,
+          fileName,
+        });
+        return data;
+      },
 
-  deleteProject: async (id) => {
-    await axiosInstance.delete(`/project/${id}`);
-  },
+      deleteProject: async (id) => {
+        await axiosInstance.delete(`/project/${id}`);
+      },
 
-  getDeletedProjects: async () => {
-    const { data } = await axiosInstance.get('/deletedprojects');
-    return data;
-  },
+      getDeletedProjects: async () => {
+        const { data } = await axiosInstance.get("/deletedprojects");
+        return data;
+      },
 
-  restoreProject: async (id) => {
-    await axiosInstance.post(`/deletedprojects/${id}/restore`);
-  },
+      restoreProject: async (id) => {
+        await axiosInstance.post(`/deletedprojects/${id}/restore`);
+      },
 
-  getTeamProjects: async (teamId) => {
-    const { data } = await axiosInstance.get(`/teams/${teamId}/projects`);
-    return data;
-  }
-};
+      getTeamProjects: async (teamId) => {
+        const { data } = await axiosInstance.get(`/teams/${teamId}/projects`);
+        return data;
+      },
+    };
 
 export default ProjectService;
