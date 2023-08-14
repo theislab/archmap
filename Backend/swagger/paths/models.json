@@ -35,6 +35,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "compatibleClassifiers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -74,6 +80,12 @@
                       "type": "string"
                     },
                     "requirements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "compatibleClassifiers": {
                       "type": "array",
                       "items": {
                         "type": "string"
