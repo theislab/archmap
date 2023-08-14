@@ -1,0 +1,88 @@
+{
+  "/classifier/{id}": {
+    "get": {
+      "summary": "Get details about a classifier",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "tags": ["Classifier"],
+      "responses": {
+        "200": {
+          "description": "Getting classifier by id successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "classiferUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Missing classifier id"
+        },
+        "500": {
+          "description": "Internal error, unable to retrieve information about the classifier."
+        }
+      }
+    }
+  },
+  "/classifiers": {
+    "get": {
+      "summary": "Get all available classifiers",
+      "tags": ["Classifier"],
+      "responses": {
+        "200": {
+          "description": "Getting all available classifiers successful.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "classiferUrl": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal error, unable to retrieve information about the classifiers."
+        }
+      }
+    }
+  }
+}

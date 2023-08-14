@@ -37,7 +37,9 @@ const get_classifiers = (): Router => {
       console.error("Error accessing the classifiers!");
       console.error(JSON.stringify(err));
       console.error(err);
-      return res.status(500).send("Unable to access the classifiers.");
+      return res
+        .status(500)
+        .send("Internal error, unable to retrieve information about the classifiers.");
     }
   });
   return router;
