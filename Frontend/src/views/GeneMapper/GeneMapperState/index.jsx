@@ -8,6 +8,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import ModelService from 'shared/services/Model.service';
 import AtlasService from 'shared/services/Atlas.service';
 import DemoService from 'shared/services/Demo.service';
+import ClassifierService from 'shared/services/Classifier.service';
 
 /**
  * GeneMapperState
@@ -33,10 +34,17 @@ function GeneMapperState({ path }) {
   const steps = ['Pick Atlas and Model', 'Choose File and Project details'];
   const [atlases, setAtlases] = useState(null);
   const [models, setModels] = useState(null);
+  const [classifiers, setClassifiers] = useState(null);
+  const [selectedClassifier, setSelectedClassifier] = useState('');
 
   const handleAtlasSelection = (newAtlas) => {
     setSelectedAtlas(newAtlas);
     setSelectedModel('');
+    setSelectedClassifier('');
+  };
+  const handleModelSelection = (newModel) => {
+    setSelectedModel(newModel);
+    setSelectedClassifier('')
   };
 
   // function to update the state in the URL
@@ -59,6 +67,7 @@ function GeneMapperState({ path }) {
     if (step === 1 && selectedAtlas && selectedModel) {
       updateQueryParams('atlas', selectedAtlas._id);
       updateQueryParams('model', selectedModel._id);
+      updateQueryParams('classifier', selectedClassifier._id);
     }
   };
 
@@ -118,20 +127,26 @@ function GeneMapperState({ path }) {
       });
       setModels(m);
     });
+
+    ClassifierService.getClassifiers().then((cl) => {
+      setClassifiers(cl)
+    })
+
   }, []);
 
   useEffect(() => {
     if (atlasId && selectedAtlas && modelId && selectedModel) {
       handleStep(1);
-    } else if (atlases && models) {
+    } else if (atlases && models && classifiers) {
       history.push({
         pathname: history.location.pathname,
         search: '',
       });
       setSelectedAtlas('');
       setSelectedModel('');
+      setSelectedClassifier('');
     }
-  }, [atlases, models]);
+  }, [atlases, models, classifiers]);
 
   return (
     <Container>
@@ -153,13 +168,17 @@ function GeneMapperState({ path }) {
               path={path}
               selectedAtlas={selectedAtlas}
               selectedModel={selectedModel}
+              selectedClassifier={selectedClassifier}
               steps={steps}
               setSelectedAtlas={handleAtlasSelection}
-              setSelectedModel={setSelectedModel}
+              setSelectedModel={handleModelSelection}
+              setSelectedClassifier={setSelectedClassifier}
               setActiveStep={handleStep}
               compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []}
+              compatibleClassifiers={selectedModel ? selectedModel.compatibleClassifiers : []}
               atlases={atlases}
               models={models}
+              classifiers={classifiers}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
               datasetIsSelected={demoDatasetIsSelected}
@@ -171,6 +190,7 @@ function GeneMapperState({ path }) {
               path={path}
               selectedAtlas={selectedAtlas}
               selectedModel={selectedModel}
+              selectedClassifier={selectedClassifier}
               setActiveStep={handleStep}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
