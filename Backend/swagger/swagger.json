@@ -86,6 +86,9 @@
           "modelId": {
             "type": "string"
           },
+          "classifierId": {
+            "type": "string"
+          },
           "teamId": {
             "type": "string"
           }
@@ -133,6 +136,9 @@
           "modelId": {
             "type": "string"
           },
+          "classifierId": {
+            "type": "string"
+          },
           "teamId": {
             "type": "string"
           },
@@ -174,6 +180,10 @@
     {
       "name": "Model",
       "description": "APIs for CRUD operations on Model"
+    },
+    {
+      "name": "Classifier",
+      "description": "APIs for CRUD operations on Classifier"
     },
     {
       "name": "Demo",
