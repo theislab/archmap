@@ -18,8 +18,10 @@ import ProjectService from 'shared/services/Project.service';
 import { uploadMultipartFile } from 'shared/services/UploadLogic';
 import { LearnMoreAtlasComponent } from 'views/References/LearnMoreAtlas';
 import { LearnMoreModelComponent } from 'views/References/LearnMoreModel';
+import { LearnMoreClassifierComponent } from 'views/References/LearnMoreClassifier';
 
 import styles from './uploadfilepage.module.css';
+import { width } from 'components/Visualization/src/constants';
 
 /**
  * @param datasetIsSelected indicates whether a demo dataset has been selected.
@@ -28,7 +30,7 @@ import styles from './uploadfilepage.module.css';
 function UploadFilePage({
   path, selectedAtlas, selectedModel, setActiveStep,
   selectedDataset, setSelectedDataset,
-  datasetIsSelected, setDatasetIsSelected,
+  datasetIsSelected, setDatasetIsSelected,selectedClassifier
 }) {
   const [uploadedFile, setUploadedFile] = useState();
   const [mappingName, setMappingName] = useState('');
@@ -36,6 +38,7 @@ function UploadFilePage({
   const [open, setOpen] = useState(false);
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
+  const [classifierInfoOpen, setClassifierInfoOpen] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useSubmissionProgress();
   const [showWarning, setShowWarning] = useState(false);
   const [showFileWarning, setShowFileWarning] = useState(false);
@@ -97,11 +100,12 @@ function UploadFilePage({
     return null; // file accepted
   };
 
-  const createProject = useCallback((projectName, atlasId, modelId, file) => {
+  const createProject = useCallback((projectName, atlasId, modelId, classifierId, file) => {
     ProjectService.createProject(
       projectName,
       atlasId,
       modelId,
+      classifierId,
       file.name,
     ).then((project) => {
       uploadMultipartFile(
@@ -127,6 +131,7 @@ function UploadFilePage({
       projectName,
       atlasId,
       modelId,
+      undefined,
       demoDataset.name,
     );
     history.push(path); // go back to GeneMapper home
@@ -141,7 +146,7 @@ function UploadFilePage({
       createDemoProject(mappingName, selectedAtlas._id, selectedModel._id,
         selectedDataset);
     } else {
-      createProject(mappingName, selectedAtlas._id, selectedModel._id,
+      createProject(mappingName, selectedAtlas._id, selectedModel._id,selectedClassifier._id,
         uploadedFile ? uploadedFile[0] : selectedDataset);
     }
   };
@@ -160,33 +165,33 @@ function UploadFilePage({
         sx={showWarning ? { marginTop: '1em' } : {}}
       >
         {/* Left side */}
-        <Box width="50%" mr="3%">
-          <Stack direction="column">
+        <Box width="60%" mr="3%">
+          <Stack direction="column" >
             <Typography variant="h5" fontWeight="bold" pb="1em">Your Choice</Typography>
             <Stack direction="row" spacing={2} sx={{ paddingBottom: '1.5em' }}>
               <Card
                 width="50%"
                 children={(
-                  <Stack direction="column">
+                  <Stack direction="column" height={180} >
                     <Typography variant="caption" fontWeight="bold">Atlas</Typography>
-                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedAtlas.name}</Typography>
+                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedAtlas.name .includes("atlas") ? selectedAtlas.name.replace("atlas", "") : selectedAtlas.name}</Typography>
                     <Typography
                       gutterBottom
                       variant="caption"
                       sx={{
-                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px',
+                        overflow: '-moz-hidden-unscrollable', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '200px',
                       }}
                     >
                       {`Modalities:  ${selectedAtlas.modalities}`}
                     </Typography>
-                    <Typography gutterBottom variant="caption">{`Cells in Reference:  ${selectedAtlas.numberOfCells}`}</Typography>
+                    <Typography  gutterBottom variant="caption">{`Cells in Reference:  ${selectedAtlas.numberOfCells}`}</Typography>
                     <Typography gutterBottom variant="caption">{`Species: ${selectedAtlas.species}`}</Typography>
                     <Button
                       size="small"
                       variant="outlined"
                       onClick={() => setAtlasInfoOpen(true)}
                       sx={{
-                        borderRadius: 100, width: '50%', ml: '50%', mt: '1em', textTransform: 'none',
+                        borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
                       }}
                     >
                       Learn more
@@ -206,7 +211,7 @@ function UploadFilePage({
               <Card
                 width="50%"
                 children={(
-                  <Stack direction="column">
+                  <Stack direction="column" height={180} >
                     <Typography variant="caption" fontWeight="bold">Model</Typography>
                     <Typography gutterBottom variant="h6" fontWeight="bold">{selectedModel.name}</Typography>
                     <Typography
@@ -228,7 +233,7 @@ function UploadFilePage({
                       variant="outlined"
                       onClick={() => setModelInfoOpen(true)}
                       sx={{
-                        borderRadius: 100, width: '50%', ml: '50%', mt: '1em', textTransform: 'none',
+                        borderRadius: 100, width: '55%',  ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
                       }}
                     >
                       Learn more
@@ -245,6 +250,52 @@ function UploadFilePage({
                   </Stack>
                 )}
               />
+              {/* classifier */}
+              { (!selectedClassifier || selectedModel==='totalVI') ? null :
+              <Card
+                width="50%"
+                children={(
+                  <Stack direction="column" height={180} >
+                    <Typography variant="caption" fontWeight="bold">Classifier</Typography>
+                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedClassifier.name}</Typography>
+                    <Typography
+                      gutterBottom
+                      variant="caption"
+                      sx={{
+                        display: 'block',
+                        textOverflow: 'ellipsis',
+                        wordWrap: 'break-word',
+                        overflow: 'hidden',
+                        maxHeight: '5.7em',
+                        lineHeight: '1.9em',
+                      }}
+                    >
+                      {selectedClassifier.description}
+                    </Typography>
+                    
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => setClassifierInfoOpen(true)}
+                      sx={{
+                        borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
+                      }}
+                    >
+                      Learn more
+                    </Button>
+                    <Modal
+                      isOpen={classifierInfoOpen}
+                      setOpen={setClassifierInfoOpen}
+                      children={(
+                        <Container>
+                          <LearnMoreClassifierComponent id={selectedClassifier._id} />
+                        </Container>
+                      )}
+                    />
+                  </Stack>
+                )}
+              />  }
+              {/* classifier */}
             </Stack>
             <Stack>
               <Typography variant="h5" fontWeight="bold" pb="1em">Consequent Requirements</Typography>
@@ -271,7 +322,7 @@ function UploadFilePage({
           </Stack>
         </Box>
         {/* Right side */}
-        <Box width="50%" ml="3%">
+        <Box width="40%" ml="3%">
           <Modal
             isOpen={open}
             setOpen={setOpen}
