@@ -6,7 +6,7 @@ import { colors } from 'shared/theme/colors';
 import RectSkeleton from "components/Skeletons/RectSkeleton"
 
 /**
- * TabCard for TabGroup Component / List of cards with select feature used in FileUpload page
+ * TabCard for TabGroup Component / List of cards with select feature
  * @param width
  * @param height
  * @param data object containing information to be displayed on the card,
@@ -17,7 +17,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
  * @param minimal makes the tabcard view minimal and shows only the most essential information
 */
 export const TabCard = ({
-  width, height, data, handleOnClick, selected, minimal, isLoading=true
+  style, width, height, data, handleOnClick, selected, minimal, isLoading=true
 }) => (
   (isLoading)? (
     <RectSkeleton width={width} height={height} sx={{borderRadius: '0.625rem', marginBottom: '0.67em'}} />
@@ -25,6 +25,7 @@ export const TabCard = ({
   <Box
     onClick={handleOnClick}
     sx={{
+      ...style,
       width: { width }, height: { height }, backgroundColor: 'white', borderRadius: '0.625rem', marginBottom: '0.67em', cursor: 'pointer',
     }}
   >
@@ -51,8 +52,7 @@ export const TabCard = ({
     >
       <Stack spacing={0} p="0.1em" pl="0.3em">
         <Typography fontSize={minimal ? "1em" : "p" }> 
-          Atlas: <Typography display="inline">{data.atlas} | </Typography>
-          Model: <Typography display="inline">{data.model}</Typography>
+          {data.text}
         </Typography>
         <Typography variant="caption" fontWeight="">
           { !minimal && data.isDemo ? `Demo dataset for ${data.atlas} & ${data.model}` : data.visibility}

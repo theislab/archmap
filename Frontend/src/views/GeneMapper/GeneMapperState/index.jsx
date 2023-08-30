@@ -1,7 +1,7 @@
 import {
   Box, Container, Step, StepButton, Stepper,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import AtlasModelChoice from '../AtlasModelChoice/AtlasModelChoice';
 import UploadFilePage from '../UploadFilePage';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -32,6 +32,10 @@ function GeneMapperState({ path }) {
   const [demoDatasets, setDemoDatasets] = useState(null);
   const steps = ['Pick Atlas and Model', 'Choose File and Project details'];
   const [atlases, setAtlases] = useState(null);
+  const [scviHubAtlases, setScviHubAtlases] = useState(null);
+  const memoizedAtlases = useMemo(() => atlases || [], [atlases]);
+  const memoizedScviHubAtlases = useMemo(() => scviHubAtlases || [], [scviHubAtlases]);
+
   const [models, setModels] = useState(null);
 
   const handleAtlasSelection = (newAtlas) => {
@@ -133,6 +137,42 @@ function GeneMapperState({ path }) {
     }
   }, [atlases, models]);
 
+  // TODO: create useEffect to call the scviHubAtlas endpoint to get all scviHubAtlases
+  // Currently, this code is mocking the service
+  // {
+  //   "name": "name",
+  //   "compatibleModels": [
+  //   "scvi, etc"]
+  //   }
+  useEffect(()=> {
+    let shubAtlases = [{
+      "name": "demo name",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+    {
+      "name": "demo name 1",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+    {
+      "name": "demo name 2",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+    {
+      "name": "demo name 3",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+    {
+      "name": "demo name 4",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+    {
+      "name": "demo name 5",
+      "compatibleModels": ["scanVI", "scVI"]
+    },
+  ]
+    setScviHubAtlases(shubAtlases)
+  })
+
   return (
     <Container>
       <Box height="100%" width="500px" margin="auto" sx={{ marginTop: '1%', marginBottom: '1%' }}>
@@ -158,7 +198,8 @@ function GeneMapperState({ path }) {
               setSelectedModel={setSelectedModel}
               setActiveStep={handleStep}
               compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []}
-              atlases={atlases}
+              atlases={memoizedAtlases}
+              scviHubAtlases={memoizedScviHubAtlases}
               models={models}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}

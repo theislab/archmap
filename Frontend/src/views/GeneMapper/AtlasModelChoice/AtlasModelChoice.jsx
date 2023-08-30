@@ -1,8 +1,12 @@
 import {
-  Grid, Typography, Stack, Alert, Box, Tooltip,Divider
+  Grid, Typography, Stack, Alert, Box, Tooltip, Divider,
+  Accordion, AccordionSummary, AccordionDetails, Button
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
+import { TabGroup } from 'components/Tab';
 import { TabCard } from 'components/GeneMapper/TabCard';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ModelCardSelect } from 'components/Cards/ModelCardSelect';
 import CustomButton from 'components/CustomButton';
 import { colors } from 'shared/theme/colors';
@@ -16,9 +20,10 @@ function AtlasModelChoice({
   setActiveStep,
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
-  compatibleModels, atlases, models,
+  compatibleModels, atlases, models, scviHubAtlases
 }) {
   const [showWarning, setShowWarning] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const history = useHistory();
 
   //for showing Skeleton when loading
@@ -36,6 +41,10 @@ function AtlasModelChoice({
     };
     loadData();
   }, []);
+
+  const handleTabChange = (newValue) => {
+    setSelectedTab(newValue);
+  };
 
   return (
     <div>
@@ -61,7 +70,7 @@ function AtlasModelChoice({
       >
         Pick an Atlas
       </Typography>
-
+      {/* Core Archmap Atlases */}
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
@@ -83,7 +92,35 @@ function AtlasModelChoice({
           ))
         }
       </Grid>
-
+      {/* SCVI Hub Atlases */}
+      <Box style={{marginTop: '32px'}}>
+        <Button 
+          style={{textTransform: 'none'}}
+          variant="text" 
+          color="primary"
+          onClick={()=>{setIsExpanded(!isExpanded)}}
+          >
+          <Typography>scVI Hub Atlases</Typography>
+          {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+        </Button>
+        {isExpanded && (
+          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            {scviHubAtlases && scviHubAtlases.map((a)=>(
+              <TabCard
+                style={{ flex: '1 0 auto', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: `Atlas: ${a.name}`,
+                }}
+                isLoading={false}
+                handleOnClick={()=>setSelectedAtlas(a)}
+                selected={selectedAtlas.name === a.name}
+            />
+        ))}
+          </Box>
+        )
+      }
+      </Box>
       <Box width="100%" display="flex">
         <Box id="Grid" width="65%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">

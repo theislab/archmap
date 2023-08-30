@@ -347,8 +347,7 @@ function UploadFilePage({
                     height="50px"
                     data={{
                       name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
-                      atlas: dataset.atlas,
-                      model: dataset.model,
+                      text: `Atlas: ${dataset.atlas} | Model: ${dataset.model}`,
                       isDemo: true,
                     }}
                     isLoading={false}
