@@ -1,6 +1,7 @@
 import {
   Grid, Typography, Stack, Alert, Box, Tooltip, Divider,
-  Accordion, AccordionSummary, AccordionDetails, Button
+  Accordion, AccordionSummary, AccordionDetails, Button,
+  Avatar
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
 import { TabGroup } from 'components/Tab';
@@ -9,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ModelCardSelect } from 'components/Cards/ModelCardSelect';
 import CustomButton from 'components/CustomButton';
+import scviLogo from 'assets/scvi-logo.svg';
 import { colors } from 'shared/theme/colors';
 import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -71,6 +73,9 @@ function AtlasModelChoice({
         Pick an Atlas
       </Typography>
       {/* Core Archmap Atlases */}
+      <Typography variant="h6" sx={{ mb: '1.5em' }}>
+        Archmap Core Atlases
+      </Typography>
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
@@ -92,34 +97,59 @@ function AtlasModelChoice({
           ))
         }
       </Grid>
+      <Box display="flex" alignItems="center" sx={{mt:'1.5em', mb:'0.5em'}}>
+        <Typography variant="h6">scVI Hub Atlases</Typography>
+        <Avatar src={scviLogo} sx={{width: 36, height: 36, marginLeft: '5px'}}/>
+      </Box>
       {/* SCVI Hub Atlases */}
-      <Box style={{marginTop: '32px'}}>
-        <Button 
-          style={{textTransform: 'none'}}
-          variant="text" 
-          color="primary"
-          onClick={()=>{setIsExpanded(!isExpanded)}}
-          >
-          <Typography>scVI Hub Atlases</Typography>
-          {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
-        </Button>
-        {isExpanded && (
-          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
-            {scviHubAtlases && scviHubAtlases.map((a)=>(
+      <Box>
+        {isExpanded ? (
+        <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+          {scviHubAtlases &&
+            scviHubAtlases.map((a) => (
               <TabCard
-                style={{ flex: '1 0 auto', minWidth: '33.33%', padding: '8px' }}
+                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
                 height="50px"
                 data={{
-                  text: `Atlas: ${a.name}`,
+                  text: a.name,
+                  isAtlas: true
                 }}
                 isLoading={false}
-                handleOnClick={()=>setSelectedAtlas(a)}
-                selected={selectedAtlas.name === a.name}
-            />
-        ))}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+        </Box>
+        ) : (
+          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            {scviHubAtlases.slice(0, 3).map((a) => (
+              <TabCard
+                key={a.name}
+                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name,
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
           </Box>
-        )
-      }
+        )}
+        <Box sx={{display: 'flex', justifyContent: 'center', pt: '1em'}}>
+          <Button 
+            style={{textTransform: 'none', padding: '0px'}}
+            variant="text" 
+            color="primary"
+            onClick={()=>{setIsExpanded(!isExpanded)}}
+            disableRipple
+            >
+            <Typography>{isExpanded ? 'Expand less' : 'Expand more'}</Typography>
+            {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+          </Button>
+        </Box>
       </Box>
       <Box width="100%" display="flex">
         <Box id="Grid" width="65%">
