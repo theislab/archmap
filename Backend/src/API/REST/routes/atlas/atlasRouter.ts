@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import AtlasService from "../../../../database/services/atlas.service";
-import SCVIAtlasService from "../../../../database/services/scviAtlas.service";
 import s3 from "../../../../util/s3";
 import { validationMdw } from "../../middleware/validation";
 
