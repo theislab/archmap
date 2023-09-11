@@ -20,4 +20,5 @@ export interface AddProjectDTO {
     status: string,
     modelId: ObjectId,
     atlasId: ObjectId,
+    model_setup_anndata_args?: string
 }

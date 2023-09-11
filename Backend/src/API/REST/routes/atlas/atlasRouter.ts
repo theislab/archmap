@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import AtlasService from "../../../../database/services/atlas.service";
+import SCVIAtlasService from "../../../../database/services/scviAtlas.service";
 import s3 from "../../../../util/s3";
 import { validationMdw } from "../../middleware/validation";
 
@@ -83,7 +84,7 @@ const get_atlas_visualization = (): Router => {
 };
 
 /**
- *  Get all available atlases.
+ *  Get all available Archmap Core atlases.
  */
 const get_allAtlases = (): Router => {
   let router = express.Router();
@@ -128,6 +129,44 @@ const get_allAtlases = (): Router => {
   });
   return router;
 };
+
+const get_scvi_atlases = (): Router => {
+  let router = express.Router();
+
+  router.get("/scvi-atlases", async(req: any, res) => {
+    try{
+      // Endpoint to get all scvi atlases
+      const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/scvi-atlases";
+      const atlases = (await axios.get(endpoint)).data;
+
+      console.log(atlases);
+      
+      const atlasMap = new Map();
+
+      for (const item of atlases) {
+        const atlas = item.atlas;
+        const model = item.model;
+
+        if (atlasMap.has(atlas)) {
+          atlasMap.get(atlas).model.push(model);
+        } else {
+          atlasMap.set(atlas, { id: item.id, atlas, model: [model], scviAtlas: true});
+        }
+      }
+
+      // Convert the map values to an array
+      const atlasArr = Array.from(atlasMap.values());
+
+      return res.status(200).json(atlasArr);
+    }catch(err){
+      console.error("Error accessing the atlases");
+      console.error(JSON.stringify(err));
+      console.error(err);
+      return res.status(500).send("Unable to access the SCVI atlases.");
+    }
+  });
+  return router;
+}
 
 // upload atlas by url or file
 const upload_atlas = (): Router => {
@@ -339,4 +378,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas };
+export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases };
