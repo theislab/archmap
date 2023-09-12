@@ -48,3 +48,4 @@ Links To The Detailed Information Pages
 
    index.rst
    visualization/index.rst
+   beta_feature/index.rst
