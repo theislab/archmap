@@ -47,8 +47,5 @@ Steps to upload atlases to the archmap:
 
 8. Once the atlas is uploaded, you can see the atlas in the list of atlases uploaded.
 
-   image here.
-
-9. To delete the atlas, select the atlas from the search option. Click on Learn more. You will be able to edit or delete the atlas from here if you are the owner of the atlas.
-
-   image here.
+   .. image:: ../_static/beta_feature/uploaded_atlas.png
+      :alt: uploaded atlas
