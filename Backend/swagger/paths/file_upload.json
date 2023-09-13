@@ -88,9 +88,15 @@
                 },
                 "atlasId": {
                   "type": "string"
+                },
+                "scviHubId": {
+                  "type": "string"
+                },
+                "model_setup_anndata_args": {
+                  "type": "object"
                 }
               },
-              "required": ["fileName", "modelId", "atlasId", "projectName"],
+              "required": ["fileName", "projectName"],
               "additionalProperties": false
             }
           }
