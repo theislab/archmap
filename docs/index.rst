@@ -1,17 +1,16 @@
-Genecruncher Documentation
-============================
+.. include:: README.rst
 
-Genecruncher helps you visualize all of your single-cell sequencing data in a fast and easy way using neural networks.
-The neural networking is done using the scArches package. More information about scArches can be found `here <https://scarches.readthedocs.io/en/latest/>`_.
+Welcome to Archmap's documentation!
+===================================
 
 First steps
 ---------
 
-First login or sign up using your academic affiliation.
+First login or sign up using your academic affiliation. You can also do a mapping without logging in.
 
 .. image:: _static/homepage.png
 
-Under the Gene Mapper all of your mappings are displayed. Click on the plus button to create a new one.
+Click on the plus button to create a new one.
 
 .. image:: _static/mappings_dashboard.png
 
@@ -39,12 +38,17 @@ Here the mapping in the center can be moved and resized via mouse move and scrol
 
 .. image:: _static/visualizer.png
 
+.. note::
+
+   This project is under active development.
+
 
 Links To The Detailed Information Pages
 ---------
 
-.. toctree::
-   :maxdepth: 1
 
-   index.rst
+.. toctree::
+
+   Home <self>
    visualization/index.rst
+   beta_feature/index.rst

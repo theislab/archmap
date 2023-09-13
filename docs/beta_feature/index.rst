@@ -1,7 +1,7 @@
-Special Features
+Beta Features
 ===================
 
-The following special features are available to beta users now:
+The following beta features are available to beta users now:
 
 For Atlas Uploaders
 -------------------
