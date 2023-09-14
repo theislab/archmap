@@ -21,7 +21,7 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import { query_path, result_model_path, result_path } from "./bucket_filepaths";
 
-const MAX_EPOCH_QUERY = 2;
+const MAX_EPOCH_QUERY = 1;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
@@ -51,7 +51,7 @@ export default function upload_complete_upload_route() {
         let data;
         try {
           data = await s3.completeMultipartUpload(params).promise();
-          console.log("data from completeMultipart ", data)
+          console.log("data from completeMultipart ", data);
         } catch (err: any) {
           console.error(err, err.stack || "Error when completing multipart upload");
           return res.status(500).send(err);
@@ -64,7 +64,7 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
-          console.log("request inside complete upload is ", request)
+          console.log("request inside complete upload is ", request);
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
@@ -80,8 +80,8 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectById(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              try_delete_object_from_s3(query_path(project._id))
-              console.log("Deleteing the file from s3 with path ", query_path(project._id))
+              try_delete_object_from_s3(query_path(project._id));
+              console.log("Deleteing the file from s3 with path ", query_path(project._id));
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
 
@@ -108,14 +108,14 @@ export default function upload_complete_upload_route() {
             //   "async": false
             //   }
 
-            let queryInfo
-            if(model.name == "scVI" ){
+            let queryInfo;
+            if (model.name == "scVI") {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
                 output_type: {
-                    csv: false,
-                    cxg: true
+                  csv: false,
+                  cxg: true,
                 },
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
@@ -128,14 +128,13 @@ export default function upload_complete_upload_route() {
                 scvi_max_epochs_query: 1, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-            }else {
-
+            } else {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
                 output_type: {
-                    csv: false,
-                    cxg: true
+                  csv: false,
+                  cxg: true,
                 },
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
@@ -148,7 +147,6 @@ export default function upload_complete_upload_route() {
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-
             }
             console.log("sending: ");
             console.log(queryInfo);
@@ -161,7 +159,8 @@ export default function upload_complete_upload_route() {
             let result;
 
             // call liveness for debugging
-            try { // this leads to ECONNRESET
+            try {
+              // this leads to ECONNRESET
               const liveness_url = `${process.env.CLOUD_RUN_URL}/liveness`;
               result = await client.request({
                 url: liveness_url,
@@ -174,11 +173,12 @@ export default function upload_complete_upload_route() {
               result = null;
             }
 
-            try { // this leads to ECONNRESET
+            try {
+              // this leads to ECONNRESET
               result = await client.request({
                 url,
                 method: "POST",
-                timeout: 60*60*1000, // 60 min timeout
+                timeout: 60 * 60 * 1000, // 60 min timeout
                 body: JSON.stringify(queryInfo),
               });
             } catch (e) {
@@ -186,12 +186,12 @@ export default function upload_complete_upload_route() {
               console.log(e);
               result = null;
             }
-            console.log('Result object', result);
+            console.log("Result object", result);
             if (!result || result.status != 200) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              console.log("Status updated to failed")
+              console.log("Status updated to failed");
               try_delete_object_from_s3(query_path(project.id));
               return;
             }
@@ -207,7 +207,7 @@ export default function upload_complete_upload_route() {
               let content: Buffer = await new Promise((resolve, reject) => {
                 fs.readFile(
                   path.join(__dirname, "../../../../../dev/test_file1.csv"),
-                  function(err, data) {
+                  function (err, data) {
                     if (err) reject(err);
                     else resolve(data);
                   }
@@ -239,18 +239,18 @@ export default function upload_complete_upload_route() {
             }
           } else {
             const updateStatus: UpdateProjectDTO = { status: ProjectStatus.PROCESSING_FAILED };
-            console.log("Status updated to failed")
+            console.log("Status updated to failed");
             await ProjectService.updateProjectByUploadId(params.UploadId, updateStatus);
-            console.log("Status updated to failed")
+            console.log("Status updated to failed");
             try_delete_object_from_s3(query_path(project._id));
-            console.log("Deleting the file from s3 with path ", query_path(project._id) )
+            console.log("Deleting the file from s3 with path ", query_path(project._id));
             return res.status(500).send("Processing failed!");
           }
         } catch (err) {
           console.log(err);
           try {
             res.status(500).send(`Error persisting Multipart-Upload object data: ${err}`);
-          } catch { }
+          } catch {}
         }
       } catch (err) {
         console.log(err);
