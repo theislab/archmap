@@ -97,6 +97,8 @@ import { contact_us } from "./routes/contact/contactRoute";
 import { get_allDemos } from "./routes/demo/demoRouter";
 import { change_permission } from "./routes/admin/adminRouter";
 
+import { exec_task_queues } from "./routes/taskQueuesRouter"
+
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {
   let router = express.Router();
@@ -192,6 +194,9 @@ export function express_routes(): Router {
   router.use(upload_get_upload_url_route());
   router.use(upload_start_upload_route());
   router.use(upload_complete_upload_route());
+
+  //executing the task queues
+  router.use(exec_task_queues())
 
   // download routes
   router.use(download_results_route());
