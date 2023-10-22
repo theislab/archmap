@@ -11,10 +11,9 @@
               "type": "object",
               "properties": {
                 "queryInfo": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
+                  "type": "object",
+                  "properties": {}, 
+                  "additionalProperties": true
                 }
               },
               "required": ["queryInfo"],
