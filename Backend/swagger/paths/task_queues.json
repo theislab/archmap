@@ -1,0 +1,28 @@
+{
+ "/api/taskqueues": {
+    "post": {
+        "summary": "exec task queues",
+        "tags": ["TaskQueues"],
+        "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "queryInfo": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              },
+              "required": ["queryInfo"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
