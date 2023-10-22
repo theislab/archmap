@@ -339,4 +339,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, exec_queue_tasks };
+export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas };
