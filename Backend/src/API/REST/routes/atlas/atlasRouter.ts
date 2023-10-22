@@ -4,7 +4,6 @@ import s3 from "../../../../util/s3";
 import { validationMdw } from "../../middleware/validation";
 
 import { Storage } from "@google-cloud/storage";
-import { CloudTasksClient, protos } from "@google-cloud/tasks"
 
 import multer from "multer";
 
@@ -18,8 +17,6 @@ import { upload_permission_auth } from "../../middleware/check_institution_auth"
 
 
 const uploadDirectory = "/tmp/"; // for gcp 
-
-const client = new CloudTasksClient();
 
 
 if(!fs.existsSync(uploadDirectory)){
@@ -311,81 +308,6 @@ export const deleteAtlasById = async (atlasId) => {
   return false;
 };
 
-const testing_queue_tasks = (): Router => {
-
-  let router = express.Router();
-  router.get("/api/testq",  validationMdw, async (req: any, res) => {
-
-    async function createHttpTask() {
-      const project = 'my-project-id';
-      const queue = 'gcp-test-queue';
-      const location = 'europe-west3';
-      const url = process.env.CLOUD_RUN_URL
-      const query_to_send = {
-        
-        "model": "scANVI",
-        "atlas": "NSCLC",
-        "output_path": "test_output/nsclc_scanvi_postman",
-        "output_type": {
-            "csv": false,
-            "cxg": true
-        },
-        "model_path": "model.pt",
-        "pre_trained_scANVI": true,
-        "reference_data": "atlas/646ddfb9fd46b85aafce28cc/data.h5ad",
-        "query_data": "query_test_data/nsclc_scanvi.h5ad",
-        "ref_path": "model.pt",
-        "scanvi_max_epochs_query": 5
-      }
-
-      const payload = query_to_send;
-      
-
-      
-      
-      
-
-      // Construct the fully qualified queue name.
-      const parent = client.queuePath(project, location, queue);
-
-      const task = {
-        httpRequest: {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          httpMethod: 'POST',
-          url,
-          body: '' // or null
-        },
-      };
-
-      if(payload){
-        task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString('base64');
-      }
-      console.log('Sending task:');
-      console.log(task);
-      const request = {parent: parent, task: task};
-
-      //FIX THE CODE HERE
-      // const [response] = await client.createTask(request);
-      // console.log(`Created task ${response.name}`);
-      
-
-    }
-    
-    await createHttpTask();
-
-  
-  })
-
-    
-  
-  return router;
-}
-
-
-
-
 
 const delete_atlas = (): Router => {
   let router = express.Router();
@@ -417,4 +339,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas };
+export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, exec_queue_tasks };
