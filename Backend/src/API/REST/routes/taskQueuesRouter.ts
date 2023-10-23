@@ -15,23 +15,23 @@ const exec_task_queues = (): Router => {
         const url = process.env.CLOUD_RUN_URL;
         let { queryInfo } = req.body;
 
-        //   const query_to_send = {
-        //     "model": "scANVI",
-        //     "atlas": "NSCLC",
-        //     "output_path": "test_output/nsclc_scanvi_postman",
-        //     "output_type": {
-        //         "csv": false,
-        //         "cxg": true
-        //     },
-        //     "model_path": "model.pt",
-        //     "pre_trained_scANVI": true,
-        //     "reference_data": "atlas/646ddfb9fd46b85aafce28cc/data.h5ad",
-        //     "query_data": "query_test_data/nsclc_scanvi.h5ad",
-        //     "ref_path": "model.pt",
-        //     "scanvi_max_epochs_query": 5
-        //   }
+          const query_to_send = {
+            "model": "scANVI",
+            "atlas": "NSCLC",
+            "output_path": "test_output/nsclc_scanvi_postman",
+            "output_type": {
+                "csv": false,
+                "cxg": true
+            },
+            "model_path": "model.pt",
+            "pre_trained_scANVI": true,
+            "reference_data": "atlas/646ddfb9fd46b85aafce28cc/data.h5ad",
+            "query_data": "query_test_data/nsclc_scanvi.h5ad",
+            "ref_path": "model.pt",
+            "scanvi_max_epochs_query": 5
+          }
 
-        const payload = queryInfo;
+        const payload = query_to_send;
         // Construct the fully qualified queue name.
         const parent = client.queuePath(project, location, queue);
 
