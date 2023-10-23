@@ -9,11 +9,11 @@ const exec_task_queues = (): Router => {
   let router = express.Router();
   router.post("/api/taskqueues",  validationMdw, async (req: any, res) => {
     try {  
-        const project = "custom-helix-329116";
-        const queue = 'gcp-test-queue';
+        const project = process.env.GCP_PROJECT_ID;
+        const queue = process.env.TASK_QUEUE_NAME;
         const location = 'europe-west3';
         const url = `${process.env.CLOUD_RUN_URL}/query`;
-        const serviceAccountEmail = "app-engine-task-queue@custom-helix-329116.iam.gserviceaccount.com"
+        const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID
         
 
         const tasks = new CloudTasksClient({
