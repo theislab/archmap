@@ -12,7 +12,7 @@ const exec_task_queues = (): Router => {
         const project = "custom-helix-329116";
         const queue = 'gcp-test-queue';
         const location = 'europe-west3';
-        const url = process.env.CLOUD_RUN_URL;
+        const url = `${process.env.CLOUD_RUN_URL}/query`;
         const serviceAccountEmail = "app-engine-task-queue@custom-helix-329116.iam.gserviceaccount.com"
         
 
