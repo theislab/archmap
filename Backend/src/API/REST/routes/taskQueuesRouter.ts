@@ -13,7 +13,8 @@ const exec_task_queues = (): Router => {
         const queue = 'gcp-test-queue';
         const location = 'europe-west3';
         const url = process.env.CLOUD_RUN_URL;
-        let { queryInfo } = req.body;
+        const serviceAccountEmail = "app-engine-task-queue@custom-helix-329116.iam.gserviceaccount.com"
+        // let { queryInfo } = req.body;
 
           const query_to_send = {
             "model": "scANVI",
@@ -37,12 +38,15 @@ const exec_task_queues = (): Router => {
 
         const task = {
             httpRequest: {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            httpMethod: 'POST' as const,
-            url,
-            body: '' // or null
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              httpMethod: 'POST' as const,
+              url,
+              body: '', // or null
+              oidcToken: {
+                  serviceAccountEmail,
+              },
             },
         };
 
