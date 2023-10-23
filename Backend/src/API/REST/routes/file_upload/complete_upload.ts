@@ -222,7 +222,7 @@ export default function upload_complete_upload_route() {
             //FIX THE CODE HERE
             const [response] = await tasks.createTask(request, call_options);
             console.log(`Created task ${response.name}`);
-            if (!response || response.name != undefined) {
+            if (!response  || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
