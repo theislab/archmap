@@ -46,13 +46,6 @@ const exec_task_queues = (): Router => {
         // Construct the fully qualified queue name.
         const parent = tasks.queuePath(project, location, queue);
 
-        const [tasks_in_queue] = await tasks.listTasks({parent: parent});
-        const names = tasks_in_queue.map((t) => t.name)
-        console.log(
-          `${tasks_in_queue.length} tasks in queue ${queue} in location ${location} in project ${project}`,
-            names
-        )
-
         const task = {
             httpRequest: {
               headers: {
@@ -77,6 +70,14 @@ const exec_task_queues = (): Router => {
         //FIX THE CODE HERE
         const [response] = await tasks.createTask(request);
         console.log(`Created task ${response.name}`);
+
+        // const [tasks_in_queue] = await tasks.listTasks({parent: parent});
+        // const names = tasks_in_queue.map((t) => t.name)
+        // console.log(
+        //   `${tasks_in_queue.length} tasks in queue ${queue} in location ${location} in project ${project}`,
+        //     names
+        // )
+
         res.status(200).send({ message: `Task ${response.name} created successfully` });
         
     } catch (error) {
