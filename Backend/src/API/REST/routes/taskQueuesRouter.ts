@@ -22,6 +22,7 @@ const exec_task_queues = (): Router => {
             client_email: process.env.TASK_QUEUE_EMAIL_ID,
             private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
           },
+          fallback: true,
         })
 
         // let { queryInfo } = req.body;
@@ -63,12 +64,16 @@ const exec_task_queues = (): Router => {
         if(payload){
             task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString('base64');
         }
+        const call_options = {
+          // 60 minutes in millis
+          timeout:  60 * 60 * 1000, 
+        }
         console.log('Sending task:');
         console.log(task);
         const request = {parent: parent, task: task};
 
         //FIX THE CODE HERE
-        const [response] = await tasks.createTask(request);
+        const [response] = await tasks.createTask(request, call_options);
         console.log(`Created task ${response.name}`);
 
         // const [tasks_in_queue] = await tasks.listTasks({parent: parent});
