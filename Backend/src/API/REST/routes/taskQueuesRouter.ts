@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import { validationMdw } from "../middleware/validation";
 import { CloudTasksClient, protos } from "@google-cloud/tasks"
 
-const client = new CloudTasksClient();
+
 
 const exec_task_queues = (): Router => {
 
@@ -14,6 +14,16 @@ const exec_task_queues = (): Router => {
         const location = 'europe-west3';
         const url = process.env.CLOUD_RUN_URL;
         const serviceAccountEmail = "app-engine-task-queue@custom-helix-329116.iam.gserviceaccount.com"
+        
+
+        const tasks = new CloudTasksClient({
+          projectId: project,
+          credentials: {
+            client_email: process.env.TASK_QUEUE_EMAIL_ID,
+            private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
+          },
+        })
+
         // let { queryInfo } = req.body;
 
           const query_to_send = {
@@ -34,7 +44,14 @@ const exec_task_queues = (): Router => {
 
         const payload = query_to_send;
         // Construct the fully qualified queue name.
-        const parent = client.queuePath(project, location, queue);
+        const parent = tasks.queuePath(project, location, queue);
+
+        const [tasks_in_queue] = await tasks.listTasks({parent: parent});
+        const names = tasks_in_queue.map((t) => t.name)
+        console.log(
+          `${tasks_in_queue.length} tasks in queue ${queue} in location ${location} in project ${project}`,
+            names
+        )
 
         const task = {
             httpRequest: {
@@ -58,7 +75,7 @@ const exec_task_queues = (): Router => {
         const request = {parent: parent, task: task};
 
         //FIX THE CODE HERE
-        const [response] = await client.createTask(request);
+        const [response] = await tasks.createTask(request);
         console.log(`Created task ${response.name}`);
         res.status(200).send({ message: `Task ${response.name} created successfully` });
         
