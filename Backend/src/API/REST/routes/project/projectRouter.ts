@@ -146,13 +146,49 @@ const get_users_projects = (): Router => {
   return router;
 };
 
+
+const sanitizeErrorMessage = (errorMessage: string) => {
+  const MAX_ERROR_MESSAGE_LENGTH = 255; // Maximum length for error message
+  if (typeof errorMessage === 'string') {
+    let sanitizedMessage = errorMessage.replace(/[\r\n]+/gm, ' ')
+                                       .replace(/(?:\w+:)?\/\/[^\s]+/g, '[URL]')
+                                       .replace(/(?:path|file|directory):['"]?[^\s'"]+['"]?/gi, '[PATH]')
+                                       .trim();
+
+    // Truncate message if it's longer than the max length
+    if (sanitizedMessage.length > MAX_ERROR_MESSAGE_LENGTH) {
+      sanitizedMessage = sanitizedMessage.substring(0, MAX_ERROR_MESSAGE_LENGTH) + '...';
+    }
+    return sanitizedMessage;
+  }
+  return 'An error occurred.';
+};
+
 const update_project_results = (): Router => {
   let router = express.Router();
   router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {
     try {
       const updateToken = req.params.token;
+      // get body from request
+      let body = req.body;
+      let conditionForFailure = body.hasOwnProperty("error") ;
+
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
+
+      if (!project) return res.status(404).send("Project not found");
+      if (project.status === ProjectStatus.DONE) return res.status(200).send("OK");
+
+      if (conditionForFailure) {
+        const updateStatusAndErrorMessage : UpdateProjectDTO = {
+          status: ProjectStatus.PROCESSING_FAILED,
+          errorMessage: sanitizeErrorMessage(body.error),
+        };
+        await ProjectService.updateProjectById(project._id, updateStatusAndErrorMessage);
+        try_delete_object_from_s3(query_path(project.id));
+        return res.status(200).send("OK");
+      }
+
       if (project.status === ProjectStatus.PROCESSING_PENDING) {
         let params: any = {
           Bucket: process.env.S3_BUCKET_NAME!,
