@@ -142,14 +142,16 @@ const get_scvi_atlases = (): Router => {
       
       const atlasMap = new Map();
 
-      for (const item of atlases) {
-        const atlas = item.atlas;
-        const model = item.model;
+      for (const item of atlases) { 
+        const atlas = item.atlasName.replace(/[-_]/g, " ");
+        const model = item.modelName;
+        const id = item.scviHubId;
 
         if (atlasMap.has(atlas)) {
-          atlasMap.get(atlas).model.push(model);
+          atlasMap.get(atlas).modelIds.push({model: model, scviHubId: id});
+          atlasMap.get(atlas).compatibleModels.push(model);
         } else {
-          atlasMap.set(atlas, { id: item.id, atlas, model: [model], scviAtlas: true});
+          atlasMap.set(atlas, {name: atlas, modelIds: [{model, scviHubId: id}], compatibleModels: [model] , scviAtlas: true});
         }
       }
 
