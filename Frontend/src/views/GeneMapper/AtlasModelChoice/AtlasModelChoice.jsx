@@ -1,51 +1,51 @@
 import {
-  Grid, Typography, Stack, Alert, Box, Tooltip,
+  Grid, Typography, Stack, Alert, Box, Tooltip, Divider,
+  Accordion, AccordionSummary, AccordionDetails, Button,
+  Avatar
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
+import { TabGroup } from 'components/Tab';
 import { TabCard } from 'components/GeneMapper/TabCard';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ModelCardSelect } from 'components/Cards/ModelCardSelect';
 import CustomButton from 'components/CustomButton';
+import scviLogo from 'assets/scvi-logo.svg';
 import { colors } from 'shared/theme/colors';
 import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Clear from '@mui/icons-material/Clear';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import styles from '../UploadFilePage/uploadfilepage.module.css';
 
 function AtlasModelChoice({
   setActiveStep,
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
-  compatibleModels, atlases, models,
-  selectedDataset, setSelectedDataset,
-  datasetIsSelected, setDatasetIsSelected,
-  demos,
+  compatibleModels, atlases, models, scviHubAtlases
 }) {
   const [showWarning, setShowWarning] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const history = useHistory();
 
-  /* Handling the choice of the demo dataset */
-  const handleDemoClick = (dataset) => {
-    // only set selected dataset if not already selected or null
-    if (!selectedDataset || selectedDataset._id !== dataset._id) {
-      setSelectedDataset(dataset);
-      setDatasetIsSelected(true);
-      // find the objects corresponding to the atlas and model in the array
-      const atlasObj = atlases.filter(
-        (a) => a.name.toLowerCase() === dataset.atlas.toLowerCase(),
-      )[0];
-      const modelObj = models.filter(
-        (m) => m.name.toLowerCase() === dataset.model.toLowerCase(),
-      )[0];
+  //for showing Skeleton when loading
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Simulate data loading delay
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        setIsError(true);
+      }
+    };
+    loadData();
+  }, []);
 
-      setSelectedAtlas(atlasObj);
-      setSelectedModel(modelObj);
-    } else {
-      setDatasetIsSelected(false);
-      setSelectedDataset(null);
-      // deselect the atlas and model
-      setSelectedAtlas({});
-      setSelectedModel({});
-    }
+  const handleTabChange = (newValue) => {
+    setSelectedTab(newValue);
   };
 
   return (
@@ -56,6 +56,12 @@ function AtlasModelChoice({
             Select an Atlas and a fitting Model before continuing
           </Alert>
         )}
+      <Stack
+        direction="column"
+        divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
+        sx={{ gap: '1.5rem' }}
+      >
+      <Box>
       <Typography
         variant="h5"
         sx={{
@@ -66,7 +72,10 @@ function AtlasModelChoice({
       >
         Pick an Atlas
       </Typography>
-
+      {/* Core Archmap Atlases */}
+      <Typography variant="h6" sx={{ mb: '1.5em' }}>
+        Archmap Core Atlases
+      </Typography>
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
@@ -82,12 +91,66 @@ function AtlasModelChoice({
                 selected={selectedAtlas.name === a.name}
                 onSelect={setSelectedAtlas}
                 atlasObject={a}
+                isLoading={isLoading}
               />
             </Grid>
           ))
         }
       </Grid>
-
+      <Box display="flex" alignItems="center" sx={{mt:'1.5em', mb:'0.5em'}}>
+        <Typography variant="h6">scVI Hub Atlases</Typography>
+        <Avatar src={scviLogo} sx={{width: 36, height: 36, marginLeft: '5px'}}/>
+      </Box>
+      {/* SCVI Hub Atlases */}
+      <Box>
+        {isExpanded ? (
+        <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+          {scviHubAtlases &&
+            scviHubAtlases.map((a) => (
+              <TabCard
+                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name,
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+        </Box>
+        ) : (
+          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            {scviHubAtlases.slice(0, 3).map((a) => (
+              <TabCard
+                key={a.name}
+                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name,
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+          </Box>
+        )}
+        <Box sx={{display: 'flex', justifyContent: 'center', pt: '1em'}}>
+          <Button 
+            style={{textTransform: 'none', padding: '0px'}}
+            variant="text" 
+            color="primary"
+            onClick={()=>{setIsExpanded(!isExpanded)}}
+            disableRipple
+            >
+            <Typography>{isExpanded ? 'Expand less' : 'Expand more'}</Typography>
+            {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+          </Button>
+        </Box>
+      </Box>
       <Box width="100%" display="flex">
         <Box id="Grid" width="65%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
@@ -109,37 +172,17 @@ function AtlasModelChoice({
                     disabled={!compatibleModels
                       || !compatibleModels.map(
                         (m) => m.toLowerCase()
-                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} />
+                      ).includes(m.name.toLowerCase()) || compatibleModels.length === 0} 
+                      isLoading={isLoading}
+                      />
                 </Grid>
               ))
             }
           </Grid>
-        </Box>
-        <Box sx={{width: '35%', display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
-          {/* Demo datasets */}
-          <Box sx={{ width: '100%', marginBottom: "1.5em" }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }} marginTop="32px">
-              Or try out one of the demos
-            </Typography>
           </Box>
-          {/* Loop over demo datasets */}
-            {demos && demos.map((dataset) => (
-                <TabCard
-                  width="97%"
-                  data={{
-                    name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
-                    atlas: dataset.atlas,
-                    model: dataset.model,
-                    isDemo: true,
-                  }}
-                  minimal
-                  handleOnClick={() => handleDemoClick(dataset)}
-                  selected={datasetIsSelected && dataset._id === selectedDataset._id}
-                />
-            ))}
         </Box>
-      </Box>
-
+        </Box>
+      </Stack>
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
