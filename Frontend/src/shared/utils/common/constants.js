@@ -5,7 +5,7 @@ const DEV_BACKEND_ADDRESS =
 const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
 const PRODUCTION_BACKEND_ADDRESS =
   "https://custom-helix-329116.ey.r.appspot.com/v1";
-export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
+export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS;
 
 // const names for indexed DB variables
 export const INDEXED_DB_NAME = "indexedDB-archmap-projects";

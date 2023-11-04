@@ -26,7 +26,7 @@ import upload_user_avatar_route from "./routes/upload_user_avatar";
 
 import { get_teams_of_user, get_users, get_user_by_id, delete_temp_users } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
-import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases } from "./routes/atlas/atlasRouter";
+import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas } from "./routes/atlas/atlasRouter";
 import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -181,7 +181,6 @@ export function express_routes(): Router {
   router.use(upload_atlas())
   router.use(edit_atlas());
   router.use(delete_atlas());
-  router.use(get_scvi_atlases());
 
   // demo routes
   router.use(get_allDemos());

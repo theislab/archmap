@@ -9,7 +9,6 @@ import { Modal } from "components/Modal"
 import { LearnMoreAtlasComponent } from "views/References/LearnMoreAtlas"
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
 import AtlasInfo from "components/GeneMapper/AtlasInfo"
-import RectSkeleton from "components/Skeletons/RectSkeleton"
 
 /**
  * Atlas Card 
@@ -26,7 +25,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
 export default function AtlasCardSelect({
   width = "100%", height = "100%", title, imgLink, modalities,
   cellsInReference, species, mapLink, learnMoreLink, selected=false, 
-  onSelect, atlasObject={},isLoading=true
+  onSelect, atlasObject={}
 }) {
 
   //check if the mouse is hovering above the card
@@ -42,28 +41,12 @@ export default function AtlasCardSelect({
   const boxRef = useRef()
   const history = useHistory();
 
-  //skleton image
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  useEffect(() => {
-    const image = new Image();
-    image.src = imgLink;
-    image.onload = () => {
-      setIsImageLoaded(true);
-    };
-    image.onerror = () => {
-      setIsImageLoaded(true);
-    };
-  }, [imgLink]);
-
   useEffect(() => {
     //each time the card is rerendered, check if the card is flat or not
-    if (isImageLoaded && boxRef.current.clientWidth > boxRef.current.clientHeight) setFlat(true)
+    if (boxRef.current.clientWidth > boxRef.current.clientHeight) setFlat(true)
   }, [])
 
   return (
-    (!isImageLoaded || isLoading)? (
-      <RectSkeleton width={width} height={height} sx={{borderRadius: "1.2rem"}} />
-    ) :
     <Box
       sx={{
         width, height

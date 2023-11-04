@@ -31,6 +31,8 @@ export default function upload_complete_upload_route() {
     check_auth(),
     async (req: ExtRequest, res) => {
       let { parts, uploadId } = req.body;
+      console.log("Complete upload request");
+      console.log("req.body is ", req.body);
       if (!process.env.S3_BUCKET_NAME)
         return res.status(500).send("Server was not set up correctly");
 
@@ -62,6 +64,7 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
+          console.log("request inside complete upload is ", request);
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
@@ -69,17 +72,11 @@ export default function upload_complete_upload_route() {
           };
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
           if (process.env.CLOUD_RUN_URL) {
-            let model, atlas;
-            // Archmap core atlases
-            if(project.modelId && project.atlasId){
-              [model, atlas] = await Promise.all([
-                ModelService.getModelById(project.modelId),
-                AtlasService.getAtlasById(project.atlasId),
-              ]); 
-            }
-            
-            // If there is no model and atlas chosen for the core atlases, or no scviHub combination chosen. 
-            if (!(model && atlas) || !(project.scviHubId && project.model_setup_anndata_args)) { 
+            let [model, atlas] = await Promise.all([
+              ModelService.getModelById(project.modelId),
+              AtlasService.getAtlasById(project.atlasId),
+            ]);
+            if (!model || !atlas) {
               await ProjectService.updateProjectById(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
@@ -93,8 +90,26 @@ export default function upload_complete_upload_route() {
               _projectId: project._id,
             });
 
+            // {
+            //   "model": "scANVI",
+            //   "atlas": "Glioblastoma",
+            //   "output_path": "test_output/GB_scANVI",
+            //   "output_type": {
+            //   "csv": false,
+            //   "cxg": true
+            //   },
+            //   "model_path": "model.pt",
+            //   "pre_trained_scANVI": true,
+            //   "reference_data": "atlas/626ea3311d7d1a27de465b64/data.h5ad",
+            //   "query_data": "query_test_data/pbmc_10k_v3.rds",
+            //   "ref_path": "model.pt",
+            //   "scanvi_max_epochs_query": 2,
+            //   "cell_type_key": "cell_type_key",
+            //   "async": false
+            //   }
+
             let queryInfo;
-            if(model && model.name === "scVI" ){ // QueryInfo for the scVI model
+            if (model.name == "scVI") {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
@@ -113,43 +128,26 @@ export default function upload_complete_upload_route() {
                 scvi_max_epochs_query: 1, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-            }else {
-              if(model && model.name === "scANVI"){ // QueryInfo for the scANVI model
-                queryInfo = {
-                  model: model.name,
-                  atlas: atlas.name,
-                  output_type: {
-                      csv: false,
-                      cxg: true
-                  },
-                  query_data: query_path(project.id),
-                  output_path: result_path(project.id),
-                  model_path: result_model_path(project.id),
-                  reference_data: `atlas/${project.atlasId}/data.h5ad`,
-                  pre_trained_scANVI: true,
-                  ref_path: "model.pt",
-                  //ref_path: `models/${project.modelId}/model.pt`,
-                  async: false,
-                  scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
-                  webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
-                };
-              }
-              if(project.scviHubId && project.model_setup_anndata_args){ // Query info for scvi hub atlas
-                queryInfo = {
-                  scviHubId: project.scviHubId,
-                  model_setup_anndata_args: project.model_setup_anndata_args,
-                  output_type: {
-                      csv: false,
-                      cxg: true
-                  },
-                  query_data: query_path(project.id),
-                  output_path: result_path(project.id),
-                  async: false,
-                  webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
-                };
-              }
+            } else {
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+                output_type: {
+                  csv: false,
+                  cxg: true,
+                },
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                model_path: result_model_path(project.id),
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                pre_trained_scANVI: true,
+                ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+              };
             }
-
             console.log("sending: ");
             console.log(queryInfo);
             const url = `${process.env.CLOUD_RUN_URL}/query`;
@@ -159,8 +157,24 @@ export default function upload_complete_upload_route() {
             res.status(200).send("Processing started");
             //Processing is synchronous, response is sent by ML only after the result is produced, might take some time
             let result;
-            
+
+            // call liveness for debugging
             try {
+              // this leads to ECONNRESET
+              const liveness_url = `${process.env.CLOUD_RUN_URL}/liveness`;
+              result = await client.request({
+                url: liveness_url,
+                method: "GET",
+              });
+              console.log(result);
+            } catch (e) {
+              console.log("Could not send a ping to the processing container.");
+              console.log(e);
+              result = null;
+            }
+
+            try {
+              // this leads to ECONNRESET
               result = await client.request({
                 url,
                 method: "POST",
