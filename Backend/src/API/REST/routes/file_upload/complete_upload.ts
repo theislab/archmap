@@ -5,6 +5,7 @@ import {
   PutObjectRequest,
 } from "aws-sdk/clients/s3";
 import { AWSError, S3 } from "aws-sdk";
+import { CloudTasksClient, protos } from "@google-cloud/tasks"
 
 import check_auth from "../../middleware/check_auth";
 import { ExtRequest } from "../../../../definitions/ext_request";
@@ -173,25 +174,59 @@ export default function upload_complete_upload_route() {
               result = null;
             }
 
-            try {
-              // this leads to ECONNRESET
-              result = await client.request({
+            // Creating a queue task
+            const project_id_gcp = process.env.GCP_PROJECT_ID;
+            const queue = process.env.TASK_QUEUE_NAME;
+            const location = 'europe-west3';
+            const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID
+
+
+            const tasks = new CloudTasksClient({
+              projectId: project_id_gcp,
+              credentials: {
+                client_email: process.env.TASK_QUEUE_EMAIL_ID,
+                private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
+              },
+              fallback: true,
+            })
+
+            const payload = queryInfo;
+            // Construct the fully qualified queue name.
+            const parent = tasks.queuePath(project_id_gcp, location, queue);
+
+            const task = {
+              httpRequest: {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                httpMethod: 'POST' as const,
                 url,
-                method: "POST",
-                timeout: 60 * 60 * 1000, // 60 min timeout
-                body: JSON.stringify(queryInfo),
-              });
-            } catch (e) {
-              console.log("Processing failed:");
-              console.log(e);
-              result = null;
+                body: '', // or null
+                oidcToken: {
+                  serviceAccountEmail,
+                },
+              },
+            };
+
+            if (payload) {
+              task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString('base64');
             }
-            console.log("Result object", result);
-            if (!result || result.status != 200) {
+            const call_options = {
+              // 60 minutes in millis
+              timeout: 60 * 60 * 1000,
+            }
+            console.log('Sending task:');
+            console.log(task);
+            const request = { parent: parent, task: task };
+
+            //FIX THE CODE HERE
+            const [response] = await tasks.createTask(request, call_options);
+            console.log(`Created task ${response.name}`);
+            if (!response  || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              console.log("Status updated to failed");
+              console.log("Status updated to failed! Que task failed")
               try_delete_object_from_s3(query_path(project.id));
               return;
             }
@@ -250,7 +285,7 @@ export default function upload_complete_upload_route() {
           console.log(err);
           try {
             res.status(500).send(`Error persisting Multipart-Upload object data: ${err}`);
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.log(err);

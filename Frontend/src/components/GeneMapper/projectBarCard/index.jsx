@@ -211,7 +211,16 @@ export default function ProjectBarCard({
                       && <ProcessingStatus />}
                     {(project.status === PROJECT_STATUS.ABORTED
                       || project.status === PROJECT_STATUS.PROCESSING_FAILED)
-                      && <Typography variant="caption">Processing failed</Typography>}
+                      && <>
+                    <Typography variant="caption" color="error">
+                      Processing failed
+                    </Typography>
+                    {project.errorMessage &&
+                      <Typography variant="caption" color="error" sx={{ ml: 2 }}>
+                        ({project.errorMessage})
+                      </Typography>
+                    }
+                  </>}
                   </Box>
                 ) : null}
                 {!submissionProgress
@@ -227,7 +236,16 @@ export default function ProjectBarCard({
                         && <ProcessingStatus />}
                       {(project.status === PROJECT_STATUS.ABORTED
                         || project.status === PROJECT_STATUS.PROCESSING_FAILED)
-                        && <Typography variant="caption">Processing failed</Typography>}
+                && <>
+                    <Typography variant="caption" color="error">
+                      Processing failed
+                    </Typography>
+                    {project.errorMessage &&
+                      <Typography variant="caption" color="error" sx={{ ml: 2 }}>
+                        ({project.errorMessage})
+                      </Typography>
+                    }
+                  </>}
                     </Box>
                   )
                   : null}

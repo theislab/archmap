@@ -178,6 +178,10 @@
     {
       "name": "Demo",
       "description": "APIs for CRUD operations on Demo datasets"
+    },
+    {
+      "name": "TaskQueues",
+      "description": "APIs for task queues"
     }
   ],
   "paths": {}

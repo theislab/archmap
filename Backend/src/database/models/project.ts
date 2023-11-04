@@ -28,6 +28,9 @@ export interface IProject extends Document {
   status: string;
   resultName: string;
   resultSize: number;
+
+  //error Message
+  errorMessage: string;
 }
 
 const projectSchema = new Schema<IProject>({
@@ -58,6 +61,9 @@ const projectSchema = new Schema<IProject>({
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },
+
+  //error Message
+  errorMessage: { type: String, require: false },
 });
 
 export const projectModel = model<IProject>("Project", projectSchema);

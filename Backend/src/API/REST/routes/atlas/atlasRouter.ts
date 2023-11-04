@@ -18,6 +18,7 @@ import { upload_permission_auth } from "../../middleware/check_institution_auth"
 
 const uploadDirectory = "/tmp/"; // for gcp 
 
+
 if(!fs.existsSync(uploadDirectory)){
   fs.mkdirSync(uploadDirectory);
 }
@@ -306,7 +307,6 @@ export const deleteAtlasById = async (atlasId) => {
   }
   return false;
 };
-
 
 
 const delete_atlas = (): Router => {
