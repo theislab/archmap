@@ -60,7 +60,7 @@ function AtlasModelChoice({
         direction="column"
         divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
         sx={{ gap: '1.5rem' }}
-      >
+      />
       <Box>
       <Typography
         variant="h5"
@@ -100,15 +100,19 @@ function AtlasModelChoice({
       <Box display="flex" alignItems="center" sx={{mt:'1.5em', mb:'0.5em'}}>
         <Typography variant="h6">scVI Hub Atlases</Typography>
         <Avatar src={scviLogo} sx={{width: 36, height: 36, marginLeft: '5px'}}/>
+        
+      </Box>
+      <Box display="flex" sx={{mt: '1em'}}>
+        {(!scviHubAtlases || scviHubAtlases.length===0) && <Alert severity="info"sx={{width: '33%'}}>No existing datasets available. </Alert>}
       </Box>
       {/* SCVI Hub Atlases */}
-      <Box>
+      {scviHubAtlases && scviHubAtlases.length>0 && (<Box>
         {isExpanded ? (
         <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
           {scviHubAtlases &&
             scviHubAtlases.map((a) => (
               <TabCard
-                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
                 height="50px"
                 data={{
                   text: a.name,
@@ -125,10 +129,10 @@ function AtlasModelChoice({
             {scviHubAtlases.slice(0, 3).map((a) => (
               <TabCard
                 key={a.name}
-                style={{ flex: '1 0 auto', width: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
                 height="50px"
                 data={{
-                  text: a.name,
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
                   isAtlas: true
                 }}
                 isLoading={false}
@@ -150,13 +154,12 @@ function AtlasModelChoice({
             {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
           </Button>
         </Box>
-      </Box>
+      </Box>)}
       <Box width="100%" display="flex">
         <Box id="Grid" width="65%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
             Pick a Model
           </Typography>
-
           <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap">
             {
               models && models.map((m) => (
@@ -181,8 +184,7 @@ function AtlasModelChoice({
           </Grid>
           </Box>
         </Box>
-        </Box>
-      </Stack>
+      </Box>
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />

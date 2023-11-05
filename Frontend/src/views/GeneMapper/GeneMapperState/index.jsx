@@ -1,13 +1,14 @@
 import {
   Box, Container, Step, StepButton, Stepper,
 } from '@mui/material';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import AtlasModelChoice from '../AtlasModelChoice/AtlasModelChoice';
 import UploadFilePage from '../UploadFilePage';
 import { useLocation, useHistory } from 'react-router-dom';
 import ModelService from 'shared/services/Model.service';
 import AtlasService from 'shared/services/Atlas.service';
 import DemoService from 'shared/services/Demo.service';
+import ScviAtlasService from 'shared/services/ScviAtlas.service';
 
 /**
  * GeneMapperState
@@ -30,15 +31,14 @@ function GeneMapperState({ path }) {
   const [selectedDemoDataset, setSelectedDemoDataset] = useState(null);
   const [demoDatasetIsSelected, setDemoDatasetIsSelected] = useState(false);
   const [demoDatasets, setDemoDatasets] = useState(null);
+  const [scviHubAtlases, setScviHubAtlases] = useState(null);
   const steps = ['Pick Atlas and Model', 'Choose File and Project details'];
   const [atlases, setAtlases] = useState(null);
-  const [scviHubAtlases, setScviHubAtlases] = useState(null);
-  const memoizedAtlases = useMemo(() => atlases || [], [atlases]);
-  const memoizedScviHubAtlases = useMemo(() => scviHubAtlases || [], [scviHubAtlases]);
-
   const [models, setModels] = useState(null);
 
   const handleAtlasSelection = (newAtlas) => {
+    console.log('The new atlas is:', newAtlas);
+    console.log('The model is:', selectedModel) // For both the atlas selection and the model selection, if one changes, change the scvi hub id. 
     setSelectedAtlas(newAtlas);
     setSelectedModel('');
   };
@@ -65,6 +65,13 @@ function GeneMapperState({ path }) {
       updateQueryParams('model', selectedModel._id);
     }
   };
+
+  // get demo projects
+  useEffect(() => {
+    DemoService.getDemos().then((a) => {
+      setDemoDatasets(a);
+    });
+  }, []);
 
   useEffect(() => {
     AtlasService.getAtlases().then((a) => {
@@ -122,6 +129,11 @@ function GeneMapperState({ path }) {
       });
       setModels(m);
     });
+
+    ScviAtlasService.getAtlases().then((atlases) => {
+      setScviHubAtlases(atlases);
+      console.log(atlases);
+    })
   }, []);
 
   useEffect(() => {
@@ -136,42 +148,6 @@ function GeneMapperState({ path }) {
       setSelectedModel('');
     }
   }, [atlases, models]);
-
-  // TODO: create useEffect to call the scviHubAtlas endpoint to get all scviHubAtlases
-  // Currently, this code is mocking the service
-  // {
-  //   "name": "name",
-  //   "compatibleModels": [
-  //   "scvi, etc"]
-  //   }
-  useEffect(()=> {
-    let shubAtlases = [{
-      "name": "demo name",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-    {
-      "name": "demo name 1",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-    {
-      "name": "demo name 2",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-    {
-      "name": "demo name 3",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-    {
-      "name": "demo name 4",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-    {
-      "name": "demo name 5",
-      "compatibleModels": ["scanVI", "scVI"]
-    },
-  ]
-    setScviHubAtlases(shubAtlases)
-  })
 
   return (
     <Container>
@@ -197,9 +173,9 @@ function GeneMapperState({ path }) {
               setSelectedAtlas={handleAtlasSelection}
               setSelectedModel={setSelectedModel}
               setActiveStep={handleStep}
-              compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []}
-              atlases={memoizedAtlases}
-              scviHubAtlases={memoizedScviHubAtlases}
+              compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []} // This is where the compatible models are set
+              atlases={atlases}
+              scviHubAtlases={scviHubAtlases}
               models={models}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
@@ -213,6 +189,7 @@ function GeneMapperState({ path }) {
               selectedAtlas={selectedAtlas}
               selectedModel={selectedModel}
               setActiveStep={handleStep}
+              demos={demoDatasets}
               selectedDataset={selectedDemoDataset}
               setSelectedDataset={setSelectedDemoDataset}
               datasetIsSelected={demoDatasetIsSelected}

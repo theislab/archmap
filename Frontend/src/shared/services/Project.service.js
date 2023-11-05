@@ -20,9 +20,11 @@ const ProjectService = MOCK_PROJECTS ? MockProjectService : {
     return data;
   },
 
-  createProject: async (projectName, atlasId, modelId, fileName) => {
+  createProject: async (projectName, atlasId, modelId, fileName, scviHubId) => {
+    console.log(`scvihub id is: ${scviHubId}. The type is ${typeof(scviHubId)}`)
+    console.log(`Model id is: ${modelId}. The type is ${typeof(modelId)}`)
     const { data } = await axiosInstance.post('/file_upload/start_upload', {
-      projectName, atlasId, modelId, fileName,
+      projectName, atlasId, modelId, fileName, scviHubId
     });
     return data;
   },
