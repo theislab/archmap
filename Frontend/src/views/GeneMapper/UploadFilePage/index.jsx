@@ -77,12 +77,13 @@ function UploadFilePage({
     return null; // file accepted
   };
 
-  const createProject = useCallback((projectName, atlasId, modelId, file) => {
+  const createProject = useCallback((projectName, atlasId, modelId, file) => { // removed the scvihubid from the parameteres  scviHubId=""
     ProjectService.createProject(
       projectName,
       atlasId,
       modelId,
       file.name,
+      // scviHubId, 
     ).then((project) => {
       uploadMultipartFile(
         project.uploadId,
@@ -121,8 +122,21 @@ function UploadFilePage({
       createDemoProject(mappingName, selectedAtlas._id, selectedModel._id,
         selectedDataset);
     } else {
+      console.log('The selected atlas is:', selectedAtlas)
+      console.log('The selected model is:', selectedModel)
+      let scviHubModel = null; 
+      let scviHubId = "";
+      // Find the matching scvi hub id
+      if(selectedAtlas.scviAtlas){
+        scviHubModel= selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
+        scviHubId = scviHubModel?.scviHubId;
+      }
       createProject(mappingName, selectedAtlas._id, selectedModel._id,
         uploadedFile ? uploadedFile[0] : selectedDataset);
+      // createProject(mappingName, selectedAtlas._id, selectedModel._id, scviHubId && scviHubId,
+      //   uploadedFile ? uploadedFile[0] : selectedDataset);
+      // createProject(mappingName, selectedAtlas._id, scviHubId && scviHubId, selectedModel._id, //scviHubId - I removed this parameter to test out the atlases. 
+      //   uploadedFile ? uploadedFile[0] : selectedDataset); // TODO: Go over this code and make sure it works properly. How to omit the scviHubId if it is not an scviHubAtlas? 
     }
   };
 

@@ -2,12 +2,14 @@ import {
   Box, Container, Step, StepButton, Stepper,
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import AtlasModelChoice from '../AtlasModelChoice/AtlasModelChoice';
 import UploadFilePage from '../UploadFilePage';
 import { useLocation, useHistory } from 'react-router-dom';
 import ModelService from 'shared/services/Model.service';
 import AtlasService from 'shared/services/Atlas.service';
 import DemoService from 'shared/services/Demo.service';
+import ScviAtlasService from 'shared/services/ScviAtlas.service';
 
 /**
  * GeneMapperState
@@ -30,11 +32,14 @@ function GeneMapperState({ path }) {
   const [selectedDemoDataset, setSelectedDemoDataset] = useState(null);
   const [demoDatasetIsSelected, setDemoDatasetIsSelected] = useState(false);
   const [demoDatasets, setDemoDatasets] = useState(null);
+  const [scviHubAtlases, setScviHubAtlases] = useState(null);
   const steps = ['Pick Atlas and Model', 'Choose File and Project details'];
   const [atlases, setAtlases] = useState(null);
   const [models, setModels] = useState(null);
 
   const handleAtlasSelection = (newAtlas) => {
+    console.log('The new atlas is:', newAtlas);
+    console.log('The model is:', selectedModel) // For both the atlas selection and the model selection, if one changes, change the scvi hub id. 
     setSelectedAtlas(newAtlas);
     setSelectedModel('');
   };
@@ -125,6 +130,11 @@ function GeneMapperState({ path }) {
       });
       setModels(m);
     });
+
+    ScviAtlasService.getAtlases().then((atlases) => {
+      setScviHubAtlases(atlases);
+      console.log(atlases);
+    })
   }, []);
 
   useEffect(() => {
@@ -164,8 +174,9 @@ function GeneMapperState({ path }) {
               setSelectedAtlas={handleAtlasSelection}
               setSelectedModel={setSelectedModel}
               setActiveStep={handleStep}
-              compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []}
+              compatibleModels={selectedAtlas ? selectedAtlas.compatibleModels : []} // This is where the compatible models are set
               atlases={atlases}
+              scviHubAtlases={scviHubAtlases}
               models={models}
               demos={demoDatasets}
               selectedDataset={selectedDemoDataset}

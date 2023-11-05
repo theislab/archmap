@@ -56,6 +56,12 @@ function AtlasModelChoice({
             Select an Atlas and a fitting Model before continuing
           </Alert>
         )}
+      <Stack
+        direction="column"
+        divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
+        sx={{ gap: '1.5rem' }}
+      />
+      <Box>
       <Typography
         variant="h5"
         sx={{
@@ -66,7 +72,7 @@ function AtlasModelChoice({
       >
         Pick an Atlas
       </Typography>
-
+      </Box>
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
@@ -87,13 +93,69 @@ function AtlasModelChoice({
           ))
         }
       </Grid>
-
+      <Box display="flex" alignItems="center" sx={{mt:'1.5em', mb:'0.5em'}}>
+        <Typography variant="h6">scVI Hub Atlases</Typography>
+        <Avatar src={scviLogo} sx={{width: 36, height: 36, marginLeft: '5px'}}/>
+        
+      </Box>
+      <Box display="flex" sx={{mt: '1em'}}>
+        {(!scviHubAtlases || scviHubAtlases.length===0) && <Alert severity="info"sx={{width: '33%'}}>No existing datasets available. </Alert>}
+      </Box>
+      {/* SCVI Hub Atlases */}
+      {scviHubAtlases && scviHubAtlases.length>0 && (<Box>
+        {isExpanded ? (
+        <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+          {scviHubAtlases &&
+            scviHubAtlases.map((a) => (
+              <TabCard
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name,
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+        </Box>
+        ) : (
+          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            {scviHubAtlases.slice(0, 3).map((a) => (
+              <TabCard
+                key={a.name}
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+          </Box>
+        )}
+        <Box sx={{display: 'flex', justifyContent: 'center', pt: '1em'}}>
+          <Button 
+            style={{textTransform: 'none', padding: '0px'}}
+            variant="text" 
+            color="primary"
+            onClick={()=>{setIsExpanded(!isExpanded)}}
+            disableRipple
+            >
+            <Typography>{isExpanded ? 'Expand less' : 'Expand more'}</Typography>
+            {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+          </Button>
+        </Box>
+      </Box>)}
       <Box width="100%" display="flex">
         <Box id="Grid" width="65%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
             Pick a Model
           </Typography>
-
           <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap">
             {
               models && models.map((m) => (
@@ -139,7 +201,6 @@ function AtlasModelChoice({
             ))}
         </Box>
       </Box>
-
       <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
