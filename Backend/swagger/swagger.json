@@ -88,8 +88,17 @@
           },
           "teamId": {
             "type": "string"
+          },
+          "setup_anndata_model_args": {
+            "type": "object"
+          },
+          "scviHubId": {
+            "type": "string"
           }
-        }
+        },
+        "required": ["_id", "owner", "name", "uploadId", "location", 
+        "fileName", "fileSize", "uploadDate", "status", "resultName", 
+        "resultSize", "atlasId", "modelId", "teamId"]
       },
       "DeletedProject": {
         "type": "object",

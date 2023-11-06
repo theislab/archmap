@@ -14,8 +14,10 @@ export interface IProject extends Document {
   teamId: Schema.Types.ObjectId;
   name: string;
 
-  atlasId: Schema.Types.ObjectId;
-  modelId: Schema.Types.ObjectId;
+  atlasId?: Schema.Types.ObjectId;
+  modelId?: Schema.Types.ObjectId; 
+  model_setup_anndata_args?: object;
+  scviHubId?: string;
 
   // file
   uploadId: string;
@@ -46,8 +48,13 @@ const projectSchema = new Schema<IProject>({
   },
   name: { type: String, require: true },
 
-  modelId: { type: Schema.Types.ObjectId, require: true },
-  atlasId: { type: Schema.Types.ObjectId, require: true },
+  // one of the following set of fields is required
+  // Set 1
+  modelId: { type: Schema.Types.ObjectId, require: function() { return !this.model_setup_anndata_args && !this.scviHubId; } },
+  atlasId: { type: Schema.Types.ObjectId, require: function() { return !this.model_setup_anndata_args && !this.scviHubId; } },
+  // Set 2
+  model_setup_anndata_args: {type: Object, require: function() { return !this.modelId && !this.atlasId; }},
+  scviHubId: {type: String, require: function() { return !this.modelId && !this.atlasId; }},
 
   // file
   uploadId: { type: String, require: false },

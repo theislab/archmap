@@ -22,3 +22,16 @@ export interface AddProjectDTO {
     modelId: ObjectId,
     atlasId: ObjectId,
 }
+
+/**
+ * Stores the raw data needed to create a project using an scvi-hub atlas.
+ */
+export interface AddScviProjectDTO {
+  owner: ObjectId,
+  name: string,
+  fileName: string,
+  uploadDate: Date,
+  status: string,
+  scviHubId: string
+  model_setup_anndata_args: object
+}

@@ -1,5 +1,5 @@
 import { IProject, projectModel } from "../models/project";
-import { AddProjectDTO, UpdateProjectDTO } from "../dtos/project.dto";
+import { AddProjectDTO, UpdateProjectDTO, AddScviProjectDTO } from "../dtos/project.dto";
 import { ObjectId, SortOrder } from "mongoose";
 
 /**
@@ -97,7 +97,7 @@ export default class ProjectService {
    *  @param    project
    *  @returns  projectAdded - the added project
    */
-  static async addProject(project: AddProjectDTO): Promise<IProject> {
+  static async addProject(project: AddProjectDTO | AddScviProjectDTO): Promise<IProject> {
     let projectAdded: IProject | undefined = undefined;
     projectAdded = await projectModel.create(project);
     return projectAdded;
