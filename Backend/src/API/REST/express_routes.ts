@@ -195,7 +195,7 @@ export function express_routes(): Router {
   router.use(upload_start_upload_route());
   router.use(upload_complete_upload_route());
 
-  //executing the task queues
+  //executing the task queues.. TODO: remove this. this is for testing purposes only
   router.use(exec_task_queues())
 
   // download routes
