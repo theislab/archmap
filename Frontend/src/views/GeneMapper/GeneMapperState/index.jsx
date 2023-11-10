@@ -2,7 +2,6 @@ import {
   Box, Container, Step, StepButton, Stepper,
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 import AtlasModelChoice from '../AtlasModelChoice/AtlasModelChoice';
 import UploadFilePage from '../UploadFilePage';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -38,8 +37,6 @@ function GeneMapperState({ path }) {
   const [models, setModels] = useState(null);
 
   const handleAtlasSelection = (newAtlas) => {
-    console.log('The new atlas is:', newAtlas);
-    console.log('The model is:', selectedModel) // For both the atlas selection and the model selection, if one changes, change the scvi hub id. 
     setSelectedAtlas(newAtlas);
     setSelectedModel('');
   };

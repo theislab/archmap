@@ -20,12 +20,21 @@ const ProjectService = MOCK_PROJECTS ? MockProjectService : {
     return data;
   },
 
-  createProject: async (projectName, atlasId, modelId, fileName, scviHubId) => {
-    console.log(`scvihub id is: ${scviHubId}. The type is ${typeof(scviHubId)}`)
-    console.log(`Model id is: ${modelId}. The type is ${typeof(modelId)}`)
+  createProject: async (projectName, atlasId, modelId, fileName, scviHubId = null) => { 
+    // POST request for scvi hub atlas.
+    if(scviHubId){
+      const { data } = await axiosInstance.post('/file_upload/start_upload', {
+        projectName, atlasId, modelId, fileName, scviHubId
+      });
+
+      return data;
+    }
+
+    // Create a POST request with an Archmap Core atlas.
     const { data } = await axiosInstance.post('/file_upload/start_upload', {
-      projectName, atlasId, modelId, fileName, scviHubId
+      projectName, atlasId, modelId, fileName
     });
+
     return data;
   },
 
