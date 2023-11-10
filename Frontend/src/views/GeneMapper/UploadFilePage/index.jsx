@@ -43,6 +43,7 @@ function UploadFilePage({
   const history = useHistory();
   const [availableDemos, setAvailableDemos] = useState([]);
   const [demoDatasets, setDemoDatasets] = useState([]);
+  const [scviHubModel, setScviHubModel] = useState(null); 
 
   useEffect(() => {
     setRequirements(selectedModel.requirements);
@@ -65,6 +66,11 @@ function UploadFilePage({
     DemoService.getDemos().then((a) => {
       setDemoDatasets(a);
     });
+    // Set the scvi hub model if scvi hub atlas is chosen.
+    if(selectedAtlas.scviAtlas){
+      const model = selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
+      setScviHubModel(model);
+    }   
   }, []);
 
   const handleOnDropChange = (file) => {
@@ -97,13 +103,13 @@ function UploadFilePage({
     return null; // file accepted
   };
 
-  const createProject = useCallback((projectName, atlasId, modelId, file) => { // removed the scvihubid from the parameteres  scviHubId=""
+  const createProject = useCallback((projectName, atlasId, modelId, file, scviHubId = "") => { // removed the scvihubid from the parameteres  scviHubId=""
     ProjectService.createProject(
       projectName,
       atlasId,
       modelId,
       file.name,
-      // scviHubId, 
+      scviHubId, 
     ).then((project) => {
       uploadMultipartFile(
         project.uploadId,
@@ -137,26 +143,20 @@ function UploadFilePage({
     e?.preventDefault();
     // save mapping name
     setOpen(false); // opens modal to input mapping name
-    // choose what type of project to create depending on whether a demo project is chosen
-    if (datasetIsSelected) {
+    // choose what type of project to create.
+    if (datasetIsSelected) { // Demo project
       createDemoProject(mappingName, selectedAtlas._id, selectedModel._id,
         selectedDataset);
     } else {
-      console.log('The selected atlas is:', selectedAtlas)
-      console.log('The selected model is:', selectedModel)
-      let scviHubModel = null; 
-      let scviHubId = "";
       // Find the matching scvi hub id
       if(selectedAtlas.scviAtlas){
-        scviHubModel= selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
-        scviHubId = scviHubModel?.scviHubId;
+        createProject(mappingName, scviHubModel.scviHubId, scviHubModel.model, 
+          uploadedFile[0], scviHubModel.scviHubId);
       }
-      createProject(mappingName, selectedAtlas._id, selectedModel._id,
-        uploadedFile ? uploadedFile[0] : selectedDataset);
-      // createProject(mappingName, selectedAtlas._id, selectedModel._id, scviHubId && scviHubId,
-      //   uploadedFile ? uploadedFile[0] : selectedDataset);
-      // createProject(mappingName, selectedAtlas._id, scviHubId && scviHubId, selectedModel._id, //scviHubId - I removed this parameter to test out the atlases. 
-      //   uploadedFile ? uploadedFile[0] : selectedDataset); // TODO: Go over this code and make sure it works properly. How to omit the scviHubId if it is not an scviHubAtlas? 
+      else{ // create a project with a core atlas.
+        createProject(mappingName, selectedAtlas._id, selectedModel._id,
+          uploadedFile ? uploadedFile[0]: selectedDataset);
+      }
     }
   };
 
