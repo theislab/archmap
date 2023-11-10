@@ -67,9 +67,11 @@ export default function upload_complete_upload_route() {
             fileSize: result.ContentLength,
             status: ProjectStatus.PROCESSING_PENDING,
           };
+
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
           if (process.env.CLOUD_RUN_URL) {
             let model, atlas;
+
             // Archmap core atlases
             if(project.modelId && project.atlasId){
               [model, atlas] = await Promise.all([
@@ -77,15 +79,28 @@ export default function upload_complete_upload_route() {
                 AtlasService.getAtlasById(project.atlasId),
               ]); 
             }
-            
-            // If there is no model and atlas chosen for the core atlases, or no scviHub combination chosen. 
-            if (!(model && atlas) || !(project.scviHubId && project.model_setup_anndata_args)) { 
-              await ProjectService.updateProjectById(params.UploadId, {
+
+            // Check if the model and atlas exist for the chosen core archmap atlas.
+            if ((!model || !atlas) && !project.scviHubId && !project.model_setup_anndata_args) {
+              await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
+
               try_delete_object_from_s3(query_path(project._id))
               console.log("Deleteing the file from s3 with path ", query_path(project._id))
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
+            }
+
+            // Check if the id and args exist for the chosen scvi hub atlas. 
+            if((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas){
+              console.log(project.scviHubId && project.model_setup_anndata_args);
+              await ProjectService.updateProjectByUploadId(params.UploadId, {
+                status: ProjectStatus.PROCESSING_FAILED,
+              });
+
+              try_delete_object_from_s3(query_path(project._id))
+              console.log("Deleteing the file from s3 with path ", query_path(project._id))
+              return res.status(500).send(`Could not find ${!project.scviHubId ? "scviHubId" : "model_setup_anndata_args"}`);
             }
 
             //Create a token, which can be used later to update the projects status
@@ -94,7 +109,7 @@ export default function upload_complete_upload_route() {
             });
 
             let queryInfo;
-            if(model && model.name === "scVI" ){ // QueryInfo for the scVI model
+            if(model && model.name === "scVI" ){ // QueryInfo for the scVI model for the archmap core atlases
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
@@ -114,7 +129,7 @@ export default function upload_complete_upload_route() {
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
             }else {
-              if(model && model.name === "scANVI"){ // QueryInfo for the scANVI model
+              if(model && model.name === "scANVI"){ // QueryInfo for the scANVI model for the archmap core atlases
                 queryInfo = {
                   model: model.name,
                   atlas: atlas.name,
@@ -133,20 +148,21 @@ export default function upload_complete_upload_route() {
                   scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                   webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 };
-              }
-              if(project.scviHubId && project.model_setup_anndata_args){ // Query info for scvi hub atlas
-                queryInfo = {
-                  scviHubId: project.scviHubId,
-                  model_setup_anndata_args: project.model_setup_anndata_args,
-                  output_type: {
-                      csv: false,
-                      cxg: true
-                  },
-                  query_data: query_path(project.id),
-                  output_path: result_path(project.id),
-                  async: false,
-                  webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
-                };
+              }else{ // Query info for scvi hub atlas
+                if(project.scviHubId && project.model_setup_anndata_args){ 
+                  queryInfo = {
+                    scviHubId: project.scviHubId,
+                    model_setup_anndata_args: project.model_setup_anndata_args,
+                    output_type: {
+                        csv: false,
+                        cxg: true
+                    },
+                    query_data: query_path(project.id),
+                    output_path: result_path(project.id),
+                    async: false,
+                    webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                  };
+                }
               }
             }
 

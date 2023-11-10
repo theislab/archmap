@@ -11,8 +11,8 @@ build
 # NPM
 node_modules/
 
-#add service_account_key folder
-service_account_key/
+#add service_account_key
+custom-helix-329116-bd139e227504.json
 
 tmp_upload/
 
