@@ -101,16 +101,42 @@ function GeneMapperState({ path }) {
         if (a._id === atlasId) {
           setSelectedAtlas(a);
         }
+
+        a.requirements = [];
+        if(a.name === 'Retina atlas'){
+          a.requirements.push('If the Atlas is Retina, cell_type_key: CellType and batch_key : batch');
+        }
+        if(a.name === 'Fetal Immune'){
+          a.requirements.push('If the Atlas is Fetal Immune, cell_type_key: celltype_annotation and batch_key : bbk');
+        }
+        if(a.name === 'Hypomap'){
+          a.requirements.push('If the Atlas is HypoMap, cell_type_key: Author_CellType and batch_key : Batch_ID');
+        }
+        if(a.name === 'PBMC'){
+          a.requirements.push('If the Atlas is PBMC, cell_type_key: cell_type and batch_key : sample_id');
+        }
+        if(a.name === 'Human lung cell atlas'){
+          a.requirements.push('If the Atlas is HLCA, cell_type_key: scanvi_labels and batch_key : dataset');
+        }
+        if(a.name == 'Glioblastoma'){
+          a.requirements.push('If the atlas is GB, cell_type_key: CellID and batch_key : author');
+        }
+        if(a.name == 'NSCLC'){
+          a.requirements.push('If the atlas is NSCLC, cell_type_key: cell_type and batch_key : sample');
+        }
         return a;
       });
       setAtlases(a);
     });
+
+
 
     ModelService.getModels().then((m) => {
       m.map((model) => {
         model.requirements = [
           'Ensure your data is in h5ad format',
           'Batch/study information is mandatory and should be labeled as “batch”',
+          "Input label from user has to match the labels presented here"
         ];
         if (model.name === 'scVI') {
           model.requirements.push('Cell type information should be labeled as “cell_type”');
@@ -118,6 +144,9 @@ function GeneMapperState({ path }) {
         }
         if (model.name === 'scANVI') {
           model.requirements.push('Cell type information should be labeled as “cell_type”');
+        }
+        if (model.name === 'totalVI') {
+          model.requirements.push('If the Atlas is PBMC, cell_type_key: cell_type and batch_key : sample_id');
         }
         if (model._id === modelId) {
           setSelectedModel(model);

@@ -44,8 +44,11 @@ function UploadFilePage({
   const [demoDatasets, setDemoDatasets] = useState(demos);
 
   useEffect(() => {
-    setRequirements(selectedModel.requirements);
-  }, [selectedModel]);
+    const modelRequirements = selectedModel?.requirements || [];
+    const atlasRequirements = selectedAtlas?.requirements || [];
+    const totalRequirements = [...modelRequirements, ...atlasRequirements];
+    setRequirements(totalRequirements);
+  }, [selectedModel, selectedAtlas]); // Include selectedAtlas in the dependencies array
 
   const handleOnDropChange = (file) => {
     setUploadedFile(file);
