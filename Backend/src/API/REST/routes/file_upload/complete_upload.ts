@@ -22,7 +22,7 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import { query_path, result_model_path, result_path } from "./bucket_filepaths";
 
-const MAX_EPOCH_QUERY = 1;
+const MAX_EPOCH_QUERY = 2;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
@@ -72,18 +72,40 @@ export default function upload_complete_upload_route() {
           };
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
           if (process.env.CLOUD_RUN_URL) {
-            let [model, atlas] = await Promise.all([
-              ModelService.getModelById(project.modelId),
-              AtlasService.getAtlasById(project.atlasId),
-            ]);
-            if (!model || !atlas) {
-              await ProjectService.updateProjectById(params.UploadId, {
+            let model, atlas;
+
+            // Archmap core atlases
+            if(project.modelId && project.atlasId){
+              [model, atlas] = await Promise.all([
+                ModelService.getModelById(project.modelId),
+                AtlasService.getAtlasById(project.atlasId),
+              ]); 
+            }
+
+            // Check if the model and atlas exist for the chosen core archmap atlas.
+            if ((!model || !atlas) && !project.scviHubId && !project.model_setup_anndata_args) {
+              await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              try_delete_object_from_s3(query_path(project._id));
-              console.log("Deleteing the file from s3 with path ", query_path(project._id));
+
+              try_delete_object_from_s3(query_path(project._id))
+              console.log("Deleteing the file from s3 with path ", query_path(project._id))
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
+
+            // Check if the id and args exist for the chosen scvi hub atlas. 
+            if((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas){
+              console.log(project.scviHubId && project.model_setup_anndata_args);
+              await ProjectService.updateProjectByUploadId(params.UploadId, {
+                status: ProjectStatus.PROCESSING_FAILED,
+              });
+
+              try_delete_object_from_s3(query_path(project._id))
+              console.log("Deleteing the file from s3 with path ", query_path(project._id))
+              return res.status(500).send(`Could not find ${!project.scviHubId ? "scviHubId" : "model_setup_anndata_args"}`);
+            }
+
+            
 
             //Create a token, which can be used later to update the projects status
             let { token: updateToken } = await ProjectUpdateTokenService.addToken({
@@ -91,7 +113,7 @@ export default function upload_complete_upload_route() {
             });
 
             let queryInfo;
-            if (model.name == "scVI") {
+            if (model && model.name == "scVI") {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
@@ -110,7 +132,7 @@ export default function upload_complete_upload_route() {
                 scvi_max_epochs_query: 1, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-            } else {
+            } else if (model && model.name == "scANVI") {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
@@ -129,7 +151,23 @@ export default function upload_complete_upload_route() {
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
+            }else{ // Query info for scvi hub atlas
+              if(project.scviHubId && project.model_setup_anndata_args){ 
+                queryInfo = {
+                  scviHubId: project.scviHubId,
+                  model_setup_anndata_args: project.model_setup_anndata_args,
+                  output_type: {
+                      csv: false,
+                      cxg: true
+                  },
+                  query_data: query_path(project.id),
+                  output_path: result_path(project.id),
+                  async: false,
+                  webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                };
+              }
             }
+
             console.log("sending: ");
             console.log(queryInfo);
             const url = `${process.env.CLOUD_RUN_URL}/query`;
