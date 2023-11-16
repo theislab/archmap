@@ -7,6 +7,7 @@ import {
 import { GeneralCard as Card } from 'components/Cards/GeneralCard';
 import CustomButton from 'components/CustomButton';
 import FileUpload from 'components/FileUpload';
+import DemoService from 'shared/services/Demo.service';
 import { Modal, ModalTitle } from 'components/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -373,10 +374,12 @@ function UploadFilePage({
                     height="50px"
                     data={{
                       name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
+                      text: `Atlas: ${dataset.atlas} | Model: ${dataset.model}`,
                       atlas: dataset.atlas,
                       model: dataset.model,
                       isDemo: true,
                     }}
+                    isLoading={false}
                     handleOnClick={() => handleDemoClick(dataset)}
                     selected={
                         !uploadedFile
