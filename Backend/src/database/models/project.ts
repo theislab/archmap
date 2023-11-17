@@ -15,7 +15,8 @@ export interface IProject extends Document {
   name: string;
 
   atlasId?: Schema.Types.ObjectId;
-  modelId?: Schema.Types.ObjectId; 
+  modelId?: Schema.Types.ObjectId;
+  classifierId: Schema.Types.ObjectId; 
   model_setup_anndata_args?: object;
   scviHubId?: string;
 
@@ -55,6 +56,7 @@ const projectSchema = new Schema<IProject>({
   // Set 2
   model_setup_anndata_args: {type: Object, require: function() { return !this.modelId && !this.atlasId; }},
   scviHubId: {type: String, require: function() { return !this.modelId && !this.atlasId; }},
+  classifierId: { type: Schema.Types.ObjectId, required: false },
 
   // file
   uploadId: { type: String, require: false },

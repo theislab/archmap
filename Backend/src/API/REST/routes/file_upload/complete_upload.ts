@@ -21,6 +21,7 @@ import ModelService from "../../../../database/services/model.service";
 import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import { query_path, result_model_path, result_path } from "./bucket_filepaths";
+import ClassifierService from "../../../../database/services/classifier.service";
 
 const MAX_EPOCH_QUERY = 2;
 
@@ -72,13 +73,16 @@ export default function upload_complete_upload_route() {
           };
           await ProjectService.updateProjectByUploadId(params.UploadId, updateFileAndStatus);
           if (process.env.CLOUD_RUN_URL) {
-            let model, atlas;
+            let model, atlas, classifier;
 
             // Archmap core atlases
             if(project.modelId && project.atlasId){
-              [model, atlas] = await Promise.all([
+              [model, atlas, classifier] = await Promise.all([
                 ModelService.getModelById(project.modelId),
                 AtlasService.getAtlasById(project.atlasId),
+                project.classifierId
+                ? ClassifierService.getClassifierById(project.classifierId)
+                : Promise.resolve(undefined),
               ]); 
             }
 
@@ -111,10 +115,22 @@ export default function upload_complete_upload_route() {
             });
 
             let queryInfo;
+            let classifier_type = {
+              XGoost: false,
+              KNN: false,
+              scANVI: false,
+            };
+            // Set classifier type
+            if (classifier.name in classifier_type){
+              classifier_type[classifier.name] = true;
+            }else{
+              return res.status(500).send(`Unknown classifier: ${classifier.name}`);
+            }
             if (model && model.name == "scVI") {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
+                classifier_type: classifier_type,
                 output_type: {
                   csv: false,
                   cxg: true,
@@ -133,6 +149,7 @@ export default function upload_complete_upload_route() {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
+                classifier_type: classifier_type,
                 output_type: {
                   csv: false,
                   cxg: true,
@@ -241,7 +258,7 @@ export default function upload_complete_upload_route() {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              console.log("Status updated to failed! Que task failed")
+              console.log("Status updated to failed! Queue task failed")
               try_delete_object_from_s3(query_path(project.id));
               return;
             }
@@ -299,7 +316,7 @@ export default function upload_complete_upload_route() {
           console.log(err);
           try {
             res.status(500).send(`Error persisting Multipart-Upload object data: ${err}`);
-          } catch { }
+          } catch {}
         }
       } catch (err) {
         console.log(err);
