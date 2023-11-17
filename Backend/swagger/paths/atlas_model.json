@@ -1,0 +1,45 @@
+{
+  "/create-all-associations": {
+    "post": {
+      "summary": "Create associations between compatible atlases and models",
+      "tags": ["AtlasModelAssociations"],
+      "description": "This endpoint creates an association between each compatible atlas and model, based on the compatibility specified in the atlas. It also creates corresponding files in the GCP cloud bucket for each association.",
+      "responses": {
+        "201": {
+          "description": "All compatible associations created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "associations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "atlas": {
+                          "type": "string",
+                          "description": "The ID of the atlas"
+                        },
+                        "model": {
+                          "type": "string",
+                          "description": "The ID of the model"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Unable to create the associations"
+        }
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@ export interface IAtlas extends Document {
   modalities: Array<string>;
   numberOfCells: number;
   species: Array<string>;
-  compatibleModels: Array<Schema.Types.ObjectId>;
+  compatibleModels: string[]; // Array of strings;
   uploadedBy: string;
   atlasUrl: string;
 }

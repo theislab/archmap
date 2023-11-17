@@ -96,9 +96,22 @@
             "type": "string"
           }
         },
-        "required": ["_id", "owner", "name", "uploadId", "location", 
-        "fileName", "fileSize", "uploadDate", "status", "resultName", 
-        "resultSize", "atlasId", "modelId", "teamId"]
+        "required": [
+          "_id",
+          "owner",
+          "name",
+          "uploadId",
+          "location",
+          "fileName",
+          "fileSize",
+          "uploadDate",
+          "status",
+          "resultName",
+          "resultSize",
+          "atlasId",
+          "modelId",
+          "teamId"
+        ]
       },
       "DeletedProject": {
         "type": "object",
@@ -191,6 +204,10 @@
     {
       "name": "TaskQueues",
       "description": "APIs for task queues"
+    },
+    {
+      "name": "Atlas Model",
+      "description": "APIs for Atlas Model Associations"
     }
   ],
   "paths": {}
