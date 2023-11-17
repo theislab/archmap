@@ -105,8 +105,6 @@ export default function upload_complete_upload_route() {
               return res.status(500).send(`Could not find ${!project.scviHubId ? "scviHubId" : "model_setup_anndata_args"}`);
             }
 
-            
-
             //Create a token, which can be used later to update the projects status
             let { token: updateToken } = await ProjectUpdateTokenService.addToken({
               _projectId: project._id,
@@ -127,7 +125,6 @@ export default function upload_complete_upload_route() {
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scVI: true,
                 ref_path: "model.pt",
-                //ref_path: `models/${project.modelId}/model.pt`,
                 async: false,
                 scvi_max_epochs_query: 1, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
@@ -238,7 +235,6 @@ export default function upload_complete_upload_route() {
             console.log(task);
             const request = { parent: parent, task: task };
 
-            //FIX THE CODE HERE
             const [response] = await tasks.createTask(request, call_options);
             console.log(`Created task ${response.name}`);
             if (!response  || !response.name) {
