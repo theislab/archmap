@@ -42,8 +42,9 @@ const createAllAssociations = (): Router => {
                 const association = await AtlasModelAssociationService.createAssociation(atlas._id, model._id);
                 associations.push(association);
   
-                // Create file in GCP bucket
-                const fileName = `${atlas.name}-${model.name}.txt`;
+                // Create file in GCP bucket with models/association_id/${atlas.name}-${model.name}.txt
+                const fileName = 'models/' + association._id + '/' + atlas.name + '-' + model.name + '.txt';
+
                 const file = storage.bucket(bucketName).file(fileName);
                 await file.save(''); // Creates an empty file
               }
