@@ -47,6 +47,15 @@ const createAllAssociations = (): Router => {
 
                 const file = storage.bucket(bucketName).file(fileName);
                 await file.save(''); // Creates an empty file
+              }else{
+                console.log(`Association between atlas ${atlas.name} and model ${model.name} already exists`);
+                //create only the file in GCP bucket. also check if it exists
+                const fileName = 'models/' + existingAssociation._id + '/' + atlas.name + '-' + model.name + '.txt';
+                const file = storage.bucket(bucketName).file(fileName);
+                await file.save(''); // Creates an empty file
+                associations.push(existingAssociation);
+
+
               }
             }
           }
