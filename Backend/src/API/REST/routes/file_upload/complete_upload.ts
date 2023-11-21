@@ -20,7 +20,7 @@ import ModelService from "../../../../database/services/model.service";
 
 import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
-import { model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
+import { get_classifier_path, model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
 const MAX_EPOCH_QUERY = 2;
@@ -112,6 +112,11 @@ export default function upload_complete_upload_route() {
             });
 
             let queryInfo;
+            const use_xgboost = true;
+            const use_knn = false;
+            const use_encoder = false;
+            const classifier_path = get_classifier_path(use_xgboost, use_knn, use_encoder, atlas._id);
+
             if (model && model.name == "scVI") {
               const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
                 atlas._id,
@@ -124,6 +129,10 @@ export default function upload_complete_upload_route() {
                   csv: false,
                   cxg: true,
                 },
+                use_encoder: use_encoder,
+                use_knn: use_knn,
+                use_xgboost: use_xgboost,
+                classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
                 model_path: model_path(modelAssociatedWithAtlas?._id),
@@ -146,6 +155,10 @@ export default function upload_complete_upload_route() {
                   csv: false,
                   cxg: true,
                 },
+                use_encoder: use_encoder,
+                use_knn: use_knn,
+                use_xgboost: use_xgboost,
+                classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
                 model_path: model_path(modelAssociatedWithAtlas?._id),

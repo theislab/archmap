@@ -15,6 +15,22 @@ export function model_path(modelId: ObjectId | string): string {
   return `models/${modelId}/model.pt`;
 }
 
+export function get_classifier_path(xgboost:boolean, knn:boolean, encoder: boolean, atlasId: ObjectId | string){
+  
+  if (xgboost){
+    return classifier_path_xgboost(atlasId);
+  }
+  else if (knn){
+    return classifier_path_knn(atlasId);
+  }
+  else if (encoder){
+    return classifier_path_encoder(atlasId);
+  }
+  else{
+    return "";
+  }
+}
+
 export function classifier_path_xgboost(atlasId: ObjectId | string): string {
   return `classifiers/${atlasId}/classifier_xgb.ubj`;
 }
