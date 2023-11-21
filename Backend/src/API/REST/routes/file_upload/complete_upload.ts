@@ -20,8 +20,10 @@ import ModelService from "../../../../database/services/model.service";
 
 import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
-import { query_path, result_model_path, result_path } from "./bucket_filepaths";
+
 import ClassifierService from "../../../../database/services/classifier.service";
+import { get_classifier_path, model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
+import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
 const MAX_EPOCH_QUERY = 2;
 
@@ -115,29 +117,46 @@ export default function upload_complete_upload_route() {
             });
 
             let queryInfo;
-            let classifier_type = {
-              XGoost: false,
-              KNN: false,
-              scANVI: false,
-            };
-            // Set classifier type
-            if (classifier.name in classifier_type){
-              classifier_type[classifier.name] = true;
-            }else{
-              return res.status(500).send(`Unknown classifier: ${classifier.name}`);
-            }
+
+            let use_xgboost = false;
+            let use_knn = false;
+            let use_encoder = false; 
+
+            switch (classifier.name) {
+              case 'XGBoost':
+                  use_xgboost = true;
+                  break;
+              case 'KNN':
+                  use_knn = true;
+                  break;
+              case 'scANVI':
+                use_encoder = true;
+                  break;
+              default:
+                  return res.status(500).send(`Unknown classifier: ${classifier.name}`);
+           }
+           const classifier_path = get_classifier_path(use_xgboost, use_knn, use_encoder, atlas._id);
+
             if (model && model.name == "scVI") {
+              const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+                atlas._id,
+                model._id
+              );
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                classifier_type: classifier_type,
+                
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
+                use_encoder: use_encoder,
+                use_knn: use_knn,
+                use_xgboost: use_xgboost,
+                classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
-                model_path: result_model_path(project.id),
+                model_path: model_path(modelAssociatedWithAtlas?._id),
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scVI: true,
                 ref_path: "model.pt",
@@ -146,17 +165,25 @@ export default function upload_complete_upload_route() {
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
             } else if (model && model.name == "scANVI") {
+              const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+                atlas._id,
+                model._id
+              );
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                classifier_type: classifier_type,
+                
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
+                use_encoder: use_encoder,
+                use_knn: use_knn,
+                use_xgboost: use_xgboost,
+                classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
-                model_path: result_model_path(project.id),
+                model_path: model_path(modelAssociatedWithAtlas?._id),
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scANVI: true,
                 ref_path: "model.pt",
