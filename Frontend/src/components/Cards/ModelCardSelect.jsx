@@ -105,7 +105,7 @@ export const ModelCardSelect = ({
             <Box
               sx={{
                 display: "flex",
-                flexDirection: flexDir,
+                flexDirection: "column",
                 gap: "1rem",
                 // styles below center the buttons to the very center of the component
                 position: "absolute",

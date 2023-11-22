@@ -38,7 +38,7 @@ export const TabCard = ({
         borderWidth: data.isAtlas ? '2px' : '0px',
         borderStyle: data.isAtlas ? 'solid' : 'none',
         backgroundColor: data.isAtlas ? 'none' : colors.primary[300],
-        color: 'white',
+        color: !data.isAtlas ? 'white' : '',
       }
         : {
           boxShadow: '0px 0px 2px rgba(0,0,0, 0.15)',

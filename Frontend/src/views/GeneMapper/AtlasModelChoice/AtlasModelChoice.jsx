@@ -117,7 +117,7 @@ function AtlasModelChoice({
                 style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
                 height="50px"
                 data={{
-                  text: a.name,
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
                   isAtlas: true
                 }}
                 isLoading={false}
@@ -131,7 +131,7 @@ function AtlasModelChoice({
             {scviHubAtlases.slice(0, 3).map((a) => (
               <TabCard
                 key={a.name}
-                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px', color: 'black' }}
                 height="50px"
                 data={{
                   text: a.name[0].toUpperCase() + a.name.substring(1),
@@ -158,7 +158,7 @@ function AtlasModelChoice({
         </Box>
       </Box>)}
       <Box width="100%" display="flex" marginTop="10px">
-        <Box id="Grid" width="60%">
+        <Box id="Grid" width="50%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
             Pick a Model
           </Typography>
@@ -166,9 +166,9 @@ function AtlasModelChoice({
           <Grid container spacing={2} direction="row" wrap="nowrap">
             {
               models && models.map((m) => (
-                <Grid item height="220px">
+                <Grid item height="200px">
                   <ModelCardSelect
-                    width="225px"
+                    width="170px"
                     height="97%"
                     title={m.name}
                     description={m.description}
@@ -187,21 +187,22 @@ function AtlasModelChoice({
           </Grid>
           </Box>
 
-          <Box id="Grid" width="40%" marginLeft="36px">
+          <Box id="Grid" width="50%" marginLeft="36px">
               <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
-                Pick a Classifier for your Model
+                Pick a Classifier (Optional)
               </Typography>
 
-              <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap" marginRight={2}>
+              <Grid container spacing={2} direction="row"wrap="nowrap">
                 {
               classifiers && classifiers.map((cl) => (
-                <Grid item height="145px">
+                <Grid item height="200px">
                   <ClassifierCard
-                    width="140px"
+                    width="170px"
                     height="97%"
                     title={cl.name}
                     description={cl.description}
                     selected={selectedClassifier.name === cl.name}
+                    selectedClassifier={selectedClassifier}
                     onSelect={setSelectedClassifier}
                     classifierObject={cl}
                     disabled={!compatibleClassifiers
@@ -217,7 +218,7 @@ function AtlasModelChoice({
             </Box>
         </Box>
       </Box>
-      <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
+      <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em', marginRight: '30px'}}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
           &nbsp; Cancel
