@@ -104,6 +104,7 @@ import { change_permission } from "./routes/admin/adminRouter";
 import { get_classifier, get_classifiers } from "./routes/classifier/classifierRouter";
 
 import { exec_task_queues } from "./routes/taskQueuesRouter"
+import createAllAssociations from "./routes/atlas_model/atlasModelRouter";
 
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {
@@ -194,6 +195,9 @@ export function express_routes(): Router {
   router.use(edit_atlas());
   router.use(delete_atlas());
   router.use(get_scvi_atlases());
+
+  // atlas model association routes
+  router.use(createAllAssociations());
 
   // demo routes
   router.use(get_allDemos());
