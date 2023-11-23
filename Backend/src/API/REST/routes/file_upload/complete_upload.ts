@@ -123,6 +123,7 @@ export default function upload_complete_upload_route() {
             let use_encoder = false;
             let classifier_path; 
 
+            // Optional classifier choice
             if(classifier){
               switch (classifier?.name) {
                 case 'XGBoost':
