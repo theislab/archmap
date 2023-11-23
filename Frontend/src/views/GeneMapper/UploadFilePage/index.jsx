@@ -107,14 +107,14 @@ function UploadFilePage({
   };
 
   const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, scviHubId = ""}) => {
-    ProjectService.createProject(
-      projectName,
-      atlasId,
-      modelId,
-      file.name,
-      classifierId,
-      scviHubId, 
-    ).then((project) => {
+    ProjectService.createProject({
+      projectName: projectName,
+      atlasId: atlasId,
+      modelId: modelId,
+      fileName: file.name,
+      classifierId: classifierId,
+      scviHubId: scviHubId, 
+    }).then((project) => {
       uploadMultipartFile(
         project.uploadId,
         file,
@@ -133,14 +133,13 @@ function UploadFilePage({
   }, [submissionProgress]);
 
   // the function to create a demo dataset project
-  const createDemoProject = (projectName, atlasId, modelId, demoDataset) => {
-    ProjectService.createProject(
-      projectName,
-      atlasId,
-      modelId,
-      undefined,
-      demoDataset.name,
-    );
+  const createDemoProject = ({projectName, atlasId, modelId, demoDataset}) => {
+    ProjectService.createProject({
+      projectName: projectName,
+      atlasId: atlasId,
+      modelId: modelId,
+      file: demoDataset.name,
+  });
     history.push(path); // go back to GeneMapper home
   };
 
@@ -150,16 +149,20 @@ function UploadFilePage({
     setOpen(false); // opens modal to input mapping name
     // choose what type of project to create.
     if (datasetIsSelected) { // Demo project
-      createDemoProject(mappingName, selectedAtlas._id, selectedModel._id,
-        selectedDataset);
+      createDemoProject({
+        projectName:mappingName, 
+        atlasId: selectedAtlas._id, 
+        modelId: selectedModel._id,
+        demoDataset: selectedDataset
+      });
     } else {
-      // Find the matching scvi hub id           projectName, atlasId, modelId, fileName, classifierId, scviHubId = null
       if(selectedAtlas.scviAtlas){
         createProject({
           projectName: mappingName, 
           atlasId: scviHubModel.scviHubId, 
           modelId: scviHubModel.model, 
-          fileName: uploadedFile[0],
+          file: uploadedFile[0],
+          classifierId: selectedClassifier._id,
           scviHubId: scviHubModel.scviHubId});
       }
       else{ // create a project with a core atlas.
@@ -167,7 +170,7 @@ function UploadFilePage({
           projectName: mappingName, 
           atlasId: selectedAtlas._id, 
           modelId: selectedModel._id,
-          fileName: uploadedFile ? uploadedFile[0]: selectedDataset,
+          file: uploadedFile ? uploadedFile[0]: selectedDataset,
           classifierId: selectedClassifier._id});
       }
     }
