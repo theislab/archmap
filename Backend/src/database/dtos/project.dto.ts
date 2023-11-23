@@ -34,5 +34,6 @@ export interface AddScviProjectDTO {
   uploadDate: Date,
   status: string,
   scviHubId: string,
-  model_setup_anndata_args: object
+  model_setup_anndata_args: object,
+  classifierId?: ObjectId,
 }
