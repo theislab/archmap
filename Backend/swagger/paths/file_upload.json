@@ -94,6 +94,9 @@
                 },
                 "model_setup_anndata_args": {
                   "type": "object"
+                },
+                "classifierId": {
+                  "type": "string"
                 }
               },
               "required": ["fileName", "projectName"],
