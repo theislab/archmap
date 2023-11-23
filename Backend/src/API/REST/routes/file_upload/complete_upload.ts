@@ -122,7 +122,7 @@ export default function upload_complete_upload_route() {
             let use_knn = false;
             let use_encoder = false; 
 
-            switch (classifier.name) {
+            switch (classifier?.name) {
               case 'XGBoost':
                   use_xgboost = true;
                   break;
@@ -133,7 +133,7 @@ export default function upload_complete_upload_route() {
                 use_encoder = true;
                   break;
               default:
-                  return res.status(500).send(`Unknown classifier: ${classifier.name}`);
+                  return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
            }
            const classifier_path = get_classifier_path(use_xgboost, use_knn, use_encoder, atlas._id);
 
