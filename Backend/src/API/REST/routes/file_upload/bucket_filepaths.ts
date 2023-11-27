@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
 export function query_path(projectid: ObjectId | string): string {
   return `projects/${projectid}/query.h5ad`;
@@ -15,20 +16,29 @@ export function model_path(modelId: ObjectId | string): string {
   return `models/${modelId}/model.pt`;
 }
 
-export function get_classifier_path(xgboost:boolean, knn:boolean, encoder: boolean, atlasId: ObjectId | string){
-  
-  if (xgboost){
+
+// the argument will of the form 
+// let classifier_type = {
+//   XGB : false,
+//   kNN : false,
+//   Native: false
+// };
+export async function get_classifier_path(classifier_type: {XGB : boolean, kNN : boolean, Native: boolean}  , atlasId: ObjectId | string, modelId: ObjectId | string ){
+  if(classifier_type.XGB){
     return classifier_path_xgboost(atlasId);
-  }
-  else if (knn){
+  }else if(classifier_type.kNN){
     return classifier_path_knn(atlasId);
-  }
-  else if (encoder){
-    return classifier_path_encoder(atlasId);
+  }else if(classifier_type.Native){
+    const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+      atlasId,
+      modelId
+    );
+    return model_path(modelAssociatedWithAtlas._id);
   }
   else{
-    return "";
+    return null;
   }
+  
 }
 
 export function classifier_path_xgboost(atlasId: ObjectId | string): string {
@@ -39,6 +49,22 @@ export function classifier_path_knn(atlasId: ObjectId | string): string {
   return `classifiers/${atlasId}/classifier_knn.pickle`;
 }
 
-export function classifier_path_encoder(atlasId: ObjectId | string): string {
+function _encoder_path(atlasId:ObjectId | string){
   return `classifiers/${atlasId}/classifier_encoding.pickle`;
+}
+
+export async function  encoder_path(classifier_type: {XGB : boolean, kNN : boolean, Native: boolean}, atlasId: ObjectId | string, modelId: ObjectId | string) {
+  if(classifier_type.XGB || classifier_type.kNN){
+    return _encoder_path(atlasId);
+  }else if(classifier_type.Native){
+    const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+      atlasId,
+      modelId
+    );
+    return model_path(modelAssociatedWithAtlas._id);
+  }
+  else{
+    return null;
+  }
+  
 }

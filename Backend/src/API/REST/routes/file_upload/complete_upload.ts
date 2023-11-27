@@ -121,24 +121,30 @@ export default function upload_complete_upload_route() {
             let use_xgboost = false;
             let use_knn = false;
             let use_encoder = false;
-            let classifier_path; 
-
+            let classifier_type = {
+              XGB : false,
+              kNN : false,
+              Native: false
+            };
+            let encoder_path;
+            let classifier_path;
             // Optional classifier choice
             if(classifier){
               switch (classifier?.name) {
                 case 'XGBoost':
-                    use_xgboost = true;
+                    classifier_type.XGB = true;
                     break;
                 case 'KNN':
-                    use_knn = true;
+                    classifier_type.kNN = true;
                     break;
                 case 'scANVI':
-                  use_encoder = true;
+                    classifier_type.Native = true;
                     break;
                 default:
                     return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
              }
-             classifier_path = get_classifier_path(use_xgboost, use_knn, use_encoder, atlas._id);
+             classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
+             encoder_path = await encoder_path(classifier_type, atlas._id, model._id);
             }
 
             if (model && model.name == "scVI") {
