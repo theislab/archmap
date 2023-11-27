@@ -118,9 +118,7 @@ export default function upload_complete_upload_route() {
 
             let queryInfo;
 
-            let use_xgboost = false;
-            let use_knn = false;
-            let use_encoder = false;
+            
             let classifier_type = {
               XGB : false,
               kNN : false,
@@ -160,10 +158,9 @@ export default function upload_complete_upload_route() {
                   csv: false,
                   cxg: true,
                 },
-                use_encoder: use_encoder,
-                use_knn: use_knn,
-                use_xgboost: use_xgboost,
+                classifier_type : classifier_type,
                 classifier_path: classifier_path,
+                encoder_path: encoder_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
                 model_path: model_path(modelAssociatedWithAtlas?._id),
@@ -187,12 +184,11 @@ export default function upload_complete_upload_route() {
                   csv: false,
                   cxg: true,
                 },
-                use_encoder: use_encoder,
-                use_knn: use_knn,
-                use_xgboost: use_xgboost,
+                classifier_type : classifier_type,
                 classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
+                encoder_path: encoder_path,
                 model_path: model_path(modelAssociatedWithAtlas?._id),
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scANVI: true,
