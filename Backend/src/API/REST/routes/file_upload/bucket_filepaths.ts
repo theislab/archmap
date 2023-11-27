@@ -53,7 +53,7 @@ function _encoder_path(atlasId:ObjectId | string){
   return `classifiers/${atlasId}/classifier_encoding.pickle`;
 }
 
-export async function  encoder_path(classifier_type: {XGB : boolean, kNN : boolean, Native: boolean}, atlasId: ObjectId | string, modelId: ObjectId | string) {
+export async function  get_encoder_path(classifier_type: {XGB : boolean, kNN : boolean, Native: boolean}, atlasId: ObjectId | string, modelId: ObjectId | string) {
   if(classifier_type.XGB || classifier_type.kNN){
     return _encoder_path(atlasId);
   }else if(classifier_type.Native){

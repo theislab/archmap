@@ -22,7 +22,7 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 
 import ClassifierService from "../../../../database/services/classifier.service";
-import { get_classifier_path, model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
+import { get_classifier_path, get_encoder_path, model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
 const MAX_EPOCH_QUERY = 2;
@@ -142,7 +142,10 @@ export default function upload_complete_upload_route() {
                     return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
              }
              classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
-             encoder_path = await encoder_path(classifier_type, atlas._id, model._id);
+             encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
+             console.log("classifier_path is ", classifier_path);
+              console.log("encoder_path is ", encoder_path);
+              console.log("classifier_type is ", classifier_type);
             }
 
             if (model && model.name == "scVI") {
