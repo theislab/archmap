@@ -14,6 +14,9 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useAuth } from "shared/context/authContext";
 import AtlasService from "shared/services/Atlas.service";
+import ClassifierService from "shared/services/Classifier.service";
+import ModelService from "shared/services/Model.service";
+
 
 const { default: CustomButton } = require("components/CustomButton");
 
@@ -46,6 +49,8 @@ const AtlasUpload = () => {
   const [user, setUser] = useAuth();
   const classes = useStyles();
   const navigate = useHistory();
+  const [modelResult, setModelResult] = useState([]);
+  const [classifierResult, setClassifierResult] = useState([]);
 
   if (user.hasPermission === false) {
     navigate.push("/gene-mapper");
@@ -60,6 +65,10 @@ const AtlasUpload = () => {
       setIsLoading(true);
       const atlasResults = await AtlasService.getAtlases();
       const filteredAtlas = filterByUploadedPerson(atlasResults, user);
+      const modelResult  = await ModelService.getModels();
+      const classifierResult = await ClassifierService.getClassifiers();
+      setModelResult(modelResult);
+      setClassifierResult(classifierResult);
       setAtlases(filteredAtlas);
       // applyAtlasFilters(atlasResults);
       setIsLoading(false);
@@ -177,6 +186,8 @@ const AtlasUpload = () => {
           setIsLoading={setIsLoading}
           user={user}
           isLoading={isLoading}
+          modelsList= {modelResult}
+          classifiersList= {classifierResult}
         />
       </Dialog>
     </>
