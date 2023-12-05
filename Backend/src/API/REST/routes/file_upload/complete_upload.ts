@@ -78,14 +78,14 @@ export default function upload_complete_upload_route() {
             let model, atlas, classifier;
 
             // Archmap core atlases
-            if(project.modelId && project.atlasId){
+            if (project.modelId && project.atlasId) {
               [model, atlas, classifier] = await Promise.all([
                 ModelService.getModelById(project.modelId),
                 AtlasService.getAtlasById(project.atlasId),
                 project.classifierId
-                ? ClassifierService.getClassifierById(project.classifierId)
-                : Promise.resolve(undefined),
-              ]); 
+                  ? ClassifierService.getClassifierById(project.classifierId)
+                  : Promise.resolve(undefined),
+              ]);
             }
 
             // Check if the model and atlas exist for the chosen core archmap atlas.
@@ -100,7 +100,7 @@ export default function upload_complete_upload_route() {
             }
 
             // Check if the id and args exist for the chosen scvi hub atlas. 
-            if((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas){
+            if ((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas) {
               console.log(project.scviHubId && project.model_setup_anndata_args);
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
@@ -118,32 +118,32 @@ export default function upload_complete_upload_route() {
 
             let queryInfo;
 
-            
+
             let classifier_type = {
-              XGB : false,
-              kNN : false,
+              XGBoost: false,
+              kNN: false,
               Native: false
             };
             let encoder_path;
             let classifier_path;
             // Optional classifier choice
-            if(classifier){
+            if (classifier) {
               switch (classifier?.name) {
                 case 'XGBoost':
-                    classifier_type.XGB = true;
-                    break;
+                  classifier_type.XGBoost = true;
+                  break;
                 case 'KNN':
-                    classifier_type.kNN = true;
-                    break;
+                  classifier_type.kNN = true;
+                  break;
                 case 'scANVI':
-                    classifier_type.Native = true;
-                    break;
+                  classifier_type.Native = true;
+                  break;
                 default:
-                    return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
-             }
-             classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
-             encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
-             console.log("classifier_path is ", classifier_path);
+                  return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
+              }
+              classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
+              encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
+              console.log("classifier_path is ", classifier_path);
               console.log("encoder_path is ", encoder_path);
               console.log("classifier_type is ", classifier_type);
             }
@@ -156,12 +156,12 @@ export default function upload_complete_upload_route() {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                
+
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
-                classifier_type : classifier_type,
+                classifier_type: classifier_type,
                 classifier_path: classifier_path,
                 encoder_path: encoder_path,
                 query_data: query_path(project.id),
@@ -182,12 +182,12 @@ export default function upload_complete_upload_route() {
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                
+
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
-                classifier_type : classifier_type,
+                classifier_type: classifier_type,
                 classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
@@ -201,14 +201,14 @@ export default function upload_complete_upload_route() {
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-            }else{ // Query info for scvi hub atlas
-              if(project.scviHubId && project.model_setup_anndata_args){ 
+            } else { // Query info for scvi hub atlas
+              if (project.scviHubId && project.model_setup_anndata_args) {
                 queryInfo = {
                   scviHubId: project.scviHubId,
                   model_setup_anndata_args: project.model_setup_anndata_args,
                   output_type: {
-                      csv: false,
-                      cxg: true
+                    csv: false,
+                    cxg: true
                   },
                   query_data: query_path(project.id),
                   output_path: result_path(project.id),
@@ -290,7 +290,7 @@ export default function upload_complete_upload_route() {
 
             const [response] = await tasks.createTask(request, call_options);
             console.log(`Created task ${response.name}`);
-            if (!response  || !response.name) {
+            if (!response || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
@@ -352,7 +352,7 @@ export default function upload_complete_upload_route() {
           console.log(err);
           try {
             res.status(500).send(`Error persisting Multipart-Upload object data: ${err}`);
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.log(err);
