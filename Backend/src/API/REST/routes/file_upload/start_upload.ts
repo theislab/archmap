@@ -47,6 +47,8 @@ export default function upload_start_upload_route() {
               fileName: String(fileName),
               uploadDate: new Date(),
               status: ProjectStatus.UPLOAD_PENDING,
+              modelId: modelId,
+              atlasId: atlasId,
               model_setup_anndata_args: model_setup_anndata_args,
               scviHubId: scviHubId
             };

@@ -33,6 +33,8 @@ export interface AddScviProjectDTO {
   fileName: string,
   uploadDate: Date,
   status: string,
+  modelId: string, 
+  atlasId: string,
   scviHubId: string,
   model_setup_anndata_args: object,
   classifierId?: ObjectId,

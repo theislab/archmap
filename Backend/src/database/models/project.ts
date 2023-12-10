@@ -1,4 +1,4 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, Types } from "mongoose";
 
 export enum ProjectStatus {
   UPLOAD_PENDING = "UPLOAD_PENDING",
@@ -49,14 +49,41 @@ const projectSchema = new Schema<IProject>({
   },
   name: { type: String, require: true },
 
-  // one of the following set of fields is required
-  // Set 1
-  modelId: { type: Schema.Types.ObjectId, require: function() { return !this.model_setup_anndata_args && !this.scviHubId; } },
-  atlasId: { type: Schema.Types.ObjectId, require: function() { return !this.model_setup_anndata_args && !this.scviHubId; } },
+  modelId: {
+    type: Schema.Types.Mixed,
+    validate: {
+      validator: function (value: any) {
+        if (!this.model_setup_anndata_args && !this.scviHubId) {
+          console.log('It is an instance of the object id: ', value instanceof Schema.Types.ObjectId);
+          return Types.ObjectId.isValid(value);
+        } else {
+          return typeof value === 'string';; // Allow string type for scvi hub atlases.
+        }
+      },
+      message: 'modelId must be either a String for an scvi hub atlas or an ObjectId.',
+    },
+    required: true,
+  },
+
+  atlasId: {
+    type: Schema.Types.Mixed, // Allows multiple types
+    validate: {
+      validator: function (value: any) {
+        if (!this.model_setup_anndata_args && !this.scviHubId) {
+          console.log('It is an instance of the object id: ', value instanceof Schema.Types.ObjectId);
+          return Types.ObjectId.isValid(value);
+        } else {
+          return typeof value === 'string'; // Allow string type for scvi hub atlases.
+        }
+      },
+      message: "atlasId must be either a String for an scvi hub atlas or an ObjectId",
+    },
+    required: true,
+  },
   // Set 2
-  model_setup_anndata_args: {type: Object, require: function() { return !this.modelId && !this.atlasId; }},
-  scviHubId: {type: String, require: function() { return !this.modelId && !this.atlasId; }},
-  classifierId: { type: Schema.Types.ObjectId, required: false },
+  model_setup_anndata_args: {type: Object, require: false},
+  scviHubId: {type: String, require: false},
+  classifierId: { type: Schema.Types.ObjectId, require: false },
 
   // file
   uploadId: { type: String, require: false },
