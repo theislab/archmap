@@ -78,7 +78,7 @@ export default function upload_complete_upload_route() {
             let model, atlas, classifier;
 
             // Archmap core atlases
-            if (project.modelId && project.atlasId) {
+            if (!project?.scviHubId) {
               [model, atlas, classifier] = await Promise.all([
                 ModelService.getModelById(project.modelId),
                 AtlasService.getAtlasById(project.atlasId),
