@@ -228,8 +228,9 @@ const delete_project = (): Router => {
         ...project,
         deletedAt: new Date(),
       };
-
+      console.log('Trying to delete the project.')
       await DeletedProjectService.addDeletedProject(deletedProject);
+      console.log('The project has been deleted');
       await ProjectService.deleteProjectById(projectId);
 
       return res.status(200).send("OK");
