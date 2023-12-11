@@ -6,8 +6,8 @@ export interface AddDeletedProjectDTO {
   teamId: ObjectId;
   name: string;
 
-  atlasId?: ObjectId;
-  modelId?: ObjectId;
+  atlasId?: ObjectId | string;
+  modelId?: ObjectId | string;
   scviHubId?: string,
   model_setup_anndata_args?: object,
   classifierId?: ObjectId, 

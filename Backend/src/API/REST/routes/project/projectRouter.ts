@@ -282,8 +282,8 @@ const restore_deleted_project = (): Router => {
             fileName: deletedProject.fileName,
             uploadDate: deletedProject.uploadDate,
             status: deletedProject.status,
-            modelId: deletedProject.modelId,
-            atlasId: deletedProject.atlasId,
+            modelId: deletedProject.modelId as string,
+            atlasId: deletedProject.atlasId as string,
             scviHubId: deletedProject.scviHubId,
             model_setup_anndata_args: deletedProject.model_setup_anndata_args,
             classifierId: deletedProject.classifierId,
@@ -295,8 +295,8 @@ const restore_deleted_project = (): Router => {
             fileName: deletedProject.fileName,
             uploadDate: deletedProject.uploadDate,
             status: deletedProject.status,
-            modelId: deletedProject.modelId,
-            atlasId: deletedProject.atlasId,
+            modelId: deletedProject.modelId as ObjectId,
+            atlasId: deletedProject.atlasId as ObjectId,
             classifierId: deletedProject.classifierId,
           }
         }

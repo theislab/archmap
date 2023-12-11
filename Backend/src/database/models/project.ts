@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from "mongoose";
+import { Document, model, Schema, Types, ObjectId } from "mongoose";
 
 export enum ProjectStatus {
   UPLOAD_PENDING = "UPLOAD_PENDING",
@@ -14,8 +14,8 @@ export interface IProject extends Document {
   teamId: Schema.Types.ObjectId;
   name: string;
 
-  atlasId?: Schema.Types.Mixed; // Allow multiple types: String and object id.
-  modelId?: Schema.Types.Mixed; // Allow multiple types: String and object id. 
+  atlasId?: ObjectId | string; // Allow multiple types: String or object id.
+  modelId?: ObjectId | string; // Allow multiple types: String or object id. 
   classifierId: Schema.Types.ObjectId; 
   model_setup_anndata_args?: object;
   scviHubId?: string;
