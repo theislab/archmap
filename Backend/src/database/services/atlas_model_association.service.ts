@@ -80,4 +80,35 @@ export default class AtlasModelAssociationService {
   ): Promise<IAtlasModelAssociation | null> {
     return await AtlasModelAssociation.findOne({ atlas: atlasId, model: modelId }).populate('atlas model').exec();
   }
+
+  /**
+   * Update modelUploadID by id of atlas_model_association
+   * 
+   * @param atlasModelID
+   * @param modelUploadId
+   * 
+   */
+  static async updateModelByModelUploadId(
+    atlasModelID: ObjectId | string,
+    modelUploadId: string
+  ) {
+    // await atlasModel.updateOne({ atlasID }, { encoderUploadPath: encoderUploadPath }).exec();
+    await  AtlasModelAssociation.updateOne({ _id: atlasModelID }, { modelUploadId: modelUploadId }).exec();
+  }
+
+  /**
+   * Update model path by id of atlas_model_association
+   * 
+   * @param _id
+   * @param modelUploadPath
+   * 
+   */
+  static async updateModelPathByModelUploadId(
+    _id: ObjectId | string,
+    modelUploadPath: string
+  ) {
+    
+    await  AtlasModelAssociation.updateOne({ _id }, { modelUploadPath: modelUploadPath }).exec();
+  }
+
 }

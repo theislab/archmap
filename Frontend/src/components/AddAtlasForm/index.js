@@ -6,6 +6,11 @@ const { default: axiosInstance } = require("shared/services/axiosInstance");
 import { makeStyles } from "@mui/styles";
 import { Select, MenuItem } from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
+import AtlasUploadService from "shared/services/AtlasUpload.service";
+import {   initUploadProgress, useUploadProgress } from "shared/context/UploadProgressContext";
+import { uploadAtlasAndModelFiles} from "shared/services/UploadLogic";
+import { MULTIPART_UPLOAD_STATUS } from "shared/utils/common/constants";
+
 
 
 
@@ -59,6 +64,8 @@ const styles = {
     const [modelFiles, setModelFiles] = useState({});
     const [encoderFile, setEncoderFile] = useState(null);
 
+    const { setProgress, uploadProgress } = useUploadProgress();
+
     
     
 
@@ -66,7 +73,112 @@ const styles = {
   
     const classes = useStyles();
 
+    const handleFormSubmit = async (e) => {
+      e.preventDefault();
+      setIsLoading(true);
+    
+      if (!validateModelSelectionAndFiles()) {
+        alert("Please upload files for all selected models.");
+        setIsLoading(false);
+        return;
+      }
+    
+      if (!validateClassifierFiles()) {
+        alert("Please upload both classifier and encoder files.");
+        setIsLoading(false);
+        return;
+      }
+    
+      try {
+        // Assuming AtlasUploadService.createAtlas is an async function
+        const { atlas, models } = await AtlasUploadService.createAtlas(
+          atlasName, previewPictureURL, modalities, numberOfCells, species, 
+          compatibleModels.map(model => model.name), 
+          selectedClassifier.name, url, user._id
+        );
+        
+        console.log("Atlas: ", atlas);
+        console.log("Models: ", models);
+    
+        // Initialize atlas uploads
+        if (atlasFile) {
+          console.log("atlas upload path", atlas.atlasUploadPath)
+          console.log("atlas file, atlas upload id, atlas upload path", atlasFile, atlas.atlasUploadId, atlas.atlasUploadPath)
+          handleFileUpload(atlasFile, atlas.atlasUploadId, atlas.atlasUploadPath);
 
+        }
+        if (atlas.classifierUploadId) {
+          handleFileUpload(classifierFile, atlas.classifierUploadId, atlas.classifierUploadPath);
+          handleFileUpload(encoderFile, atlas.encoderUploadId, atlas.encoderUploadPath);
+        }
+    
+        // Initialize model uploads
+        models.forEach(model => {
+          console.log("model", model)
+          if (modelFiles[model.name]) {
+            console.log("model upload path", model.modelUploadPath)
+            handleFileUpload(modelFiles[model.name], model.modelUploadId, model.modelUploadPath);
+          }
+        });
+        
+        alert("File upload started successfully")
+    
+      } catch (error) {
+        console.error("Error during form submission:", error);
+        axiosInstance
+        .delete(`/api/atlases/${atlas._id}`)
+          .then(() => {
+        console.log("atlas deleted successfully");
+        setIsLoading(false);
+        
+        
+        })
+        .catch((error) => {
+          console.error(error);
+          setIsLoading(false);
+        });
+        setIsLoading(false);
+        // Handle any errors that occurred during submission
+      } finally {
+        // Reset the form and state
+        setIsLoading(false);
+        // setAtlasName("");
+        // setPreviewPictureURL("");
+        // setModalities([]);
+        // setCompatibleModels([]);
+        // setNumberOfCells("");
+        // setSpecies("");
+        // setAtlasFile(null);
+        // setFileName("");
+        // setUrl("");
+        // setFileError("");
+        // setSelectedClassifier("");
+        // setClassifierFile(null);
+        // setModelFiles({});
+        // setEncoderFile(null);
+
+        // setIsAddModalOpen(false);
+      }
+    };
+
+    
+    const handleFileUpload = async (file, uploadId, keyPath) => {
+      console.log("File upload started in handle file upload", file);
+      console.log("UPLOAD ID IS ", uploadId);
+      
+      // Initialize the upload progress for this uploadId
+      setProgress(uploadId, initUploadProgress(uploadId));
+    
+      // Wait for the next render to ensure the state has been updated
+      setTimeout(() => {
+        uploadAtlasAndModelFiles(uploadId, file, keyPath, (uploadId, newProgressFields) => {
+          console.log("upload progress inside handleFileUpload", newProgressFields);
+          setProgress(uploadId, newProgressFields);
+        }, () => uploadProgress);
+      }, 0);
+    };
+    
+  
 
     const validateModelSelectionAndFiles = () => {
       // Check if any model is selected
@@ -82,109 +194,6 @@ const styles = {
       return selectedClassifier === "" || (classifierFile && encoderFile);
     };
   
-    const handleFormSubmit = (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      // Create a new FormData object
-
-      if (!validateModelSelectionAndFiles()) {
-        alert("Please upload files for all selected models.");
-        setIsLoading(false);
-        return;
-      }
-
-      if (!validateClassifierFiles()) {
-        alert("Please upload both classifier and encoder files.");
-        setIsLoading(false);
-        return;
-      }
-
-      const formData = new FormData();
-        
-      // Append form data
-      formData.append("name", atlasName);
-      formData.append("previewPictureURL", previewPictureURL);
-      modalities.forEach((modality) => {
-        formData.append("modalities", modality);
-      });
-      formData.append("numberOfCells", numberOfCells);
-      formData.append("species", species);
-      if (atlasFile) {
-        formData.append("atlasFile", atlasFile);
-      }
-
-      const modelNames = compatibleModels.map(model => model.name);
-      formData.append("compatibleModels", JSON.stringify(modelNames));
-
-  
-      formData.append("atlasUrl", url);
-      formData.append("userId", user._id);
-      // Append compatible model files
-      
-      // send each model 
-      compatibleModels.forEach(model => {
-        // set each model file to the corresponding model name like modefile_$model_name
-        const modelFile = `modelFile_${model.name}`;
-        formData.append(modelFile, modelFiles[model.name]);
-      });
-      
-
-      if (selectedClassifier) {
-        const selectedClassifierName = selectedClassifier.name;
-        formData.append("selectedClassifier", selectedClassifierName);
-        if (classifierFile) {
-          formData.append("classifierFile", classifierFile);
-        }
-        if (encoderFile) {
-          formData.append("encoderFile", encoderFile);
-        }
-      }
-
-      // print the formdata that is being sent to the backend
-      // Display the key/value pairs
-      for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
-      }
-
-      
-  
-      // Make the API request to create the atlas using Axios
-      axiosInstance
-        .post("/atlases/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          // Handle the response
-          console.log("Atlas created:", response.data);
-  
-          // Reset form fields
-          setAtlasName("");
-          setPreviewPictureURL("");
-          setModalities([]);
-          setNumberOfCells("");
-          setSpecies("");
-          setAtlasFile(null);
-          setFileName("");
-          setUrl("");
-          setIsLoading(false);
-          setIsAddModalOpen(false);
-          setCompatibleModels([]);
-          setModelFiles({});
-          setClassifierFile(null);
-          setEncoderFile(null);
-          setSelectedClassifier("");
-          
-          setFileError("");
-
-          alert("Atlas added successfully");
-        })
-        .catch((error) => {
-          console.error("Error creating atlas:", error);
-          setIsLoading(false);
-        });
-    };
     const handleUrlChange = (e) => {
       setUrl(e.target.value);
       setAtlasFile(null);
@@ -211,6 +220,8 @@ const styles = {
         });
       }
     };
+
+    
     
     
     return (

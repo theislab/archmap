@@ -9,6 +9,14 @@ export interface IAtlas extends Document {
   compatibleModels: string[]; // Array of strings;
   uploadedBy: string;
   atlasUrl: string;
+  atlasUploadId: string;
+  classifierUploadId: string;
+  encoderUploadId: string;
+  status: string;
+  atlasUploadPath: string;
+  classifierUploadPath: string;
+  encoderUploadPath: string;
+  
 }
 
 const atlasSchema = new Schema<IAtlas>(
@@ -50,6 +58,14 @@ const atlasSchema = new Schema<IAtlas>(
     ],
     uploadedBy: { type: String, required: false },
     atlasUrl: { type: String, required: false },
+    atlasUploadId: { type: String, required: false },
+    classifierUploadId: { type: String, required: false },
+    encoderUploadId: { type: String, required: false },
+    status: { type: String, required: false },
+    atlasUploadPath: { type: String, required: false },
+    classifierUploadPath: { type: String, required: false },
+    encoderUploadPath: { type: String, required: false },
+
   },
   {
     timestamps: true,

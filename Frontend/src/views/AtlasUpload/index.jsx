@@ -12,10 +12,12 @@ import { makeStyles } from "@mui/styles";
 import AddAtlasForm from "components/AddAtlasForm";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import {  useUploadProgress } from "shared/context/UploadProgressContext";
 import { useAuth } from "shared/context/authContext";
 import AtlasService from "shared/services/Atlas.service";
 import ClassifierService from "shared/services/Classifier.service";
 import ModelService from "shared/services/Model.service";
+
 
 
 const { default: CustomButton } = require("components/CustomButton");
@@ -51,6 +53,11 @@ const AtlasUpload = () => {
   const navigate = useHistory();
   const [modelResult, setModelResult] = useState([]);
   const [classifierResult, setClassifierResult] = useState([]);
+  const [uploadProgressBarValue, setUploadProgressBarValue] = useState(0);
+  const { uploadProgress, setProgress} = useUploadProgress();
+  
+
+  
 
   if (user.hasPermission === false) {
     navigate.push("/gene-mapper");
@@ -70,13 +77,20 @@ const AtlasUpload = () => {
       setModelResult(modelResult);
       setClassifierResult(classifierResult);
       setAtlases(filteredAtlas);
+      console.log("atlases", atlasResults);
+
       // applyAtlasFilters(atlasResults);
       setIsLoading(false);
     };
     fetchAtlases();
   }, []);
 
+  useEffect(() => {
+    console.log('Updated uploadProgress', uploadProgress);
+  }, [uploadProgress]);
+
   return (
+    
     <>
       {/* {A heading which says My Atlases} */}
       <Box
@@ -95,6 +109,7 @@ const AtlasUpload = () => {
           </Grid>
         </Grid>
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -146,6 +161,7 @@ const AtlasUpload = () => {
       >
         {atlases &&
           atlases.map((atlas) => (
+            
             <Grid className={classes.gridForCard} item key={atlas._id}>
               <Card
                 onClick={() => {
@@ -168,6 +184,16 @@ const AtlasUpload = () => {
                   >
                     {atlas.name}
                   </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    Status: {
+                      atlas.atlasUploadId 
+                        ? (uploadProgress[atlas.atlasUploadId] 
+                            ? uploadProgress[atlas.atlasUploadId].status 
+                            : 'Pending Upload') 
+                        : 'No Upload ID' 
+                    }
+                  </Typography>
+
                 </CardContent>
               </Card>
             </Grid>
@@ -191,6 +217,8 @@ const AtlasUpload = () => {
         />
       </Dialog>
     </>
+    
+
   );
 };
 export default AtlasUpload;

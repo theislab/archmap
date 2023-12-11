@@ -30,5 +30,33 @@ export default function upload_get_upload_url_route() {
       res.status(500).send(err);
     }
   });
+
+  // New POST route
+  router.post("/file_upload/get_upload_url", check_auth(), async (req: ExtRequest, res) => {
+    const { partNumber, uploadId, keyPath } = req.body;
+
+    if (!process.env.S3_BUCKET_NAME) {
+      return res.status(500).send("S3-BucketName is not set");
+    }
+
+    try {
+      // Your existing logic might differ here depending on how you handle key paths
+      // and whether you need to validate or retrieve additional information based on the keyPath.
+
+      let params: UploadPartRequest = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: keyPath,
+        PartNumber: Number(partNumber),
+        UploadId: uploadId,
+      };
+      console.log("params", params)
+      let presignedUrl = await s3.getSignedUrlPromise("uploadPart", params);
+      console.log("presignedUrl", presignedUrl)
+      res.status(200).send({ presignedUrl });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  });
   return router;
 }

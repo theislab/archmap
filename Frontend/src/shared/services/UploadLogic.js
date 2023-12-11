@@ -74,6 +74,59 @@ async function uploadChunks(chunkCount, remaining, selectedFile, uploadId,
   }
 }
 
+async function uploadChunksForAtlas(chunkCount, remaining, selectedFile, uploadId, keyPath, getLatestUploadProgress, setProgress, promiseArray) {
+  let latestUploadProgress = getLatestUploadProgress();
+  for (let index = 1; index <= chunkCount && !localStorage.getItem(`cancelUpload_${uploadId}`); index++) {
+    if (!remaining.includes(index)) {
+      console.log(`Skipping chunk ${index}`);
+      continue;
+    }
+
+    const start = (index - 1) * UPLOAD_CHUNK_SIZE;
+    const end = index < chunkCount ? start + UPLOAD_CHUNK_SIZE : selectedFile.size;
+    const blob = selectedFile.slice(start, end);
+
+    const currentPromise = fetch(`${BACKEND_ADDRESS}/file_upload/get_upload_url`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
+        },
+        body: JSON.stringify({
+            partNumber: index,
+            uploadId: uploadId,
+            keyPath: keyPath
+        })
+      })
+      .then(response => expectStatus(response, 'get_upload_url', 200))
+      .then(response => response.json())
+      .then(async ({ presignedUrl }) => fetch(presignedUrl, {
+        body: blob,
+        method: 'PUT',
+        headers: { 'Content-Type': selectedFile.type },
+      }))
+      .then(chunkResponse => {
+        if (chunkResponse.status !== 200) {
+          throw new Error(`Invalid status code received for chunk upload (${chunkResponse.status})`);
+        }
+        const etag = chunkResponse.headers.get('ETag');
+        const newRemaining = removeItemFromArray(latestUploadProgress[uploadId].remaining, index);
+
+        setProgress(uploadId, {uploaded: latestUploadProgress[uploadId].uploaded + 1, remaining: newRemaining });
+        return { etag, index };
+      });
+
+    promiseArray.push(currentPromise);
+
+    try {
+      await currentPromise; // sequential upload
+    } catch (error) {
+      console.error(`Error uploading chunk ${index}:`, error);
+      // Handle error (e.g., retry logic, abort, etc.)
+    }
+  }
+}
+
 function finishUpload(chunkCount, promiseArray, submissionProgress, setSubmissionProgress,
   selectedFile, uploadId) {
   Promise.all(promiseArray.map((promise) => promise.catch((e) => e)))
@@ -118,6 +171,40 @@ function finishUpload(chunkCount, promiseArray, submissionProgress, setSubmissio
     }).catch((err) => console.log(err));
 }
 
+
+// This is how it is called 
+// uploadAtlasAndModelFiles(uploadId, file, keyPath, (uploadId, uploadProgress) => {
+//   console.log("upload progress", uploadProgress);
+//   setProgress(uploadId, uploadProgress);
+// });
+
+export async function uploadAtlasAndModelFiles(uploadId, selectedFile, keyPath, onProgressUpdate, getLatestUploadProgress) {
+  const chunkCount = Math.floor(selectedFile.size / UPLOAD_CHUNK_SIZE) + 1;
+  console.log("chunk count for ", keyPath, chunkCount);
+
+  onProgressUpdate(uploadId, { chunks: chunkCount });
+  
+  const latestUploadProgress = getLatestUploadProgress();
+  
+  // Check if the state for this uploadId is defined
+  if (latestUploadProgress[uploadId]) {
+    if (latestUploadProgress[uploadId].status !== Status.ERROR_FINISH) {
+      let { remaining } = latestUploadProgress[uploadId];
+      console.log("remaining is ", remaining);
+
+      if (!remaining || remaining.length === 0) {
+        remaining = Array.from({ length: chunkCount }, (_, i) => i + 1);
+        onProgressUpdate(uploadId, { remaining: remaining });
+      }
+
+      onProgressUpdate(uploadId, { status: Status.UPLOAD_PROGRESS });
+      
+      await uploadChunksForAtlas(chunkCount, remaining, selectedFile, uploadId, keyPath, getLatestUploadProgress, onProgressUpdate, promiseArray);
+    }
+  } else {
+    console.error("No progress state found for uploadId:", uploadId);
+  }
+}
 export async function uploadMultipartFile(uploadId, selectedFile,
   submissionProgress, setSubmissionProgress) {
   const chunkCount = Math.floor(selectedFile.size / UPLOAD_CHUNK_SIZE) + 1;

@@ -9,6 +9,12 @@ export enum ProjectStatus {
   DONE = "DONE",
 }
 
+export enum AtlasUploadStatus {
+  UPLOAD_PENDING = "UPLOAD_PENDING",
+  UPLOAD_COMPLETE = "UPLOAD_COMPLETE",
+  UPLOAD_FAILED = "UPLOAD_FAILED",
+}
+
 export interface IProject extends Document {
   owner: Schema.Types.ObjectId;
   teamId: Schema.Types.ObjectId;

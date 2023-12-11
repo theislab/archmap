@@ -34,6 +34,4 @@ export default class ModelService {
     return await modelModel.findOne({name: name}).exec();
   }
 
-
-
 }

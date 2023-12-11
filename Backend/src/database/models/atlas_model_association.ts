@@ -5,6 +5,9 @@ import { IModel } from "./model"; // The path should point to where your IModel 
 export interface IAtlasModelAssociation extends Document {
   atlas: IAtlas['_id']; // Reference to the Atlas document's _id
   model: IModel['_id']; // Reference to the Model document's _id
+  modelUploadId: string;
+  modelUploadPath: string;
+  status: string;
 }
 
 const atlasModelAssociationSchema = new Schema<IAtlasModelAssociation>(
@@ -18,7 +21,21 @@ const atlasModelAssociationSchema = new Schema<IAtlasModelAssociation>(
       type: Schema.Types.ObjectId,
       ref: 'Model', // This should match the name you've given your Model model
       required: true
-    }
+    },
+    modelUploadId: {
+      type: String,
+      required: false,
+    },
+    status: {
+      type: String,
+      required: false,
+    },
+    modelUploadPath: {
+      type: String,
+      required: false,
+    },
+
+
   },
   {
     timestamps: true, // This will add createdAt and updatedAt fields
