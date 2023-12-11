@@ -131,7 +131,18 @@ export default function ProjectBarCard({
     }
     setCellxgene({ ...res, status: "ready" });
     setSnackbar({ open: true, type: "success", message: "Cellxgene instance launched. Timeout set to 1 hr." });
+    // Update cache
+    let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+    cachedProjects[project._id]["cellxgene"] = res;
+    localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
   }
+
+  // Set cellxgene state based on the cache value
+  useEffect(() => {
+    const cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+    const cxgValue = cachedProjects[project._id]["cellxgene"];
+    if(cxgValue)  setCellxgene({ ...cxgValue, status: "ready" })
+  }, [project]);
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -286,7 +297,7 @@ export default function ProjectBarCard({
                           ))
                       }
                       {/* Launch Button */}
-                      {(!cellxgene.status || Date.now() > cellxgene.timeout)
+                      {!cellxgene.status || Date.now() > cellxgene.timeout
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
