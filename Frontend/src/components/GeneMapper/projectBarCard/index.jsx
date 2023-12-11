@@ -298,7 +298,10 @@ export default function ProjectBarCard({
                       {/* View Button */}
                       {cellxgene.status === "launching"
                         && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"}>
-                          <Typography>Launching...</Typography>
+                          <Typography>
+                            Launching
+                            <CircularProgress style={{width: '20px', height: '20px', marginLeft: '10px', alignSelf: 'center' }} />
+                          </Typography>
                         </CustomButton>
                         )}
                       {cellxgene.status === "ready" && Date.now() <= cellxgene.timeout
@@ -322,7 +325,7 @@ export default function ProjectBarCard({
                       {/* Snackbar after launching cellxgene */}
                       <Snackbar
                         open={snackbar.open}
-                        autoHideDuration={3000}
+                        autoHideDuration={10000}
                         onClose={() => setSnackbar({ ...snackbar, open: false })}
                         anchorOrigin={{
                           vertical: 'bottom',
@@ -349,25 +352,22 @@ export default function ProjectBarCard({
                           }
                         </Alert>
                       </Snackbar>
-                      <IconButton
-                        href={project.location}
-                        download={`${project.name}.tsv`}
-                        disabled={project.status !== 'DONE'}
-                      >
-                        <DownloadIcon />
-                      </IconButton>
+                      <Box sx={{paddingLeft: '10px'}}>
+                        <IconButton
+                          href={project.location}
+                          download={`${project.name}.tsv`}
+                          disabled={project.status !== 'DONE'}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete()}>
+                        {deleted
+                          ? <ReplayIcon />
+                          : <DeleteOutlineIcon color="error" />}
+                        </IconButton>
+                      </Box>
                     </>
                   )}
-                {/* delete and restore button available if logged in*/}
-                {
-                  loggedIn ? (
-                    <IconButton onClick={() => handleDelete()}>
-                      {deleted
-                        ? <ReplayIcon />
-                        : <DeleteOutlineIcon color="error" />}
-                    </IconButton>
-                  ) : null
-                }
               </Box>
             </Grid>
           </Grid>

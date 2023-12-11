@@ -67,9 +67,15 @@ function GeneMapperState({ path }) {
   const handleStep = (step) => {
     setActiveStep(step);
     if (step === 1 && selectedAtlas && selectedModel) {
-      updateQueryParams('atlas', selectedAtlas._id);
-      updateQueryParams('model', selectedModel._id);
-      updateQueryParams('classifier', selectedClassifier._id);
+      if(selectedAtlas?.scviAtlas){
+        updateQueryParams('atlas', selectedAtlas.name);
+        updateQueryParams('model', selectedModel._id);
+      }else{
+        updateQueryParams('atlas', selectedAtlas._id);
+        updateQueryParams('model', selectedModel._id);
+        updateQueryParams('classifier', selectedClassifier._id);
+      }
+
     }
   };
 

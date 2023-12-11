@@ -75,28 +75,24 @@ function GeneMapperHome({ style, loggedIn }) {
     DemoService.getDemos().then((demos) => {
       // delete project from cache permanently
       let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
-      console.log(`Cached projects: ${JSON.stringify(cachedProjects)}`);
       delete cachedProjects[id];
       localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
 
-      // delete project stored on the remotely
-      if (loggedIn) {
-        // update the projects that are not deleted
-        ProjectService.deleteProject(id).then(() => {
-          ProjectService.getOwnProjects().then((data) => {
-            // search for demos and set the information stored about them
-            findDemos(data, demos);
-            setProjects(data);
-          });
-          // update the projects that are deleted
-          ProjectService.getDeletedProjects().then((data) => {
-            // search for demos and set the information stored about them
-            findDemos(data, demos);
-            console.log(data);
-            setDeletedProjects(data);
-          });
+      // update the projects that are not deleted
+      ProjectService.deleteProject(id).then(() => {
+        ProjectService.getOwnProjects().then((data) => {
+          // search for demos and set the information stored about them
+          findDemos(data, demos);
+          setProjects(data);
         });
-      }
+        // update the projects that are deleted
+        ProjectService.getDeletedProjects().then((data) => {
+          // search for demos and set the information stored about them
+          findDemos(data, demos);
+          console.log(data);
+          setDeletedProjects(data);
+        });
+      });
     });
   };
 
@@ -224,17 +220,25 @@ function GeneMapperHome({ style, loggedIn }) {
           && (
             <div>
               {projects.filter((project) => (
-                (findString === '' || project.name.toLowerCase().includes(findString.toLowerCase())))).map((project) => (
-                  <ProjectBarCard
+                (findString === '' || project.name.toLowerCase().includes(findString.toLowerCase())))).map((project) => {
+                  let atlas = atlases.find((atlas) => String(atlas._id) === String(project.atlasId));
+                  if(!atlas) atlas = { name: project.atlasId }; // set values for scvi hub atlas
+                  let model = models.find((model) => String(model._id) === String(project.modelId));
+                  if(!model){ // set values for the model if it is from scvi hub
+                    let name;
+                    if(project?.modelId) name = project?.modelId.slice(0,2) + project?.modelId?.slice(2).toUpperCase();
+                    model = { name: name };
+                  }
+                  return (<ProjectBarCard
                     key={project._id}
                     project={project}
-                    atlas={atlases.find((atlas) => String(atlas._id) === String(project.atlasId))}
-                    model={models.find((model) => String(model._id) === String(project.modelId))}
+                    atlas={atlas}
+                    model={model}
                     userTeams={userTeams}
                     handleDelete={() => handleDeleteProject(project._id)}
                     loggedIn={loggedIn}
-                  />
-                ))}
+                  />);
+                })}
             </div>
           )}
         {loggedIn && deletedProjects.length > 0

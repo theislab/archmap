@@ -12,25 +12,24 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function ProjectInfo({ project, atlas, model }) {
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
-
   return (
     <>
       <Typography>
         {`Atlas: ${atlas?.name}`}
-        <IconButton size="small" onClick={() => setAtlasInfoOpen(true)}>
+        {atlas._id && <IconButton size="small" onClick={() => setAtlasInfoOpen(true)}>
           <InfoOutlinedIcon fontSize="small" />
-        </IconButton>
+        </IconButton>}
       </Typography>
       <Typography>
         {`Model: ${model?.name}`}
-        <IconButton size="small" onClick={() => setModelInfoOpen(true)}>
+        {model._id && <IconButton size="small" onClick={() => setModelInfoOpen(true)}>
           <InfoOutlinedIcon fontSize="small" />
-        </IconButton>
+        </IconButton>}
       </Typography>
       <Typography>{`Dataset: ${project?.fileName}`}</Typography>
-      {atlas
+      {atlas._id
       && <AtlasInfo id={atlas._id} open={atlasInfoOpen} setOpen={setAtlasInfoOpen} />}
-      {model
+      {model._id
       && <ModelInfo id={model._id} open={modelInfoOpen} setOpen={setModelInfoOpen} />}
     </>
   );
