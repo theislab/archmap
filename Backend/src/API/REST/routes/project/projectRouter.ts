@@ -216,7 +216,7 @@ const update_project_results = (): Router => {
 
 const delete_project = (): Router => {
   let router = express.Router();
-  router.delete("/project/:id", check_auth(), validationMdw, async (req, res) => {
+  router.delete("/project/:id", check_auth(), async (req, res) => {
     try {
       const projectId = req.params.id;
       const project = (await (await ProjectService.getProjectById(projectId) as any).lean());
