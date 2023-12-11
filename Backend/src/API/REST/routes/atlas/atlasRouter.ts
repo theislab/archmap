@@ -139,8 +139,6 @@ const get_scvi_atlases = (): Router => {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/scvi-atlases";
       const atlases = (await axios.get(endpoint)).data;
 
-      console.log(atlases);
-
       const atlasMap = new Map();
 
       for (const item of atlases) {

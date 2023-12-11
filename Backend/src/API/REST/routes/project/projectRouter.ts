@@ -14,6 +14,7 @@ import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import { DeleteObjectRequest } from "aws-sdk/clients/s3";
 import { ProjectStatus } from "../../../../database/models/project";
 import { query_path, result_model_path, result_path } from "../file_upload/bucket_filepaths";
+import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
 const get_projects = (): Router => {
   let router = express.Router();
@@ -224,11 +225,10 @@ const delete_project = (): Router => {
 
       console.log('The project is: ', project);
 
-      const deletedProject = {
-        ...project,
+      const deletedProject: AddDeletedProjectDTO = {
+        ...project.toObject(),
         deletedAt: new Date(),
       };
-      console.log('Trying to delete the project.')
       await DeletedProjectService.addDeletedProject(deletedProject);
       console.log('The project has been deleted');
       await ProjectService.deleteProjectById(projectId);
@@ -272,7 +272,7 @@ const restore_deleted_project = (): Router => {
         if (!project) {
           return res.status(404).send("Project not found");
         }
-        const { deletedAt, ...deletedProject } = project;
+        const { deletedAt, ...deletedProject } = project.toObject();
         let projectToAdd: AddProjectDTO | AddScviProjectDTO;
         
         if('scviHubId' in deletedProject){
