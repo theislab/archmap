@@ -14,8 +14,8 @@ export interface IProject extends Document {
   teamId: Schema.Types.ObjectId;
   name: string;
 
-  atlasId?: Schema.Types.ObjectId;
-  modelId?: Schema.Types.ObjectId;
+  atlasId?: Schema.Types.Mixed; // Allow multiple types: String and object id.
+  modelId?: Schema.Types.Mixed; // Allow multiple types: String and object id. 
   classifierId: Schema.Types.ObjectId; 
   model_setup_anndata_args?: object;
   scviHubId?: string;
