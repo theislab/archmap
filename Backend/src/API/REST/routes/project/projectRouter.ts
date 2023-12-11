@@ -9,7 +9,7 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import DeletedProjectService from "../../../../database/services/deletedProject.service";
 import { IDeletedProject } from "../../../../database/models/deleted_projects";
-import { UpdateProjectDTO } from "../../../../database/dtos/project.dto";
+import { AddProjectDTO, AddScviProjectDTO, UpdateProjectDTO } from "../../../../database/dtos/project.dto";
 import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import { DeleteObjectRequest } from "aws-sdk/clients/s3";
 import { ProjectStatus } from "../../../../database/models/project";
@@ -219,8 +219,10 @@ const delete_project = (): Router => {
   router.delete("/project/:id", check_auth(), async (req, res) => {
     try {
       const projectId = req.params.id;
-      const project = (await (await ProjectService.getProjectById(projectId) as any).lean());
+      const project = await ProjectService.getProjectById(projectId);
       if (project == null) return res.status(404).send("Project not found");
+
+      console.log('The project is: ', project);
 
       const deletedProject = {
         ...project,
@@ -241,7 +243,7 @@ const delete_project = (): Router => {
 
 const get_deleted_projects = (): Router => {
   let router = express.Router();
-  router.get("/deletedprojects", check_auth(), validationMdw, async (req: ExtRequest, res) => {
+  router.get("/deletedprojects", check_auth(), validationMdw, async (req:  ExtRequest, res) => {
     try {
       let projects = await DeletedProjectService.getDeletedProjectsByOwner(req.user_id!);
       if (!projects) {
@@ -265,12 +267,40 @@ const restore_deleted_project = (): Router => {
     validationMdw,
     async (req: ExtRequest, res) => {
       try {
-        let project = (await (await DeletedProjectService.getDeletedProjectById(req.params.id) as any).lean());
+        let project = await DeletedProjectService.getDeletedProjectById(req.params.id);
         if (!project) {
           return res.status(404).send("Project not found");
         }
-        let { deletedAt, ...restoredProject } = project;
-        await ProjectService.addProject(restoredProject);
+        const { deletedAt, ...deletedProject } = project;
+        let projectToAdd: AddProjectDTO | AddScviProjectDTO;
+        
+        if('scviHubId' in deletedProject){
+          projectToAdd = {
+            owner: deletedProject.owner,
+            name: deletedProject.name,
+            fileName: deletedProject.fileName,
+            uploadDate: deletedProject.uploadDate,
+            status: deletedProject.status,
+            modelId: deletedProject.modelId,
+            atlasId: deletedProject.atlasId,
+            scviHubId: deletedProject.scviHubId,
+            model_setup_anndata_args: deletedProject.model_setup_anndata_args,
+            classifierId: deletedProject.classifierId,
+          }
+        }else{
+          projectToAdd = {
+            owner: deletedProject.owner,
+            name: deletedProject.name,
+            fileName: deletedProject.fileName,
+            uploadDate: deletedProject.uploadDate,
+            status: deletedProject.status,
+            modelId: deletedProject.modelId,
+            atlasId: deletedProject.atlasId,
+            classifierId: deletedProject.classifierId,
+          }
+        }
+
+        await ProjectService.addProject(projectToAdd);
         await DeletedProjectService.deleteDeletedProjectById(project._id);
         return res.status(200).send("OK");
       } catch (err) {
