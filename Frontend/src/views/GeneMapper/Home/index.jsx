@@ -78,6 +78,11 @@ function GeneMapperHome({ style, loggedIn }) {
       delete cachedProjects[id];
       localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
 
+      const updatedProjects = projects.filter((project) => project._id !== id);
+
+      // Set deleted projects
+      setProjects(updatedProjects)
+
       // update the projects that are not deleted
       ProjectService.deleteProject(id).then(() => {
         ProjectService.getOwnProjects().then((data) => {
@@ -241,6 +246,7 @@ function GeneMapperHome({ style, loggedIn }) {
                 })}
             </div>
           )}
+        {console.log('The projects are here: ', projects)}
         {loggedIn && deletedProjects.length > 0
           && (
             <Box>
