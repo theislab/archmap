@@ -5,7 +5,7 @@ const TEST_BACKEND_ADDRESS = "https://testversion-dot-custom-helix-329116.ey.r.a
 const RON_BACKEND_ADDRESS =  "https://ronversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
 const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
 const PRODUCTION_BACKEND_ADDRESS = "https://custom-helix-329116.ey.r.appspot.com/v1";
-export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS_LOCAL;
+export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS;
 
 // const names for indexed DB variables 
 // const names for indexed DB variables 
