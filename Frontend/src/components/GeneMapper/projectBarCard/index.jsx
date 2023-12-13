@@ -297,7 +297,7 @@ export default function ProjectBarCard({
                           ))
                       }
                       {/* Launch Button */}
-                      {!cellxgene.status || Date.now() > cellxgene.timeout
+                      {(!cellxgene.status || Date.now() > cellxgene.timeout)
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
