@@ -308,10 +308,10 @@ export default function ProjectBarCard({
                       }
                       {/* View Button */}
                       {cellxgene.status === "launching"
-                        && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"}>
+                        && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"} style={{ display: 'flex', alignItems: 'center' }}>
                           <Typography>
                             Launching
-                            <CircularProgress style={{width: '20px', height: '20px', marginLeft: '10px', alignSelf: 'center' }} />
+                            <CircularProgress style={{width: '20px', height: '20px', marginLeft: '10px'}} />
                           </Typography>
                         </CustomButton>
                         )}

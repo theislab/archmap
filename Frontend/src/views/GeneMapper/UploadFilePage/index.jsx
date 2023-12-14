@@ -160,7 +160,7 @@ function UploadFilePage({
       projectName: projectName,
       atlasId: atlasId,
       modelId: modelId,
-      file: demoDataset.name,
+      fileName: demoDataset.name,
   });
     history.push(path); // go back to GeneMapper home
   };
