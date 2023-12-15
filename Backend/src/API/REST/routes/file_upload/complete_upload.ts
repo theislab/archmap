@@ -146,6 +146,8 @@ export default function upload_complete_upload_route() {
                 case "KNN":
                   classifier_type.kNN = true;
                   break;
+                //TODO: scpoli have to be added
+                // case "scPoli":
                 case "scANVI":
                   classifier_type.Native = true;
                   break;
@@ -158,6 +160,7 @@ export default function upload_complete_upload_route() {
                       }`
                     );
               }
+              //TODO: classifier_path and encoder_path have to be adjusted for scpoli
               classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
               encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
               console.log("classifier_path is ", classifier_path);
