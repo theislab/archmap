@@ -67,7 +67,6 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
-          console.log("request inside complete upload is ", request);
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,

@@ -33,9 +33,7 @@ export default function download_results_route() {
         Key: result_path(project._id),
         Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
       };
-      console.log("Generating presigned URL for: ", params)
       let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
-      console.log("Presigned URL: ", presignedUrl)
       return res.status(200).send({ presignedUrl });
     } catch (err) {
       console.log(err);

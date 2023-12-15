@@ -160,6 +160,140 @@ export default class AtlasService {
     await atlasModel.updateOne({ _id:atlasID }, { status: status }).exec();
   }
 
+  /**
+   *  get atlas by atlasUploadId
+   *
+   *  @param   atlasUploadId
+   *  
+   */
+  static async getAtlasByAtlasUploadId(
+    atlasUploadId: string
+  ): Promise<(IAtlas & { _id: ObjectId }) | null> {
+    return await atlasModel.findOne({ atlasUploadId: atlasUploadId }).exec();
+  }
+
+  
+  /**
+   * get atlas by classifierUploadId
+   * 
+   * @param classifierUploadId
+   *  
+   *  
+    */
+  static async getAtlasByClassifierUploadId(
+    classifierUploadId: string
+  ): Promise<(IAtlas & { _id: ObjectId }) | null> {
+    return await atlasModel.findOne({ classifierUploadId: classifierUploadId }).exec();
+  }
+
+  
+  /**
+   * get atlas by encoderUploadId
+   * 
+   * @param encoderUploadId
+   *  
+   *  
+    */
+  static async getAtlasByEncoderUploadId(
+    encoderUploadId: string
+  ): Promise<(IAtlas & { _id: ObjectId }) | null> {
+    return await atlasModel.findOne({ encoderUploadId: encoderUploadId }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by atlasFilesize
+   * 
+   * @param atlasID
+   * @param atlasFilesize
+   * 
+   */
+  static async updateAtlasByAtlasFilesize(
+    atlasID: ObjectId | string,
+    atlasFilesize: number
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { atlasFilesize: atlasFilesize }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by classifierFilesize
+   * 
+   * @param atlasID
+   * @param classifierFilesize
+   * 
+   */
+
+  static async updateAtlasByClassifierFilesize(
+    atlasID: ObjectId | string,
+    classifierFilesize: number
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { classifierFilesize: classifierFilesize }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by encoderFilesize
+   * 
+   * @param atlasID
+   * @param encoderFilesize
+   * 
+   */
+
+  static async updateAtlasByEncoderFilesize(
+    atlasID: ObjectId | string,
+    encoderFilesize: number
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { encoderFilesize: encoderFilesize }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by atlasUploadStatus
+   * 
+   * @param atlasID
+   * @param atlasUploadStatus
+   * 
+   */
+
+  static async updateAtlasByAtlasUploadStatus(
+    atlasID: ObjectId | string,
+    atlasUploadStatus: string
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { atlasUploadStatus: atlasUploadStatus }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by classifierUploadStatus
+   * 
+   * @param atlasID
+   * @param classifierUploadStatus
+   * 
+   */
+
+  static async updateAtlasByClassifierUploadStatus(
+    atlasID: ObjectId | string,
+    classifierUploadStatus: string
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { classifierUploadStatus: classifierUploadStatus }).exec();
+  }
+
+  /**
+   * 
+   * update atlas by encoderUploadStatus
+   * 
+   * @param atlasID
+   * @param encoderUploadStatus
+   * 
+   */
+
+  static async updateAtlasByEncoderUploadStatus(
+    atlasID: ObjectId | string,
+    encoderUploadStatus: string
+  ) {
+    await atlasModel.updateOne({ _id: atlasID }, { encoderUploadStatus: encoderUploadStatus }).exec();
+  }
 
 
 

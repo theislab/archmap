@@ -49,9 +49,7 @@ export default function upload_get_upload_url_route() {
         PartNumber: Number(partNumber),
         UploadId: uploadId,
       };
-      console.log("params", params)
       let presignedUrl = await s3.getSignedUrlPromise("uploadPart", params);
-      console.log("presignedUrl", presignedUrl)
       res.status(200).send({ presignedUrl });
     } catch (err) {
       console.log(err);

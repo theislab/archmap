@@ -36,6 +36,47 @@
       }
     }
   },
+  "/file_upload/complete_upload_for_atlas": {
+    "post": {
+      "summary": "Complete upload for Atlas",
+      "tags": ["Project"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ETag": {
+                        "type": "string"
+                      },
+                      "PartNumber": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "uploadId": {
+                  "type": "string"
+                },
+                "uploadFileType": {
+                  "type": "string"
+                }
+              },
+              "required": ["parts", "uploadId", "uploadFileType"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+
   "/file_upload/get_upload_url": {
     "get": {
       "summary": "Get upload URL",

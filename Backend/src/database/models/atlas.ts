@@ -1,5 +1,8 @@
 import { Document, model, Schema } from "mongoose";
 
+//TODO: 
+// create file size field in atlas, classifier, encoder, and model
+// create status for atlas, classifier, encoder, model
 export interface IAtlas extends Document {
   name: string;
   previewPictureURL: string;
@@ -12,6 +15,12 @@ export interface IAtlas extends Document {
   atlasUploadId: string;
   classifierUploadId: string;
   encoderUploadId: string;
+  atlasFilesize: number;
+  classifierFilesize: number;
+  encoderFilesize: number;
+  atlasUploadStatus: string;
+  classifierUploadStatus: string;
+  encoderUploadStatus: string;
   status: string;
   atlasUploadPath: string;
   classifierUploadPath: string;
@@ -65,6 +74,13 @@ const atlasSchema = new Schema<IAtlas>(
     atlasUploadPath: { type: String, required: false },
     classifierUploadPath: { type: String, required: false },
     encoderUploadPath: { type: String, required: false },
+    atlasFilesize: { type: Number, required: false },
+    classifierFilesize: { type: Number, required: false },
+    encoderFilesize: { type: Number, required: false },
+    atlasUploadStatus: { type: String, required: false },
+    classifierUploadStatus: { type: String, required: false, default: 'NOT_AVAILABLE' },
+    encoderUploadStatus: { type: String, required: false, default: 'NOT_AVAILABLE' },
+
 
   },
   {

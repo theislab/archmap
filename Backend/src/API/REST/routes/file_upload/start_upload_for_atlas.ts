@@ -5,26 +5,27 @@ import AtlasService from "../../../../database/services/atlas.service";
 import { ExtRequest } from "../../../../definitions/ext_request";
 import check_auth from "../../middleware/check_auth";
 import { validationMdw } from "../../middleware/validation";
-import s3 from "../../../../util/s3";
+import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import express from "express";
-import { AtlasUploadStatus } from "../../../../database/models/project";
+import { AtlasUploadStatus, ProjectStatus } from "../../../../database/models/project";
 import ModelService from "../../../../database/services/model.service";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
+import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 
 
 
 const createMultipartUploadAsync = async (params: S3.CreateMultipartUploadRequest): Promise<S3.CreateMultipartUploadOutput> => {
     return new Promise((resolve, reject) => {
-      s3.createMultipartUpload(params, (err, uploadData) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(uploadData);
-        }
-      });
+        s3.createMultipartUpload(params, (err, uploadData) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(uploadData);
+            }
+        });
     });
-  };
-  
+};
+
 
 export default function upload_start_upload_for_atlas_route() {
     let router = express.Router();
@@ -33,20 +34,20 @@ export default function upload_start_upload_for_atlas_route() {
         validationMdw,
         check_auth(),
         async (req: ExtRequest, res) => {
-        
-            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl} = req.body;
-            
+
+            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl } = req.body;
+
 
             const compatibleModels = req.body.compatibleModels || [];
-            
+
             if (compatibleModels.length === 0) {
                 return res.status(400).send("No compatible models specified");
             }
             if (!process.env.S3_BUCKET_NAME) {
                 return res.status(500).send("S3-BucketName is not set");
             }
-            
-            let atlasToAdd: AddAtlasDTO ;
+
+            let atlasToAdd: AddAtlasDTO;
 
             try {
                 atlasToAdd = {
@@ -75,10 +76,10 @@ export default function upload_start_upload_for_atlas_route() {
                     await AtlasService.updateAtlasByAtlasUploadPath(atlas._id, keyPath);
                     console.log("updated atlas upload id and path")
                 }
-                if (req.body.selectedClassifier){
+                if (req.body.selectedClassifier) {
 
                     let classifierFilePathInBucket = `classifiers/${atlas._id}/`;
-                        switch (req.body.selectedClassifier) {
+                    switch (req.body.selectedClassifier) {
                         case "KNN":
                             classifierFilePathInBucket += "classifier_knn.pickle";
                             break;
@@ -87,7 +88,7 @@ export default function upload_start_upload_for_atlas_route() {
                             break;
                         default:
                             return res.status(400).send("Invalid classifier selected");
-                            
+
                     }
                     let params: S3.CreateMultipartUploadRequest = {
                         Bucket: process.env.S3_BUCKET_NAME,
@@ -99,7 +100,7 @@ export default function upload_start_upload_for_atlas_route() {
                         await AtlasService.updateAtlasByClassifierUploadPath(atlas._id, classifierFilePathInBucket);
                         console.log("updated atlas classifier upload id and path")
                     }
-                    
+
 
                     let encoderFilePathInBucket = `classifiers/${atlas._id}/classifier_encoding.pickle`;
                     let params2: S3.CreateMultipartUploadRequest = {
@@ -117,35 +118,33 @@ export default function upload_start_upload_for_atlas_route() {
 
                 }
 
-                
+
                 const modelsToUploadPromises = compatibleModels.map(async (modelName: string) => {
-                    console.log("modelName: ", modelName);
-            
+
                     const model = await ModelService.getModelByName(modelName);
                     const modelMongoId = await AtlasModelAssociationService.createAssociation(atlas._id, model._id);
                     const pathName = `models/${modelMongoId._id}/model.pt`;
-            
+
                     let params: S3.CreateMultipartUploadRequest = {
                         Bucket: process.env.S3_BUCKET_NAME,
                         Key: pathName,
                     };
                     const uploadData = await createMultipartUploadAsync(params);
-            
+
                     if (uploadData.UploadId !== undefined) {
                         await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData.UploadId);
                         await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName);
-                        console.log("updated model upload id and path for model: ", modelName);
                         return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
                     }
                 });
 
                 // Wait for all model upload operations to complete
                 let modelsToUpload = await Promise.all(modelsToUploadPromises);
-            
 
-            
+
+
                 let updatedAtlas = await AtlasService.getAtlasById(atlas._id);
-                res.status(200).send({atlas: updatedAtlas, models: modelsToUpload});
+                res.status(200).send({ atlas: updatedAtlas, models: modelsToUpload });
 
 
             } catch (err) {
@@ -155,4 +154,107 @@ export default function upload_start_upload_for_atlas_route() {
         }
     );
     return router;
-    }
+}
+
+// "required": ["parts", "uploadId"],
+export const complete_upload_for_atlas = () => {
+    let router = express.Router();
+    router.post(
+        "/file_upload/complete_upload_for_atlas",
+        validationMdw,
+        check_auth(),
+        async (req: ExtRequest, res) => {
+            let { parts, uploadId, uploadFileType } = req.body;
+
+
+            if (!process.env.S3_BUCKET_NAME)
+                return res.status(500).send("Server was not set up correctly");
+            // get atlas or model here
+            let instance;
+            let query_path;
+            if (uploadFileType === "atlas") {
+                instance = await AtlasService.getAtlasByAtlasUploadId(uploadId);
+                query_path = instance.atlasUploadPath;
+            } else if (uploadFileType === "model") {
+                instance = await AtlasModelAssociationService.getAssociationByModelUploadId(uploadId);
+
+                query_path = instance[0].modelUploadPath;
+            } else if (uploadFileType == "classifier") {
+                instance = await AtlasService.getAtlasByClassifierUploadId(uploadId);
+                if (instance === null) {
+                    query_path = undefined;
+                } else {
+                    query_path = instance.classifierUploadPath;
+                }
+
+            } else if (uploadFileType == "encoder") {
+                instance = await AtlasService.getAtlasByEncoderUploadId(uploadId);
+                query_path = instance.encoderUploadPath;
+            } else {
+                return res.status(400).send("Invalid uploadFileType");
+            }
+            if (query_path === undefined) {
+                // "Invalid uploadFileType;query path is undefined for " uploadid and uploadFileType
+                return res.status(400).send("Invalid uploadFileType;query path is undefined for " + uploadId + " and " + uploadFileType);
+
+            }
+
+            if (!instance) return res.status(400).send("Instance " + uploadFileType + " could not be found");
+
+            //Complete multipart upload
+
+            let params: CompleteMultipartUploadRequest = {
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: query_path,
+                MultipartUpload: { Parts: parts },
+                UploadId: String(uploadId),
+            };
+
+            let data;
+            try {
+                data = await s3.completeMultipartUpload(params).promise();
+
+            } catch (err: any) {
+                console.error(err, err.stack || "Error when completing multipart upload");
+                return res.status(500).send(err);
+            }
+            if (!data || !data.Key || !data.Bucket || !data.Location) {
+                try_delete_object_from_s3(query_path);
+                return res.status(500).send("Error getting Multipart-Upload object data");
+            }
+
+            //TODO: 
+            // create file size field in atlas, classifier, encoder, and model
+            // create status for atlas, classifier, encoder, model
+            // update status for atlas, classifier, encoder, model
+            // update file size for atlas and model
+
+
+            //Query file size and save in project
+            try {
+                let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
+                let result = await s3.headObject(request).promise();
+                if (uploadFileType === "atlas") {
+                    await AtlasService.updateAtlasByAtlasFilesize(instance._id, result.ContentLength);
+                    await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                } else if (uploadFileType === "model") {
+                    await AtlasModelAssociationService.updateModelFilesizeByModelId(instance._id, result.ContentLength);
+                    await AtlasModelAssociationService.updateModelUploadStatusByModelId(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                } else if (uploadFileType == "classifier") {
+                    await AtlasService.updateAtlasByClassifierFilesize(instance._id, result.ContentLength);
+                    await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                } else if (uploadFileType == "encoder") {
+                    await AtlasService.updateAtlasByEncoderFilesize(instance._id, result.ContentLength);
+                    await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                } else {
+                    return res.status(400).send("Invalid uploadFileType");
+                }
+            }
+            catch (err) {
+                console.error(err, err.stack || "Error when getting file size");
+            }
+            return res.status(200).send(data);
+
+        });
+    return router;
+}

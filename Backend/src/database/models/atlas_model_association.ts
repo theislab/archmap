@@ -8,7 +8,10 @@ export interface IAtlasModelAssociation extends Document {
   modelUploadId: string;
   modelUploadPath: string;
   status: string;
+  modelUploadStatus: string;
+  modelFilesize: number;
 }
+
 
 const atlasModelAssociationSchema = new Schema<IAtlasModelAssociation>(
   {
@@ -32,6 +35,14 @@ const atlasModelAssociationSchema = new Schema<IAtlasModelAssociation>(
     },
     modelUploadPath: {
       type: String,
+      required: false,
+    },
+    modelUploadStatus: {
+      type: String,
+      required: false,
+    },
+    modelFilesize: {
+      type: Number,
       required: false,
     },
 

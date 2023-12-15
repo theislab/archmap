@@ -9,7 +9,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import AtlasUploadService from "shared/services/AtlasUpload.service";
 import {   initUploadProgress, useUploadProgress } from "shared/context/UploadProgressContext";
 import { uploadAtlasAndModelFiles} from "shared/services/UploadLogic";
-import { MULTIPART_UPLOAD_STATUS } from "shared/utils/common/constants";
+import { MULTIPART_UPLOAD_STATUS, UPLOAD_FILE_TYPE } from "shared/utils/common/constants";
 
 
 
@@ -63,12 +63,11 @@ const styles = {
     // State to keep track of the selected files for each model
     const [modelFiles, setModelFiles] = useState({});
     const [encoderFile, setEncoderFile] = useState(null);
+    const [encoderFileName, setEncoderFileName] = useState('');
+    const [classifierFileName, setClassifierFileName] = useState('');
 
-    const { setProgress, uploadProgress } = useUploadProgress();
 
-    
-    
-
+    const [ uploadProgress, setUploadProgress ] = useUploadProgress();
 
   
     const classes = useStyles();
@@ -104,20 +103,19 @@ const styles = {
         if (atlasFile) {
           console.log("atlas upload path", atlas.atlasUploadPath)
           console.log("atlas file, atlas upload id, atlas upload path", atlasFile, atlas.atlasUploadId, atlas.atlasUploadPath)
-          handleFileUpload(atlasFile, atlas.atlasUploadId, atlas.atlasUploadPath);
+          handleFileUpload(atlasFile, atlas.atlasUploadId, atlas.atlasUploadPath, UPLOAD_FILE_TYPE.ATLAS);
 
         }
         if (atlas.classifierUploadId) {
-          handleFileUpload(classifierFile, atlas.classifierUploadId, atlas.classifierUploadPath);
-          handleFileUpload(encoderFile, atlas.encoderUploadId, atlas.encoderUploadPath);
+          handleFileUpload(classifierFile, atlas.classifierUploadId, atlas.classifierUploadPath, UPLOAD_FILE_TYPE.CLASSIFIER);
+          handleFileUpload(encoderFile, atlas.encoderUploadId, atlas.encoderUploadPath, UPLOAD_FILE_TYPE.ENCODER);
         }
     
         // Initialize model uploads
         models.forEach(model => {
-          console.log("model", model)
-          if (modelFiles[model.name]) {
+          if (modelFiles[model.model.name]) {
             console.log("model upload path", model.modelUploadPath)
-            handleFileUpload(modelFiles[model.name], model.modelUploadId, model.modelUploadPath);
+            handleFileUpload(modelFiles[model.model.name], model.modelUploadId, model.modelUploadPath, UPLOAD_FILE_TYPE.MODEL);
           }
         });
         
@@ -142,40 +140,50 @@ const styles = {
       } finally {
         // Reset the form and state
         setIsLoading(false);
-        // setAtlasName("");
-        // setPreviewPictureURL("");
-        // setModalities([]);
-        // setCompatibleModels([]);
-        // setNumberOfCells("");
-        // setSpecies("");
-        // setAtlasFile(null);
-        // setFileName("");
-        // setUrl("");
-        // setFileError("");
-        // setSelectedClassifier("");
-        // setClassifierFile(null);
-        // setModelFiles({});
-        // setEncoderFile(null);
+        setAtlasName("");
+        setPreviewPictureURL("");
+        setModalities([]);
+        setCompatibleModels([]);
+        setNumberOfCells("");
+        setSpecies("");
+        setAtlasFile(null);
+        setFileName("");
+        setUrl("");
+        setFileError("");
+        setSelectedClassifier("");
+        setClassifierFile(null);
+        setModelFiles({});
+        setEncoderFile(null);
 
-        // setIsAddModalOpen(false);
+        setIsAddModalOpen(false);
       }
     };
 
     
-    const handleFileUpload = async (file, uploadId, keyPath) => {
-      console.log("File upload started in handle file upload", file);
-      console.log("UPLOAD ID IS ", uploadId);
+    const handleFileUpload = async (file, uploadId, keyPath, uploadFileType) => {
+      
+      console.log("UPLOAD ID for filetype  IS ", uploadId, uploadFileType);
       
       // Initialize the upload progress for this uploadId
-      setProgress(uploadId, initUploadProgress(uploadId));
-    
-      // Wait for the next render to ensure the state has been updated
-      setTimeout(() => {
+      setUploadProgress(prev => {
+        const newProgress = {
+          ...prev,
+          [uploadId]: initUploadProgress(uploadId, keyPath, uploadFileType, file.name)
+        };
+        
+        // Call the upload function here after state update
         uploadAtlasAndModelFiles(uploadId, file, keyPath, (uploadId, newProgressFields) => {
-          console.log("upload progress inside handleFileUpload", newProgressFields);
-          setProgress(uploadId, newProgressFields);
-        }, () => uploadProgress);
-      }, 0);
+          setUploadProgress(prevProgress => ({
+            ...prevProgress,
+            [uploadId]: {
+              ...prevProgress[uploadId],
+              ...newProgressFields 
+            } 
+          }));
+        }, newProgress, uploadFileType);
+    
+        return newProgress;
+      });
     };
     
   
@@ -200,15 +208,22 @@ const styles = {
     };
 
     const handleEncoderFileChange = (e) => {
-      if (e.target.files[0]) {
-        setEncoderFile(e.target.files[0]);
+      const encFile = e.target.files[0];
+      if (encFile) {
+        setEncoderFile(encFile);
+        setEncoderFileName(encFile.name);
       }
+      
+    
     };
 
     const handleClassifierFileChange = (e) => {
-      if (e.target.files[0]) {
-        setClassifierFile(e.target.files[0]);
+      const classifierFile = e.target.files[0];
+      if (classifierFile) {
+        setClassifierFileName(classifierFile.name);
+        setClassifierFile(classifierFile);
       }
+      
     };
     
 
@@ -408,6 +423,11 @@ const styles = {
                         onChange={handleEncoderFileChange}
                       />
                     </Button>
+                    {encoderFileName && (
+                      <span style={{ marginLeft: '20px' }}>
+                        Selected file is: {encoderFileName}
+                      </span>
+                    )}
                   </Grid>
                   <Grid item xs={8}>
                     <Button variant="contained" component="label">
@@ -418,8 +438,14 @@ const styles = {
                         onChange={handleClassifierFileChange}
                       />
                     </Button>
+                    {classifierFileName && (
+                      <span style={{ marginLeft: '20px' }}>
+                        Selected file is: {classifierFileName}
+                      </span>
+                    )}
                   </Grid>
                 </>
+
               )}
 
               <Grid item xs={8}>

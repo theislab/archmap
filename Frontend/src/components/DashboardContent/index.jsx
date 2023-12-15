@@ -32,11 +32,11 @@ const DashboardContent = () => {
 
         {/* create the admmin route which is protected */}
         <Route path={`${path}/admin`}>
-          <AdminPanel />
+          <AdminPanel sidebarShown={sidebarShown} />
         </Route>
 
         <Route path={`${path}/upload`}>
-         <AtlasUpload />
+         <AtlasUpload sidebarShown={sidebarShown} />
         </Route>
 
         <Route exact path={`${path}/`}>
