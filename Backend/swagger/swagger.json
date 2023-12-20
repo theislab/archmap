@@ -88,8 +88,30 @@
           },
           "teamId": {
             "type": "string"
+          },
+          "setup_anndata_model_args": {
+            "type": "object"
+          },
+          "scviHubId": {
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "_id",
+          "owner",
+          "name",
+          "uploadId",
+          "location",
+          "fileName",
+          "fileSize",
+          "uploadDate",
+          "status",
+          "resultName",
+          "resultSize",
+          "atlasId",
+          "modelId",
+          "teamId"
+        ]
       },
       "DeletedProject": {
         "type": "object",
@@ -178,6 +200,14 @@
     {
       "name": "Demo",
       "description": "APIs for CRUD operations on Demo datasets"
+    },
+    {
+      "name": "TaskQueues",
+      "description": "APIs for task queues"
+    },
+    {
+      "name": "Atlas Model",
+      "description": "APIs for Atlas Model Associations"
     }
   ],
   "paths": {}

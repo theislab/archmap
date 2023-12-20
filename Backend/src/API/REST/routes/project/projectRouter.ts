@@ -9,11 +9,12 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 import DeletedProjectService from "../../../../database/services/deletedProject.service";
 import { IDeletedProject } from "../../../../database/models/deleted_projects";
-import { UpdateProjectDTO } from "../../../../database/dtos/project.dto";
+import { AddProjectDTO, AddScviProjectDTO, UpdateProjectDTO } from "../../../../database/dtos/project.dto";
 import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import { DeleteObjectRequest } from "aws-sdk/clients/s3";
 import { ProjectStatus } from "../../../../database/models/project";
 import { query_path, result_model_path, result_path } from "../file_upload/bucket_filepaths";
+import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
 const get_projects = (): Router => {
   let router = express.Router();
@@ -146,13 +147,49 @@ const get_users_projects = (): Router => {
   return router;
 };
 
+
+const sanitizeErrorMessage = (errorMessage: string) => {
+  const MAX_ERROR_MESSAGE_LENGTH = 255; // Maximum length for error message
+  if (typeof errorMessage === 'string') {
+    let sanitizedMessage = errorMessage.replace(/[\r\n]+/gm, ' ')
+                                       .replace(/(?:\w+:)?\/\/[^\s]+/g, '[URL]')
+                                       .replace(/(?:path|file|directory):['"]?[^\s'"]+['"]?/gi, '[PATH]')
+                                       .trim();
+
+    // Truncate message if it's longer than the max length
+    if (sanitizedMessage.length > MAX_ERROR_MESSAGE_LENGTH) {
+      sanitizedMessage = sanitizedMessage.substring(0, MAX_ERROR_MESSAGE_LENGTH) + '...';
+    }
+    return sanitizedMessage;
+  }
+  return 'An error occurred.';
+};
+
 const update_project_results = (): Router => {
   let router = express.Router();
   router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {
     try {
       const updateToken = req.params.token;
+      // get body from request
+      let body = req.body;
+      let conditionForFailure = body.hasOwnProperty("error") ;
+
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
+
+      if (!project) return res.status(404).send("Project not found");
+      if (project.status === ProjectStatus.DONE) return res.status(200).send("OK");
+
+      if (conditionForFailure) {
+        const updateStatusAndErrorMessage : UpdateProjectDTO = {
+          status: ProjectStatus.PROCESSING_FAILED,
+          errorMessage: sanitizeErrorMessage(body.error),
+        };
+        await ProjectService.updateProjectById(project._id, updateStatusAndErrorMessage);
+        try_delete_object_from_s3(query_path(project.id));
+        return res.status(200).send("OK");
+      }
+
       if (project.status === ProjectStatus.PROCESSING_PENDING) {
         let params: any = {
           Bucket: process.env.S3_BUCKET_NAME!,
@@ -180,18 +217,20 @@ const update_project_results = (): Router => {
 
 const delete_project = (): Router => {
   let router = express.Router();
-  router.delete("/project/:id", check_auth(), validationMdw, async (req, res) => {
+  router.delete("/project/:id", check_auth(), async (req, res) => {
     try {
       const projectId = req.params.id;
-      const project = (await (await ProjectService.getProjectById(projectId) as any).lean());
+      const project = await ProjectService.getProjectById(projectId);
       if (project == null) return res.status(404).send("Project not found");
 
-      const deletedProject = {
-        ...project,
+      console.log('The project is: ', project);
+
+      const deletedProject: AddDeletedProjectDTO = {
+        ...project.toObject(),
         deletedAt: new Date(),
       };
-
       await DeletedProjectService.addDeletedProject(deletedProject);
+      console.log('The project has been deleted');
       await ProjectService.deleteProjectById(projectId);
 
       return res.status(200).send("OK");
@@ -205,7 +244,7 @@ const delete_project = (): Router => {
 
 const get_deleted_projects = (): Router => {
   let router = express.Router();
-  router.get("/deletedprojects", check_auth(), validationMdw, async (req: ExtRequest, res) => {
+  router.get("/deletedprojects", check_auth(), validationMdw, async (req:  ExtRequest, res) => {
     try {
       let projects = await DeletedProjectService.getDeletedProjectsByOwner(req.user_id!);
       if (!projects) {
@@ -229,12 +268,40 @@ const restore_deleted_project = (): Router => {
     validationMdw,
     async (req: ExtRequest, res) => {
       try {
-        let project = (await (await DeletedProjectService.getDeletedProjectById(req.params.id) as any).lean());
+        let project = await DeletedProjectService.getDeletedProjectById(req.params.id);
         if (!project) {
           return res.status(404).send("Project not found");
         }
-        let { deletedAt, ...restoredProject } = project;
-        await ProjectService.addProject(restoredProject);
+        const { deletedAt, ...deletedProject } = project.toObject();
+        let projectToAdd: AddProjectDTO | AddScviProjectDTO;
+        
+        if('scviHubId' in deletedProject){
+          projectToAdd = {
+            owner: deletedProject.owner,
+            name: deletedProject.name,
+            fileName: deletedProject.fileName,
+            uploadDate: deletedProject.uploadDate,
+            status: deletedProject.status,
+            modelId: deletedProject.modelId as string,
+            atlasId: deletedProject.atlasId as string,
+            scviHubId: deletedProject.scviHubId,
+            model_setup_anndata_args: deletedProject.model_setup_anndata_args,
+            classifierId: deletedProject.classifierId,
+          }
+        }else{
+          projectToAdd = {
+            owner: deletedProject.owner,
+            name: deletedProject.name,
+            fileName: deletedProject.fileName,
+            uploadDate: deletedProject.uploadDate,
+            status: deletedProject.status,
+            modelId: deletedProject.modelId as ObjectId,
+            atlasId: deletedProject.atlasId as ObjectId,
+            classifierId: deletedProject.classifierId,
+          }
+        }
+
+        await ProjectService.addProject(projectToAdd);
         await DeletedProjectService.deleteDeletedProjectById(project._id);
         return res.status(200).send("OK");
       } catch (err) {

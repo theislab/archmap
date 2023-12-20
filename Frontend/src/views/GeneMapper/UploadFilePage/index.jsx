@@ -8,6 +8,7 @@ import { GeneralCard as Card } from 'components/Cards/GeneralCard';
 import CustomButton from 'components/CustomButton';
 import FileUpload from 'components/FileUpload';
 import DemoService from 'shared/services/Demo.service';
+import AnndataArgsService from 'shared/services/AnndataArgs.service';
 import { Modal, ModalTitle } from 'components/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -18,17 +19,19 @@ import ProjectService from 'shared/services/Project.service';
 import { uploadMultipartFile } from 'shared/services/UploadLogic';
 import { LearnMoreAtlasComponent } from 'views/References/LearnMoreAtlas';
 import { LearnMoreModelComponent } from 'views/References/LearnMoreModel';
+import { LearnMoreClassifierComponent } from 'views/References/LearnMoreClassifier';
 
 import styles from './uploadfilepage.module.css';
+import { width } from 'components/Visualization/src/constants';
 
 /**
  * @param datasetIsSelected indicates whether a demo dataset has been selected.
  * @param selectedDataset indicates the dataset that has been selected.
  */
 function UploadFilePage({
-  path, selectedAtlas, selectedModel, setActiveStep,
+  path, selectedAtlas, selectedModel, setActiveStep, demos,
   selectedDataset, setSelectedDataset,
-  datasetIsSelected, setDatasetIsSelected,
+  datasetIsSelected, setDatasetIsSelected,selectedClassifier
 }) {
   const [uploadedFile, setUploadedFile] = useState();
   const [mappingName, setMappingName] = useState('');
@@ -36,6 +39,8 @@ function UploadFilePage({
   const [open, setOpen] = useState(false);
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
+  const [model_setup_anndata_args, setAnndataArgs] = useState();
+  const [classifierInfoOpen, setClassifierInfoOpen] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useSubmissionProgress();
   const [showWarning, setShowWarning] = useState(false);
   const [showFileWarning, setShowFileWarning] = useState(false);
@@ -43,6 +48,7 @@ function UploadFilePage({
   const history = useHistory();
   const [availableDemos, setAvailableDemos] = useState([]);
   const [demoDatasets, setDemoDatasets] = useState([]);
+  const [scviHubModel, setScviHubModel] = useState(null); 
 
   useEffect(() => {
     setRequirements(selectedModel.requirements);
@@ -65,6 +71,11 @@ function UploadFilePage({
     DemoService.getDemos().then((a) => {
       setDemoDatasets(a);
     });
+    // Set the scvi hub model if scvi hub atlas is chosen.
+    if(selectedAtlas.scviAtlas){
+      const model = selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
+      setScviHubModel(model);
+    }   
   }, []);
 
   const handleOnDropChange = (file) => {
@@ -97,13 +108,35 @@ function UploadFilePage({
     return null; // file accepted
   };
 
-  const createProject = useCallback((projectName, atlasId, modelId, file) => {
-    ProjectService.createProject(
-      projectName,
-      atlasId,
-      modelId,
-      file.name,
-    ).then((project) => {
+  // Fetch the model_setup_anndata_args if the chosen atlas is an scvi hub atlas.
+  useEffect(() => {
+    const fetchData = async () => {
+      if(selectedAtlas.scviAtlas){
+        try{
+          const model = selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
+          const scviHubId = model.scviHubId;
+          
+          const response = await AnndataArgsService.postAnndataArgs(scviHubId);
+          setAnndataArgs(response.model_setup_anndata_args);
+        }catch(err){
+          console.error(`Error fetching the model_setup_anndata_args. Error: ${err}`);
+        }
+      }
+    }
+
+    fetchData();
+  }, [selectedAtlas]);
+
+  const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, scviHubId = "", model_setup_anndata_args = null}) => {
+    ProjectService.createProject({
+      projectName: projectName,
+      atlasId: atlasId,
+      modelId: modelId,
+      fileName: file.name,
+      classifierId: classifierId,
+      scviHubId: scviHubId, 
+      model_setup_anndata_args: model_setup_anndata_args,
+    }).then((project) => {
       uploadMultipartFile(
         project.uploadId,
         file,
@@ -122,13 +155,13 @@ function UploadFilePage({
   }, [submissionProgress]);
 
   // the function to create a demo dataset project
-  const createDemoProject = (projectName, atlasId, modelId, demoDataset) => {
-    ProjectService.createProject(
-      projectName,
-      atlasId,
-      modelId,
-      demoDataset.name,
-    );
+  const createDemoProject = ({projectName, atlasId, modelId, demoDataset}) => {
+    ProjectService.createProject({
+      projectName: projectName,
+      atlasId: atlasId,
+      modelId: modelId,
+      fileName: demoDataset.name,
+  });
     history.push(path); // go back to GeneMapper home
   };
 
@@ -136,15 +169,49 @@ function UploadFilePage({
     e?.preventDefault();
     // save mapping name
     setOpen(false); // opens modal to input mapping name
-    // choose what type of project to create depending on whether a demo project is chosen
-    if (datasetIsSelected) {
-      createDemoProject(mappingName, selectedAtlas._id, selectedModel._id,
-        selectedDataset);
+    // choose what type of project to create.
+    if (datasetIsSelected) { // Demo project
+      createDemoProject({
+        projectName:mappingName, 
+        atlasId: selectedAtlas._id, 
+        modelId: selectedModel._id,
+        demoDataset: selectedDataset
+      });
     } else {
-      createProject(mappingName, selectedAtlas._id, selectedModel._id,
-        uploadedFile ? uploadedFile[0] : selectedDataset);
+      if(selectedAtlas.scviAtlas){
+        createProject({
+          projectName: mappingName, 
+          atlasId: scviHubModel.scviHubId, 
+          modelId: scviHubModel.model, 
+          file: uploadedFile[0],
+          classifierId: selectedClassifier._id,
+          scviHubId: scviHubModel.scviHubId,
+          model_setup_anndata_args: model_setup_anndata_args,
+        });
+      }
+      else{ // create a project with a core atlas.
+        createProject({
+          projectName: mappingName, 
+          atlasId: selectedAtlas._id, 
+          modelId: selectedModel._id,
+          file: uploadedFile ? uploadedFile[0]: selectedDataset,
+          classifierId: selectedClassifier._id});
+      }
     }
   };
+
+  // finding all matching demos for the current choice combination
+  useEffect(() => {
+    if (demoDatasets) {
+      const matchingDemos = demoDatasets
+        .filter((d) => d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase()
+        && d.model.toLowerCase() === selectedModel.name.toLowerCase());
+
+      setAvailableDemos(matchingDemos);
+    } else {
+      setAvailableDemos([]);
+    }
+  }, []);
 
   return (
     <Box sx={{ marginTop: '2.5em' }}>
@@ -160,33 +227,33 @@ function UploadFilePage({
         sx={showWarning ? { marginTop: '1em' } : {}}
       >
         {/* Left side */}
-        <Box width="50%" mr="3%">
-          <Stack direction="column">
+        <Box width="60%" mr="3%">
+          <Stack direction="column" >
             <Typography variant="h5" fontWeight="bold" pb="1em">Your Choice</Typography>
             <Stack direction="row" spacing={2} sx={{ paddingBottom: '1.5em' }}>
               <Card
                 width="50%"
                 children={(
-                  <Stack direction="column">
+                  <Stack direction="column" height={180} >
                     <Typography variant="caption" fontWeight="bold">Atlas</Typography>
-                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedAtlas.name}</Typography>
+                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedAtlas.name .includes("atlas") ? selectedAtlas.name.replace("atlas", "") : selectedAtlas.name}</Typography>
                     <Typography
                       gutterBottom
                       variant="caption"
                       sx={{
-                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px',
+                        overflow: '-moz-hidden-unscrollable', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '200px',
                       }}
                     >
                       {`Modalities:  ${selectedAtlas.modalities}`}
                     </Typography>
-                    <Typography gutterBottom variant="caption">{`Cells in Reference:  ${selectedAtlas.numberOfCells}`}</Typography>
+                    <Typography  gutterBottom variant="caption">{`Cells in Reference:  ${selectedAtlas.numberOfCells}`}</Typography>
                     <Typography gutterBottom variant="caption">{`Species: ${selectedAtlas.species}`}</Typography>
                     <Button
                       size="small"
                       variant="outlined"
                       onClick={() => setAtlasInfoOpen(true)}
                       sx={{
-                        borderRadius: 100, width: '50%', ml: '50%', mt: '1em', textTransform: 'none',
+                        borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
                       }}
                     >
                       Learn more
@@ -206,7 +273,7 @@ function UploadFilePage({
               <Card
                 width="50%"
                 children={(
-                  <Stack direction="column">
+                  <Stack direction="column" height={180} >
                     <Typography variant="caption" fontWeight="bold">Model</Typography>
                     <Typography gutterBottom variant="h6" fontWeight="bold">{selectedModel.name}</Typography>
                     <Typography
@@ -228,7 +295,7 @@ function UploadFilePage({
                       variant="outlined"
                       onClick={() => setModelInfoOpen(true)}
                       sx={{
-                        borderRadius: 100, width: '50%', ml: '50%', mt: '1em', textTransform: 'none',
+                        borderRadius: 100, width: '55%',  ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
                       }}
                     >
                       Learn more
@@ -245,6 +312,52 @@ function UploadFilePage({
                   </Stack>
                 )}
               />
+              {/* classifier */}
+              { (!selectedClassifier || selectedModel==='totalVI') ? null :
+              <Card
+                width="50%"
+                children={(
+                  <Stack direction="column" height={180} >
+                    <Typography variant="caption" fontWeight="bold">Classifier</Typography>
+                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedClassifier.name}</Typography>
+                    <Typography
+                      gutterBottom
+                      variant="caption"
+                      sx={{
+                        display: 'block',
+                        textOverflow: 'ellipsis',
+                        wordWrap: 'break-word',
+                        overflow: 'hidden',
+                        maxHeight: '5.7em',
+                        lineHeight: '1.9em',
+                      }}
+                    >
+                      {selectedClassifier.description}
+                    </Typography>
+                    
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => setClassifierInfoOpen(true)}
+                      sx={{
+                        borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
+                      }}
+                    >
+                      Learn more
+                    </Button>
+                    <Modal
+                      isOpen={classifierInfoOpen}
+                      setOpen={setClassifierInfoOpen}
+                      children={(
+                        <Container>
+                          <LearnMoreClassifierComponent id={selectedClassifier._id} />
+                        </Container>
+                      )}
+                    />
+                  </Stack>
+                )}
+              />  }
+              {/* classifier */}
             </Stack>
             <Stack>
               <Typography variant="h5" fontWeight="bold" pb="1em">Consequent Requirements</Typography>
@@ -271,7 +384,7 @@ function UploadFilePage({
           </Stack>
         </Box>
         {/* Right side */}
-        <Box width="50%" ml="3%">
+        <Box width="40%" ml="3%">
           <Modal
             isOpen={open}
             setOpen={setOpen}
@@ -347,6 +460,7 @@ function UploadFilePage({
                     height="50px"
                     data={{
                       name: `${dataset.name.split('_')[0]} + ${dataset.name.split('_')[1]}`,
+                      text: `Atlas: ${dataset.atlas} | Model: ${dataset.model}`,
                       atlas: dataset.atlas,
                       model: dataset.model,
                       isDemo: true,

@@ -1,24 +1,33 @@
 import {
-  Grid, Typography, Stack, Alert, Box, Tooltip,Divider
+  Grid, Typography, Stack, Alert, Box, Tooltip, Divider,
+  Accordion, AccordionSummary, AccordionDetails, Button,
+  Avatar
 } from '@mui/material';
 import AtlasCardSelect from 'components/Cards/AtlasCardSelect';
+import { TabGroup } from 'components/Tab';
 import { TabCard } from 'components/GeneMapper/TabCard';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ModelCardSelect } from 'components/Cards/ModelCardSelect';
 import CustomButton from 'components/CustomButton';
+import scviLogo from 'assets/scvi-logo.svg';
 import { colors } from 'shared/theme/colors';
 import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Clear from '@mui/icons-material/Clear';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import styles from '../UploadFilePage/uploadfilepage.module.css';
+import { ClassifierCard } from 'components/Cards/ClassifierCard';
 
 function AtlasModelChoice({
   setActiveStep,
   selectedAtlas, setSelectedAtlas,
   selectedModel, setSelectedModel, path,
-  compatibleModels, atlases, models,
+  compatibleModels, atlases, models, scviHubAtlases,
+  selectedClassifier, setSelectedClassifier, compatibleClassifiers, classifiers,
 }) {
   const [showWarning, setShowWarning] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const history = useHistory();
 
   //for showing Skeleton when loading
@@ -37,6 +46,10 @@ function AtlasModelChoice({
     loadData();
   }, []);
 
+  const handleTabChange = (newValue) => {
+    setSelectedTab(newValue);
+  };
+
   return (
     <div>
       {showWarning
@@ -49,27 +62,30 @@ function AtlasModelChoice({
         direction="column"
         divider={(<Divider className={styles.divider} orientation="horizontal" flexItem />)}
         sx={{ gap: '1.5rem' }}
-      >
+      />
       <Box>
       <Typography
         variant="h5"
         sx={{
           fontWeight: 'bold',
           pb: '1em',
-          mt: '1.5em',
+          mt: '1.0em',
         }}
       >
         Pick an Atlas
       </Typography>
-
+      {/* Core Archmap Atlases */}
+      <Typography variant="h6" sx={{ mb: '1.5em' }}>
+        Archmap Core Atlases
+      </Typography>
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
-            <Grid item height="320px">
+            <Grid item height="330px">
               <AtlasCardSelect
                 width="225px"
                 height="97%"
-                title={a.name}
+                title={a.name.includes("atlas") ? a.name.replace("atlas", "") : a.name} 
                 modalities={a.modalities}
                 cellsInReference={a.numberOfCells}
                 species={a.species}
@@ -83,19 +99,76 @@ function AtlasModelChoice({
           ))
         }
       </Grid>
-
-      <Box width="100%" display="flex">
-        <Box id="Grid" width="65%">
+      <Box display="flex" alignItems="center" sx={{mt:'1.5em', mb:'0.5em'}}>
+        <Typography variant="h6">scVI Hub Atlases</Typography>
+        <Avatar src={scviLogo} sx={{width: 36, height: 36, marginLeft: '5px'}}/>
+        
+      </Box>
+      <Box display="flex" sx={{mt: '1em'}}>
+        {(!scviHubAtlases || scviHubAtlases.length===0) && <Alert severity="info"sx={{width: '33%'}}>No existing datasets available. </Alert>}
+      </Box>
+      {/* SCVI Hub Atlases */}
+      {scviHubAtlases && scviHubAtlases.length>0 && (<Box>
+        {isExpanded ? (
+        <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+          {scviHubAtlases &&
+            scviHubAtlases.map((a) => (
+              <TabCard
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px' }}
+                height="50px"
+                data={{
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+        </Box>
+        ) : (
+          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            {scviHubAtlases.slice(0, 3).map((a) => (
+              <TabCard
+                key={a.name}
+                style={{ flex: '1 0 auto', maxWidth: '33.33%', minWidth: '33.33%', padding: '8px', color: 'black' }}
+                height="50px"
+                data={{
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
+                  isAtlas: true
+                }}
+                isLoading={false}
+                handleOnClick={() => setSelectedAtlas(a)}
+                selected={selectedAtlas && selectedAtlas.name === a.name}
+              />
+            ))}
+          </Box>
+        )}
+        <Box sx={{display: 'flex', justifyContent: 'center', pt: '1em'}}>
+          <Button 
+            style={{textTransform: 'none', padding: '0px'}}
+            variant="text" 
+            color="primary"
+            onClick={()=>{setIsExpanded(!isExpanded)}}
+            disableRipple
+            >
+            <Typography>{isExpanded ? 'Expand less' : 'Expand more'}</Typography>
+            {isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+          </Button>
+        </Box>
+      </Box>)}
+      <Box width="100%" display="flex" marginTop="10px">
+        <Box id="Grid" width="50%">
           <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
             Pick a Model
           </Typography>
 
-          <Grid container spacing={2} direction="row" overflow="auto" wrap="nowrap">
+          <Grid container spacing={2} direction="row" wrap="nowrap">
             {
               models && models.map((m) => (
-                <Grid item height="225px">
+                <Grid item height="200px">
                   <ModelCardSelect
-                    width="225px"
+                    width="170px"
                     height="97%"
                     title={m.name}
                     description={m.description}
@@ -113,10 +186,41 @@ function AtlasModelChoice({
             }
           </Grid>
           </Box>
+
+          <Box id="Grid" width="50%" marginLeft="36px">
+              <Typography variant="h5" sx={{ fontWeight: 'bold', pb: '1em' }} marginTop="32px">
+                Pick a Classifier (Optional)
+              </Typography>
+
+              <Grid container spacing={2} direction="row"wrap="nowrap">
+                {
+              classifiers && classifiers.map((cl) => (
+                <Grid item height="200px">
+                  <ClassifierCard
+                    width="170px"
+                    height="97%"
+                    title={cl.name}
+                    description={cl.description}
+                    selected={selectedClassifier.name === cl.name}
+                    selectedClassifier={selectedClassifier}
+                    onSelect={setSelectedClassifier}
+                    classifierObject={cl}
+                    disabled={!compatibleClassifiers
+                      || !compatibleClassifiers.map( // incomptaible model
+                        (cc) => cc.toLowerCase(),
+                      ).includes(cl.name.toLowerCase()) 
+                      || compatibleClassifiers.length === 0  
+                      || selectedAtlas?.scviAtlas} // scvi atlas
+                    isLoading={isLoading}
+                  />
+                </Grid>
+              ))
+            }
+              </Grid>
+            </Box>
         </Box>
-        </Box>
-      </Stack>
-      <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em' }}>
+      </Box>
+      <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '50px', marginBottom: '3em', marginRight: '30px'}}>
         <CustomButton type="tertiary" onClick={() => history.push(`${path}`)}>
           <Clear />
           &nbsp; Cancel

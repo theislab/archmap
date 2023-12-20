@@ -1,4 +1,4 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, Types, ObjectId } from "mongoose";
 
 export enum ProjectStatus {
   UPLOAD_PENDING = "UPLOAD_PENDING",
@@ -14,8 +14,11 @@ export interface IProject extends Document {
   teamId: Schema.Types.ObjectId;
   name: string;
 
-  atlasId: Schema.Types.ObjectId;
-  modelId: Schema.Types.ObjectId;
+  atlasId: ObjectId | string; // Allow multiple types: String or object id.
+  modelId: ObjectId | string; // Allow multiple types: String or object id. 
+  classifierId?: Schema.Types.ObjectId; 
+  model_setup_anndata_args?: object;
+  scviHubId?: string;
 
   // file
   uploadId: string;
@@ -28,6 +31,9 @@ export interface IProject extends Document {
   status: string;
   resultName: string;
   resultSize: number;
+
+  //error Message
+  errorMessage: string;
 }
 
 const projectSchema = new Schema<IProject>({
@@ -43,8 +49,41 @@ const projectSchema = new Schema<IProject>({
   },
   name: { type: String, require: true },
 
-  modelId: { type: Schema.Types.ObjectId, require: true },
-  atlasId: { type: Schema.Types.ObjectId, require: true },
+  modelId: {
+    type: Schema.Types.Mixed,
+    validate: {
+      validator: function (value: any) {
+        if (!this.model_setup_anndata_args && !this.scviHubId) {
+          console.log('It is an instance of the object id: ', value instanceof Schema.Types.ObjectId);
+          return Types.ObjectId.isValid(value);
+        } else {
+          return typeof value === 'string';; // Allow string type for scvi hub atlases.
+        }
+      },
+      message: 'modelId must be either a String for an scvi hub atlas or an ObjectId.',
+    },
+    required: true,
+  },
+
+  atlasId: {
+    type: Schema.Types.Mixed, // Allows multiple types
+    validate: {
+      validator: function (value: any) {
+        if (!this.model_setup_anndata_args && !this.scviHubId) {
+          console.log('It is an instance of the object id: ', value instanceof Schema.Types.ObjectId);
+          return Types.ObjectId.isValid(value);
+        } else {
+          return typeof value === 'string'; // Allow string type for scvi hub atlases.
+        }
+      },
+      message: "atlasId must be either a String for an scvi hub atlas or an ObjectId",
+    },
+    required: true,
+  },
+  // Set 2
+  model_setup_anndata_args: {type: Object, require: false},
+  scviHubId: {type: String, require: false},
+  classifierId: { type: Schema.Types.ObjectId, require: false },
 
   // file
   uploadId: { type: String, require: false },
@@ -58,6 +97,9 @@ const projectSchema = new Schema<IProject>({
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },
+
+  //error Message
+  errorMessage: { type: String, require: false },
 });
 
 export const projectModel = model<IProject>("Project", projectSchema);

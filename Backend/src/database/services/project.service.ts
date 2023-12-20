@@ -1,5 +1,5 @@
 import { IProject, projectModel } from "../models/project";
-import { AddProjectDTO, UpdateProjectDTO } from "../dtos/project.dto";
+import { AddProjectDTO, UpdateProjectDTO, AddScviProjectDTO } from "../dtos/project.dto";
 import { ObjectId, SortOrder } from "mongoose";
 
 /**
@@ -62,7 +62,7 @@ export default class ProjectService {
     user_id: ObjectId,
     sort: SortOrder = 1
   ): Promise<(IProject & { _id: ObjectId })[]> {
-    return await projectModel.find({ owner: user_id }).sort({uploadDate: sort});
+    return await projectModel.find({ owner: user_id }).sort({ uploadDate: sort });
   }
 
   /**
@@ -73,9 +73,7 @@ export default class ProjectService {
    *  @param   teamIds as ObjectId array
    *  @returns projects or null
    */
-  static async getProjectsOfTeams(
-    teamIds: ObjectId[]
-  ): Promise<(IProject & { _id: ObjectId })[]> {
+  static async getProjectsOfTeams(teamIds: ObjectId[]): Promise<(IProject & { _id: ObjectId })[]> {
     return await projectModel.find({ teamId: { $in: teamIds } }).exec();
   }
 
@@ -97,7 +95,7 @@ export default class ProjectService {
    *  @param    project
    *  @returns  projectAdded - the added project
    */
-  static async addProject(project: AddProjectDTO): Promise<IProject> {
+  static async addProject(project: AddProjectDTO | AddScviProjectDTO): Promise<IProject> {
     let projectAdded: IProject | undefined = undefined;
     projectAdded = await projectModel.create(project);
     return projectAdded;

@@ -18,6 +18,7 @@ import { upload_permission_auth } from "../../middleware/check_institution_auth"
 
 const uploadDirectory = "/tmp/"; // for gcp 
 
+
 if(!fs.existsSync(uploadDirectory)){
   fs.mkdirSync(uploadDirectory);
 }
@@ -83,7 +84,7 @@ const get_atlas_visualization = (): Router => {
 };
 
 /**
- *  Get all available atlases.
+ *  Get all available Archmap Core atlases.
  */
 const get_allAtlases = (): Router => {
   let router = express.Router();
@@ -128,6 +129,69 @@ const get_allAtlases = (): Router => {
   });
   return router;
 };
+
+const get_scvi_atlases = (): Router => {
+  let router = express.Router();
+
+  router.get("/scvi-atlases", async(req: any, res) => {
+    try{
+      // Endpoint to get all scvi atlases
+      const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/scvi-atlases";
+      const atlases = (await axios.get(endpoint)).data;
+
+      const atlasMap = new Map();
+
+      for (const item of atlases) {
+        const atlas = item.atlasName.replace(/[-_]/g, " ");
+        const model = item.modelName;
+        const id = item.scviHubId;
+
+        if (atlasMap.has(atlas)) {
+          atlasMap.get(atlas).modelIds.push({model: model, scviHubId: id});
+          atlasMap.get(atlas).compatibleModels.push(model);
+        } else {
+          atlasMap.set(atlas, {name: atlas, modelIds: [{model, scviHubId: id}], compatibleModels: [model] , scviAtlas: true});
+        }
+      }
+
+      // Convert the map values to an array
+      const atlasArr = Array.from(atlasMap.values());
+
+      return res.status(200).json(atlasArr);
+    }catch(err){
+      console.error("Error accessing the atlases");
+      console.error(JSON.stringify(err));
+      console.error(err);
+      return res.status(500).send("Unable to access the SCVI atlases.");
+    }
+  });
+  return router;
+}
+
+const post_anndata_args = (): Router => {
+  let router = express.Router();
+
+  router.post("/model_setup_anndata_args", async(req: any, res) => {
+    try{
+      const { scviHubId } = req.body;
+      const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/scvi-atlas-anndata-args"; 
+
+      const postData = {
+        scviHubId: scviHubId
+      };
+      const response = await axios.post(endpoint, postData);
+
+      const atlas = response.data;
+      const model_setup_anndata_args = atlas[0].model_setup_anndata_args;
+
+      res.status(200).send({"model_setup_anndata_args" : model_setup_anndata_args});
+    }catch(err){
+      res.status(500).send(err);
+    }
+  })
+  
+  return router;
+}
 
 // upload atlas by url or file
 const upload_atlas = (): Router => {
@@ -308,7 +372,6 @@ export const deleteAtlasById = async (atlasId) => {
 };
 
 
-
 const delete_atlas = (): Router => {
   let router = express.Router();
   
@@ -339,4 +402,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas };
+export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args };

@@ -30,7 +30,7 @@ const DashboardContent = () => {
       <Sidebar setUser={setUser} user={user} />
       <Switch>
 
-        {/* create the admmin route which is protected */}
+        {/* create the admin route which is protected */}
         <Route path={`${path}/admin`}>
           <AdminPanel />
         </Route>
