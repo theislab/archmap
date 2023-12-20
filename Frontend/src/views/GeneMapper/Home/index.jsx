@@ -224,7 +224,7 @@ function GeneMapperHome({ style, loggedIn }) {
         {projects
           && (
             <div>
-              {projects.filter((project) => (
+              {projects.filter((project) => ( // TODO: to add the search, use the findString like here
                 (findString === '' || project.name.toLowerCase().includes(findString.toLowerCase())))).map((project) => {
                   let atlas = atlases.find((atlas) => String(atlas._id) === String(project.atlasId));
                   if(!atlas) atlas = { name: project.atlasId }; // set values for scvi hub atlas

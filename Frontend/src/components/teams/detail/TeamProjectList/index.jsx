@@ -86,18 +86,35 @@ function TeamProjectList({
 
   return (
     <div>
-      {projects
-        .map((project) => (
-          <ProjectBarCard
-            key={project._id}
-            project={project}
-            atlas={atlases.find((atlas) => String(atlas._id) === String(project.atlasId))}
-            model={models.find((model) => String(model._id) === String(project.modelId))}
-            userTeams={userTeams}
-            handleDelete={() => handleDelete(project)}
-            loggedIn // logged in always true for team project lists
-          />
-        ))}
+      <div>
+        {projects.map((project) => {
+            let atlas = atlases.find((atlas) => String(atlas._id) === String(project.atlasId));
+            if (!atlas) {
+              atlas = { name: project.atlasId }; // set values for scvi hub atlas
+            }
+
+            let model = models.find((model) => String(model._id) === String(project.modelId));
+            if (!model) {
+              // set values for the model if it is from scvi hub
+              let name;
+              if (project?.modelId) {
+                name = project?.modelId.slice(0, 2) + project?.modelId?.slice(2).toUpperCase();
+              }
+              model = { name: name };
+            }
+            return (
+              <ProjectBarCard
+                key={project._id}
+                project={project}
+                atlas={atlas}
+                model={model}
+                userTeams={userTeams}
+                handleDelete={() => handleDeleteProject(project._id)}
+                loggedIn
+              />
+            );
+          })}
+      </div>
       <Modal
         isOpen={dialogOpen}
         setOpen={(o) => !o && handleCloseDialog()}
