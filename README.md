@@ -1,7 +1,7 @@
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 ## ArchMap
-ArchMap is an open-source web platform that enables anybody to use [scArches](https://github.com/theislab/scarches), a package that enables reference-based analysis of single-cell data. With this innovative approach, researchers can easily analyze their own datasets in an automated way by choosing a reference of their choice. ArchMap offers multiple references for analysis. The list of available references is always expanding, with new additions every month. 
+TEST THE MERGE RULE: ArchMap is an open-source web platform that enables anybody to use [scArches](https://github.com/theislab/scarches), a package that enables reference-based analysis of single-cell data. With this innovative approach, researchers can easily analyze their own datasets in an automated way by choosing a reference of their choice. ArchMap offers multiple references for analysis. The list of available references is always expanding, with new additions every month. 
 Currently, ArchMap only provides mapping capabilities, but this will be expanded in the future. 
 
 
