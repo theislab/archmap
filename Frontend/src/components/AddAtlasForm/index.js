@@ -172,14 +172,30 @@ const styles = {
         };
         
         // Call the upload function here after state update
-        uploadAtlasAndModelFiles(uploadId, file, keyPath, (uploadId, newProgressFields) => {
-          setUploadProgress(prevProgress => ({
-            ...prevProgress,
-            [uploadId]: {
-              ...prevProgress[uploadId],
-              ...newProgressFields 
-            } 
-          }));
+        uploadAtlasAndModelFiles(uploadId, file, keyPath, 
+          /**
+           * A callback function used to update the upload progress in the parent component.
+           *
+           * @callback ProgressUpdateCallback
+           * @param {string} uploadId - The unique identifier for the upload being updated.
+           * @param {object} newProgressFields - An object containing new progress fields to be merged with the existing progress state.
+           * @returns {void}
+           */
+          (uploadId, newProgressFields) => {
+            setUploadProgress(prevProgress => ({
+              ...prevProgress,
+              [uploadId]: {
+                ...prevProgress[uploadId],
+                ...newProgressFields 
+              } 
+            }));
+            // get all upload ids in the uploadProgress state and check if all uploads are complete
+            const allUploadsComplete = Object.keys(uploadProgress).every(uploadId => uploadProgress[uploadId].status === MULTIPART_UPLOAD_STATUS.COMPLETE);
+            if (allUploadsComplete) {
+              // All uploads are complete, so reset the upload progress state
+              
+            }
+
         }, newProgress, uploadFileType);
     
         return newProgress;

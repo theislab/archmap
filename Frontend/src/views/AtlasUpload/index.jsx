@@ -171,9 +171,12 @@ const AtlasUpload = () => {
           transition: "padding-left 0.3s ease",
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Upload Progress
-        </Typography>
+        {Object.entries(uploadProgress).length > 0 && (
+          <Typography variant="h5" gutterBottom>
+            Upload Progress
+          </Typography>
+        )}
+        
         {Object.entries(uploadProgress).map(([uploadId, progress]) => (
           <Card key={uploadId} sx={{ width: '100%', mb: 2 }}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -297,15 +300,12 @@ const AtlasUpload = () => {
                   >
                     {atlas.name}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    Status: {
-                      atlas.atlasUploadId 
-                        ? (uploadProgress[atlas.atlasUploadId] 
-                            ? uploadProgress[atlas.atlasUploadId].status 
-                            : 'Pending Upload') 
-                        : 'No Upload ID' 
-                    }
-                  </Typography>
+                  {atlas.atlasUploadId && (
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Status: {atlas.status === "UPLOAD_COMPLETE" ? "Upload Complete" : "Upload Incomplete"}
+                    </Typography>
+                  )}
+
 
                 </CardContent>
               </Card>

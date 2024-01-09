@@ -237,15 +237,19 @@ export const complete_upload_for_atlas = () => {
                 if (uploadFileType === "atlas") {
                     await AtlasService.updateAtlasByAtlasFilesize(instance._id, result.ContentLength);
                     await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    console.log("updated atlas upload status and filesize")
                 } else if (uploadFileType === "model") {
                     await AtlasModelAssociationService.updateModelFilesizeByModelId(instance._id, result.ContentLength);
                     await AtlasModelAssociationService.updateModelUploadStatusByModelId(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    console.log("updated model upload status and filesize")
                 } else if (uploadFileType == "classifier") {
                     await AtlasService.updateAtlasByClassifierFilesize(instance._id, result.ContentLength);
-                    await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    await AtlasService.updateAtlasByClassifierUploadStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    console.log("updated classifier upload status and filesize")
                 } else if (uploadFileType == "encoder") {
                     await AtlasService.updateAtlasByEncoderFilesize(instance._id, result.ContentLength);
-                    await AtlasService.updateAtlasByStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    await AtlasService.updateAtlasByEncoderUploadStatus(instance._id, AtlasUploadStatus.UPLOAD_COMPLETE);
+                    console.log("updated encoder upload status and filesize")
                 } else {
                     return res.status(400).send("Invalid uploadFileType");
                 }

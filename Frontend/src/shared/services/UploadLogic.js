@@ -272,6 +272,22 @@ function finishUpload(chunkCount, promiseArray, submissionProgress, setSubmissio
 //   setProgress(uploadId, uploadProgress);
 // });
 
+
+
+/**
+ * Uploads a file (e.g., atlas, model, classifier) in chunks, tracking the progress and updating the state
+ * as the upload progresses.
+ *
+ * @async
+ * @function uploadAtlasAndModelFiles
+ * @param {string} uploadId - The unique identifier for this upload.
+ * @param {File} selectedFile - The file to be uploaded.
+ * @param {string} keyPath - The key path where the file will be stored.
+ * @param {ProgressUpdateCallback} onProgressUpdate - A callback function to update the upload progress in the parent component.
+ * @param {object} currentUploadProgress - The current upload progress state.
+ * @param {string} uploadFileType - The type of the file being uploaded (e.g., ATLAS, MODEL, CLASSIFIER).
+ * @returns {Promise<void>} - A promise that resolves when the upload is completed.
+ */
 export async function uploadAtlasAndModelFiles(uploadId, selectedFile, keyPath, onProgressUpdate, currentUploadProgress, uploadFileType) {
   const chunkCount = Math.floor(selectedFile.size / UPLOAD_CHUNK_SIZE) + 1;
   const promiseArray = [];
