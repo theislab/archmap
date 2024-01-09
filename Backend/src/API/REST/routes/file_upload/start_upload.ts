@@ -19,40 +19,27 @@ export default function upload_start_upload_route() {
     async (req: ExtRequest, res) => {
       let { projectName, atlasId, modelId, classifierId, fileName } = req.body;
       let scviHubId = req.body?.scviHubId;
+      let model_setup_anndata_args = req.body?.model_setup_anndata_args;
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
 
       let projectToAdd: AddProjectDTO | AddScviProjectDTO;
       try {
-        let model_setup_anndata_args;
         // Check if the atlas is from scvi hub
         if(scviHubId){
-          const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/scvi-atlas-anndata-args";
-          // Data for post
-          const postData = {
+          // scvi atlas
+          projectToAdd = {
+            owner: req.user_id!,
+            name: projectName,
+            fileName: String(fileName),
+            uploadDate: new Date(),
+            status: ProjectStatus.UPLOAD_PENDING,
+            modelId: modelId,
+            atlasId: atlasId,
+            model_setup_anndata_args: model_setup_anndata_args,
             scviHubId: scviHubId
           };
-
-          try {
-            const response = await axios.post(endpoint, postData);
-
-            const atlas = response.data;
-            // The updated atlas
-            model_setup_anndata_args = atlas[0].model_setup_anndata_args;
-            // scvi atlas
-            projectToAdd = {
-              owner: req.user_id!,
-              name: projectName,
-              fileName: String(fileName),
-              uploadDate: new Date(),
-              status: ProjectStatus.UPLOAD_PENDING,
-              model_setup_anndata_args: model_setup_anndata_args,
-              scviHubId: scviHubId
-            };
-          } catch (error) {
-            console.error("Error sending POST request:", error);
-          }
         }else{ // Archmap core atlas is chosen
           projectToAdd = {
             owner: req.user_id!,

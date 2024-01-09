@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { Modal, ModalTitle } from 'components/Modal';
 import TeamService from 'shared/services/Team.service';
+import ProjectService from 'shared/services/Project.service';
 import CellxgeneService from 'shared/services/Cellxgene.service';
 import CustomButton from 'components/CustomButton';
 import { TabCard } from '../TabCard';
@@ -94,17 +95,33 @@ export default function ProjectBarCard({
       ? 'red'
       : 'orange';
 
-  const [projectTeam, setProjectTeam] = useState({});
+  // The team that the project has been added to.
+  const [projectTeam, setProjectTeam] = useState([]);
   const [addTeam, setAddTeam] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState('');
   const [open, setOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
-    if (project.teamId) {
-      TeamService.getTeam(project.teamId).then((team) => setProjectTeam(team));
-    }
-  }, [project.teamId]);
+    const fetchProjects = async () => {
+      const updatedProjectTeam = [];
+      await Promise.all(
+        userTeams.map(async (team) => {
+          let projects = await ProjectService.getTeamProjects(team._id);
+          projects = projects.filter((pr) => pr._id === project._id);
+          // If the project belongs to the team, add the team to updatedProjectTeam.
+          if (projects.length > 0) {
+            updatedProjectTeam.push(team);
+            console.log('The updated projects are: ', updatedProjectTeam);
+            console.log('The type is: ', typeof updatedProjectTeam);
+          }
+        })
+      );
+      setProjectTeam(updatedProjectTeam);
+    };
+  
+    fetchProjects();
+  }, [userTeams, project._id]);
 
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
@@ -131,7 +148,18 @@ export default function ProjectBarCard({
     }
     setCellxgene({ ...res, status: "ready" });
     setSnackbar({ open: true, type: "success", message: "Cellxgene instance launched. Timeout set to 1 hr." });
+    // Update cache
+    let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+    cachedProjects[project._id]["cellxgene"] = res;
+    localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
   }
+
+  // Set cellxgene state based on the cache value
+  useEffect(() => {
+    const cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
+    const cxgValue = cachedProjects[project._id]["cellxgene"];
+    if(cxgValue)  setCellxgene({ ...cxgValue, status: "ready" })
+  }, [project]);
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -261,7 +289,7 @@ export default function ProjectBarCard({
                     <>
                       {/* render team button if logged in */}
                       {
-                        loggedIn && (projectTeam?.title
+                        loggedIn && (projectTeam?.title // TODO: you might need to remove this. 
                           ? (
                             <CustomButton type="tertiary" sx={{ mr: 1 }} onClick={() => history.push(`/sequencer/teams/${projectTeam._id || projectTeam.id}`)}>
                               <Typography>
@@ -297,8 +325,11 @@ export default function ProjectBarCard({
                       }
                       {/* View Button */}
                       {cellxgene.status === "launching"
-                        && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"}>
-                          <Typography>Launching...</Typography>
+                        && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"} style={{ display: 'flex', alignItems: 'center' }}>
+                          <Typography>
+                            Launching
+                            <CircularProgress style={{width: '20px', height: '20px', marginLeft: '10px'}} />
+                          </Typography>
                         </CustomButton>
                         )}
                       {cellxgene.status === "ready" && Date.now() <= cellxgene.timeout
@@ -322,7 +353,7 @@ export default function ProjectBarCard({
                       {/* Snackbar after launching cellxgene */}
                       <Snackbar
                         open={snackbar.open}
-                        autoHideDuration={3000}
+                        autoHideDuration={10000}
                         onClose={() => setSnackbar({ ...snackbar, open: false })}
                         anchorOrigin={{
                           vertical: 'bottom',
@@ -349,25 +380,22 @@ export default function ProjectBarCard({
                           }
                         </Alert>
                       </Snackbar>
-                      <IconButton
-                        href={project.location}
-                        download={`${project.name}.tsv`}
-                        disabled={project.status !== 'DONE'}
-                      >
-                        <DownloadIcon />
-                      </IconButton>
+                      <Box sx={{paddingLeft: '10px'}}>
+                        <IconButton
+                          href={project.location}
+                          download={`${project.name}.tsv`}
+                          disabled={project.status !== 'DONE'}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete()}>
+                        {deleted
+                          ? <ReplayIcon />
+                          : <DeleteOutlineIcon color="error" />}
+                        </IconButton>
+                      </Box>
                     </>
                   )}
-                {/* delete and restore button available if logged in*/}
-                {
-                  loggedIn ? (
-                    <IconButton onClick={() => handleDelete()}>
-                      {deleted
-                        ? <ReplayIcon />
-                        : <DeleteOutlineIcon color="error" />}
-                    </IconButton>
-                  ) : null
-                }
               </Box>
             </Grid>
           </Grid>
@@ -438,16 +466,17 @@ export default function ProjectBarCard({
             </Alert>
           )}
         <Box>
-          {userTeams.map(
-            (team) => (
-              <TabCard
+          {userTeams.map( 
+            (team) => {
+              const added = projectTeam.filter((t) => t._id === team._id).length > 0;
+              return (<TabCard
                 key={team._id}
-                data={{ name: team.title, visibility: team.visibility.toLowerCase() }}
+                data={{name: team.name, title: team.title, type: "team", visibility: team.visibility.toLowerCase(), added: added}}
                 selected={team?._id === selectedTeam || team?.id === selectedTeam}
                 handleOnClick={() => setSelectedTeam(team?._id || team?.id)}
-              />
-
-            ),
+                isLoading={false}
+              />)
+            }
           )}
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 4 }}>
@@ -463,11 +492,11 @@ export default function ProjectBarCard({
             </CustomButton>
             <CustomButton
               type="primary"
-              onClick={() => {
+              onClick={async () => {
                 addProjectToTeam(selectedTeam);
                 setAddTeam(false);
                 setSelectedTeam('');
-                TeamService.getTeam(selectedTeam).then((team) => setProjectTeam(team));
+                await TeamService.getTeam(selectedTeam).then((team) => setProjectTeam([...projectTeam, team]));
               }}
               disabled={selectedTeam === ''}
             >

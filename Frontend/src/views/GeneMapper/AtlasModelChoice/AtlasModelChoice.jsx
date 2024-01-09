@@ -206,9 +206,11 @@ function AtlasModelChoice({
                     onSelect={setSelectedClassifier}
                     classifierObject={cl}
                     disabled={!compatibleClassifiers
-                      || !compatibleClassifiers.map(
+                      || !compatibleClassifiers.map( // incomptaible model
                         (cc) => cc.toLowerCase(),
-                      ).includes(cl.name.toLowerCase()) || compatibleClassifiers.length === 0}
+                      ).includes(cl.name.toLowerCase()) 
+                      || compatibleClassifiers.length === 0  
+                      || selectedAtlas?.scviAtlas} // scvi atlas
                     isLoading={isLoading}
                   />
                 </Grid>

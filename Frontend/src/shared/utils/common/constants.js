@@ -1,14 +1,14 @@
 import { red, green, yellow, grey, blue } from "@mui/material/colors";
 
-const DEV_BACKEND_ADDRESS = "https://devversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
-const TEST_BACKEND_ADDRESS = "https://testversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
-const RON_BACKEND_ADDRESS =  "https://ronversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
+const DEV_BACKEND_ADDRESS =
+  "https://devversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
 const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
-const PRODUCTION_BACKEND_ADDRESS = "https://custom-helix-329116.ey.r.appspot.com/v1";
-export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS_LOCAL;
+const PRODUCTION_BACKEND_ADDRESS =
+  "https://custom-helix-329116.ey.r.appspot.com/v1";
+export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
 
-// const names for indexed DB variables 
-// const names for indexed DB variables 
+// const names for indexed DB variables
+// const names for indexed DB variables
 export const INDEXED_DB_NAME = "indexedDB-archmap-projects";
 export const DB_VERSION = 1;
 
@@ -43,8 +43,7 @@ export const UPLOAD_FILE_TYPE = {
   CLASSIFIER: "classifier",
   MODEL: "model",
   ENCODER: "encoder",
-
-}
+};
 export const statusIsUpload = (status) => status.startsWith("upload_");
 export const statusIsError = (status) => status.startsWith("error_");
 

@@ -5,7 +5,7 @@ import {
   PutObjectRequest,
 } from "aws-sdk/clients/s3";
 import { AWSError, S3 } from "aws-sdk";
-import { CloudTasksClient, protos } from "@google-cloud/tasks"
+import { CloudTasksClient, protos } from "@google-cloud/tasks";
 
 import check_auth from "../../middleware/check_auth";
 import { ExtRequest } from "../../../../definitions/ext_request";
@@ -22,10 +22,18 @@ import { validationMdw } from "../../middleware/validation";
 import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
 
 import ClassifierService from "../../../../database/services/classifier.service";
-import { get_classifier_path, get_encoder_path, model_path, query_path, result_model_path, result_path } from "./bucket_filepaths";
+import {
+  get_classifier_path,
+  get_encoder_path,
+  model_path,
+  model_path_scpoli,
+  query_path,
+  result_model_path,
+  result_path,
+} from "./bucket_filepaths";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
-const MAX_EPOCH_QUERY = 2;
+const MAX_EPOCH_QUERY = 1;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
@@ -77,14 +85,14 @@ export default function upload_complete_upload_route() {
             let model, atlas, classifier;
 
             // Archmap core atlases
-            if(project.modelId && project.atlasId){
+            if (!project?.scviHubId) {
               [model, atlas, classifier] = await Promise.all([
                 ModelService.getModelById(project.modelId),
                 AtlasService.getAtlasById(project.atlasId),
                 project.classifierId
-                ? ClassifierService.getClassifierById(project.classifierId)
-                : Promise.resolve(undefined),
-              ]); 
+                  ? ClassifierService.getClassifierById(project.classifierId)
+                  : Promise.resolve(undefined),
+              ]);
             }
 
             // Check if the model and atlas exist for the chosen core archmap atlas.
@@ -93,21 +101,25 @@ export default function upload_complete_upload_route() {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
 
-              try_delete_object_from_s3(query_path(project._id))
-              console.log("Deleteing the file from s3 with path ", query_path(project._id))
+              try_delete_object_from_s3(query_path(project._id));
+              console.log("Deleteing the file from s3 with path ", query_path(project._id));
               return res.status(500).send(`Could not find ${!model ? "model" : "atlas"}`);
             }
 
-            // Check if the id and args exist for the chosen scvi hub atlas. 
-            if((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas){
+            // Check if the id and args exist for the chosen scvi hub atlas.
+            if ((!project.scviHubId || !project.model_setup_anndata_args) && !model && !atlas) {
               console.log(project.scviHubId && project.model_setup_anndata_args);
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
 
-              try_delete_object_from_s3(query_path(project._id))
-              console.log("Deleteing the file from s3 with path ", query_path(project._id))
-              return res.status(500).send(`Could not find ${!project.scviHubId ? "scviHubId" : "model_setup_anndata_args"}`);
+              try_delete_object_from_s3(query_path(project._id));
+              console.log("Deleteing the file from s3 with path ", query_path(project._id));
+              return res
+                .status(500)
+                .send(
+                  `Could not find ${!project.scviHubId ? "scviHubId" : "model_setup_anndata_args"}`
+                );
             }
 
             //Create a token, which can be used later to update the projects status
@@ -117,50 +129,56 @@ export default function upload_complete_upload_route() {
 
             let queryInfo;
 
-            
             let classifier_type = {
-              XGB : false,
-              kNN : false,
-              Native: false
+              XGBoost: false,
+              kNN: false,
+              Native: false,
             };
             let encoder_path;
             let classifier_path;
             // Optional classifier choice
-            if(classifier){
+            if (classifier) {
               switch (classifier?.name) {
-                case 'XGBoost':
-                    classifier_type.XGB = true;
-                    break;
-                case 'KNN':
-                    classifier_type.kNN = true;
-                    break;
-                case 'scANVI':
-                    classifier_type.Native = true;
-                    break;
+                case "XGBoost":
+                  classifier_type.XGBoost = true;
+                  break;
+                case "KNN":
+                  classifier_type.kNN = true;
+                  break;
+                //TODO: scpoli have to be added
+                // case "scPoli":
+                case "scANVI":
+                  classifier_type.Native = true;
+                  break;
                 default:
-                    return res.status(500).send(`Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${classifier?.name}`);
-             }
-             classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
-             encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
-             console.log("classifier_path is ", classifier_path);
+                  return res
+                    .status(500)
+                    .send(
+                      `Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${
+                        classifier?.name
+                      }`
+                    );
+              }
+              //TODO: classifier_path and encoder_path have to be adjusted for scpoli
+              classifier_path = await get_classifier_path(classifier_type, atlas._id, model._id);
+              encoder_path = await get_encoder_path(classifier_type, atlas._id, model._id);
+              console.log("classifier_path is ", classifier_path);
               console.log("encoder_path is ", encoder_path);
               console.log("classifier_type is ", classifier_type);
             }
 
             if (model && model.name == "scVI") {
-              const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
-                atlas._id,
-                model._id
-              );
+              const modelAssociatedWithAtlas =
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                
+
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
-                classifier_type : classifier_type,
+                classifier_type: classifier_type,
                 classifier_path: classifier_path,
                 encoder_path: encoder_path,
                 query_data: query_path(project.id),
@@ -170,23 +188,21 @@ export default function upload_complete_upload_route() {
                 pre_trained_scVI: true,
                 ref_path: "model.pt",
                 async: false,
-                scvi_max_epochs_query: 1, // TODO: make this a standard parameter
+                scvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
             } else if (model && model.name == "scANVI") {
-              const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
-                atlas._id,
-                model._id
-              );
+              const modelAssociatedWithAtlas =
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
               queryInfo = {
                 model: model.name,
                 atlas: atlas.name,
-                
+
                 output_type: {
                   csv: false,
                   cxg: true,
                 },
-                classifier_type : classifier_type,
+                classifier_type: classifier_type,
                 classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
@@ -200,14 +216,48 @@ export default function upload_complete_upload_route() {
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
-            }else{ // Query info for scvi hub atlas
-              if(project.scviHubId && project.model_setup_anndata_args){ 
+            } else if (model && model.name == "scPoli") {
+              const modelAssociatedWithAtlas =
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
+              const { scpoli_attr, scpoli_model_params, scpoli_var_names } = model_path_scpoli(
+                modelAssociatedWithAtlas?._id
+              );
+
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+
+                output_type: {
+                  csv: false,
+                  cxg: true,
+                },
+                classifier_type: classifier_type,
+                classifier_path: classifier_path,
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                encoder_path: encoder_path,
+
+                scpoli_attr: scpoli_attr,
+                scpoli_model_params: scpoli_model_params,
+                scpoli_var_names: scpoli_var_names,
+
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                // pre_trained_scANVI: true,
+                // ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scpoli_max_epochs: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+              };
+            } else {
+              // Query info for scvi hub atlas
+              if (project.scviHubId && project.model_setup_anndata_args) {
                 queryInfo = {
                   scviHubId: project.scviHubId,
                   model_setup_anndata_args: project.model_setup_anndata_args,
                   output_type: {
-                      csv: false,
-                      cxg: true
+                    csv: false,
+                    cxg: true,
                   },
                   query_data: query_path(project.id),
                   output_path: result_path(project.id),
@@ -217,7 +267,7 @@ export default function upload_complete_upload_route() {
               }
             }
 
-            console.log("sending: ");
+            console.log("queryInfo: ");
             console.log(queryInfo);
             const url = `${process.env.CLOUD_RUN_URL}/query`;
             const auth = new GoogleAuth();
@@ -245,9 +295,8 @@ export default function upload_complete_upload_route() {
             // Creating a queue task
             const project_id_gcp = process.env.GCP_PROJECT_ID;
             const queue = process.env.TASK_QUEUE_NAME;
-            const location = 'europe-west3';
-            const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID
-
+            const location = "europe-west3";
+            const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
 
             const tasks = new CloudTasksClient({
               projectId: project_id_gcp,
@@ -256,7 +305,7 @@ export default function upload_complete_upload_route() {
                 private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
               },
               fallback: true,
-            })
+            });
 
             const payload = queryInfo;
             // Construct the fully qualified queue name.
@@ -265,11 +314,11 @@ export default function upload_complete_upload_route() {
             const task = {
               httpRequest: {
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                 },
-                httpMethod: 'POST' as const,
+                httpMethod: "POST" as const,
                 url,
-                body: '', // or null
+                body: "", // or null
                 oidcToken: {
                   serviceAccountEmail,
                 },
@@ -277,23 +326,23 @@ export default function upload_complete_upload_route() {
             };
 
             if (payload) {
-              task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString('base64');
+              task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
             }
             const call_options = {
               // 60 minutes in millis
               timeout: 60 * 60 * 1000,
-            }
-            console.log('Sending task:');
+            };
+            console.log("Sending task:");
             console.log(task);
             const request = { parent: parent, task: task };
 
             const [response] = await tasks.createTask(request, call_options);
             console.log(`Created task ${response.name}`);
-            if (!response  || !response.name) {
+            if (!response || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,
               });
-              console.log("Status updated to failed! Queue task failed")
+              console.log("Status updated to failed! Queue task failed");
               try_delete_object_from_s3(query_path(project.id));
               return;
             }

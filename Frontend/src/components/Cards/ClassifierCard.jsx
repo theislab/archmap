@@ -115,8 +115,6 @@ export const ClassifierCard = ({
                     content={selected ? "Deselect" : "Select"}
                     onSelect={() => selectedClassifier?.name === classifierObject?.name ? onSelect('') : onSelect(classifierObject)}
                   />}
-                {console.log('selected classifier', selectedClassifier)}
-                {console.log('object', classifierObject)}
                 {hover && <OutlinedButtonSelect content="Learn More" onSelect={() => setClassifierInfoOpen(true)} disabled={disabled} />}
               </Box>
             </Box>

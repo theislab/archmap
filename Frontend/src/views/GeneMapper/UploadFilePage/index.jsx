@@ -8,6 +8,7 @@ import { GeneralCard as Card } from 'components/Cards/GeneralCard';
 import CustomButton from 'components/CustomButton';
 import FileUpload from 'components/FileUpload';
 import DemoService from 'shared/services/Demo.service';
+import AnndataArgsService from 'shared/services/AnndataArgs.service';
 import { Modal, ModalTitle } from 'components/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TabCard } from 'components/GeneMapper/TabCard';
@@ -38,6 +39,7 @@ function UploadFilePage({
   const [open, setOpen] = useState(false);
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
+  const [model_setup_anndata_args, setAnndataArgs] = useState();
   const [classifierInfoOpen, setClassifierInfoOpen] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useSubmissionProgress();
   const [showWarning, setShowWarning] = useState(false);
@@ -106,7 +108,26 @@ function UploadFilePage({
     return null; // file accepted
   };
 
-  const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, scviHubId = ""}) => {
+  // Fetch the model_setup_anndata_args if the chosen atlas is an scvi hub atlas.
+  useEffect(() => {
+    const fetchData = async () => {
+      if(selectedAtlas.scviAtlas){
+        try{
+          const model = selectedAtlas.modelIds.find(modelId => modelId.model === selectedModel.name.toLowerCase());
+          const scviHubId = model.scviHubId;
+          
+          const response = await AnndataArgsService.postAnndataArgs(scviHubId);
+          setAnndataArgs(response.model_setup_anndata_args);
+        }catch(err){
+          console.error(`Error fetching the model_setup_anndata_args. Error: ${err}`);
+        }
+      }
+    }
+
+    fetchData();
+  }, [selectedAtlas]);
+
+  const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, scviHubId = "", model_setup_anndata_args = null}) => {
     ProjectService.createProject({
       projectName: projectName,
       atlasId: atlasId,
@@ -114,6 +135,7 @@ function UploadFilePage({
       fileName: file.name,
       classifierId: classifierId,
       scviHubId: scviHubId, 
+      model_setup_anndata_args: model_setup_anndata_args,
     }).then((project) => {
       uploadMultipartFile(
         project.uploadId,
@@ -138,7 +160,7 @@ function UploadFilePage({
       projectName: projectName,
       atlasId: atlasId,
       modelId: modelId,
-      file: demoDataset.name,
+      fileName: demoDataset.name,
   });
     history.push(path); // go back to GeneMapper home
   };
@@ -163,7 +185,9 @@ function UploadFilePage({
           modelId: scviHubModel.model, 
           file: uploadedFile[0],
           classifierId: selectedClassifier._id,
-          scviHubId: scviHubModel.scviHubId});
+          scviHubId: scviHubModel.scviHubId,
+          model_setup_anndata_args: model_setup_anndata_args,
+        });
       }
       else{ // create a project with a core atlas.
         createProject({

@@ -22,19 +22,38 @@ const ProjectService = MOCK_PROJECTS
         return data;
       },
 
-      createProject: async ({projectName, atlasId, modelId, fileName, classifierId, scviHubId = null}) => { 
+      createProject: async ({
+        projectName,
+        atlasId,
+        modelId,
+        fileName,
+        classifierId,
+        scviHubId = null,
+        model_setup_anndata_args = null,
+      }) => {
         // POST request for scvi hub atlas.
-        if(scviHubId){
-          const { data } = await axiosInstance.post('/file_upload/start_upload', {
-            projectName, atlasId, modelId, fileName, classifierId, scviHubId
-          });
-
+        if (scviHubId && model_setup_anndata_args) {
+          const { data } = await axiosInstance.post(
+            "/file_upload/start_upload",
+            {
+              projectName,
+              atlasId,
+              modelId,
+              fileName,
+              classifierId,
+              scviHubId,
+              model_setup_anndata_args,
+            }
+          );
           return data;
         }
-
         // Create a POST request with an Archmap Core atlas.
-        const { data } = await axiosInstance.post('/file_upload/start_upload', {
-          projectName, atlasId, modelId, fileName, classifierId
+        const { data } = await axiosInstance.post("/file_upload/start_upload", {
+          projectName,
+          atlasId,
+          modelId,
+          fileName,
+          classifierId,
         });
 
         return data;
