@@ -7,6 +7,7 @@ export enum ProjectStatus {
   PROCESSING_FAILED = "PROCESSING_FAILED",
   ABORTED = "ABORTED",
   DONE = "DONE",
+  DOWNLOAD_READY = "DOWNLOAD_READY",
 }
 
 export enum AtlasUploadStatus {

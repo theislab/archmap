@@ -85,7 +85,7 @@ export default function ProjectBarCard({
     TeamService.addProject(teamId, project._id);
   };
 
-  const color = project.status === PROJECT_STATUS.DONE
+  const color = project.status === PROJECT_STATUS.DONE || project.status === PROJECT_STATUS.DOWNLOAD_READY
     ? 'lightGreen'
     : project.status === PROJECT_STATUS.ABORTED
       || (!submissionProgress && project.status === PROJECT_STATUS.UPLOAD_PENDING)
@@ -234,6 +234,7 @@ export default function ProjectBarCard({
                       && <CanceldOrFailedStatus />}
                     {submissionProgress.status === MULTIPART_UPLOAD_STATUS.COMPLETE
                       && project.status !== PROJECT_STATUS.DONE
+                      && project.status !== PROJECT_STATUS.DOWNLOAD_READY
                       && project.status !== PROJECT_STATUS.ABORTED
                       && project.status !== PROJECT_STATUS.PROCESSING_FAILED
                       && <ProcessingStatus />}
@@ -318,11 +319,13 @@ export default function ProjectBarCard({
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
-                          disabled={project.status !== 'DONE'}
+                          // disable it if the project status is neither done nor DOWNLOAD_READY
+                          disabled={project.status !== "DONE" && project.status !== "DOWNLOAD_READY"}
                         >
                           <Typography>Launch</Typography>
                         </CustomButton>)
                       }
+                      
                       {/* View Button */}
                       {cellxgene.status === "launching"
                         && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"} style={{ display: 'flex', alignItems: 'center' }}>
@@ -384,7 +387,7 @@ export default function ProjectBarCard({
                         <IconButton
                           href={project.location}
                           download={`${project.name}.tsv`}
-                          disabled={project.status !== 'DONE'}
+                          disabled={project.status !== 'DOWNLOAD_READY'}
                         >
                           <DownloadIcon />
                         </IconButton>

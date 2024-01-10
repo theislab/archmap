@@ -202,6 +202,11 @@ const update_project_results = (): Router => {
           status: ProjectStatus.DONE,
         };
         await ProjectService.updateProjectById(project._id, updateLocationAndStatus);
+      } else if (project.status === ProjectStatus.DONE) {
+        const updateStatus: UpdateProjectDTO = {
+          status: ProjectStatus.DOWNLOAD_READY,
+        };
+        await ProjectService.updateProjectById(project._id, updateStatus);
       } else {
         console.log(`Trying to update project with token, but status is already ${project.status}`)
       }
