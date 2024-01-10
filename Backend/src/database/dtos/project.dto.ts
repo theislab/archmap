@@ -8,6 +8,7 @@ export interface UpdateProjectDTO {
   status?: string;
   location?: string;
   errorMessage?: string;
+  outputFileWithCounts?: string;
 }
 
 /**

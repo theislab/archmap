@@ -101,6 +101,9 @@ export default function ProjectBarCard({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [open, setOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [fetchUrlError, setFetchUrlError] = useState(null);
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -128,6 +131,40 @@ export default function ProjectBarCard({
 
   const handleClickCard = () => {
     setOpen(!open);
+  };
+
+  const fetchPresignedUrlAndDownload = async (projectId) => {
+    setFetchingUrl(true);
+    setFetchUrlError(null);
+
+    try {
+      const response = await fetch('/file_download/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: projectId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const presignedUrl = data.presignedUrl;
+
+      // Create a temporary anchor tag and programmatically click it to download the file
+      const link = document.createElement('a');
+      link.href = presignedUrl;
+      link.download = `${project.name}.h5ad`; // Set the download filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (err) {
+      console.error('Error fetching presigned URL:', err);
+      setFetchUrlError('Failed to download file.');
+    } finally {
+      setFetchingUrl(false);
+    }
   };
 
   // Cellxgene-specific variables
@@ -385,12 +422,12 @@ export default function ProjectBarCard({
                       </Snackbar>
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                          href={project.location}
-                          download={`${project.name}.tsv`}
-                          disabled={project.status !== 'DOWNLOAD_READY'}
-                        >
-                          <DownloadIcon />
+                            onClick={() => fetchPresignedUrlAndDownload(project._id)}
+                            disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
+                          >
+                            {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
                         </IconButton>
+                        {fetchUrlError && <Typography color="error">{fetchUrlError}</Typography>}
                         <IconButton onClick={() => handleDelete()}>
                         {deleted
                           ? <ReplayIcon />
