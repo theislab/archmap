@@ -58,7 +58,7 @@ export const TabCard = ({
           }}
       >
         <Stack spacing={0} p="0.1em" pl="0.3em" alignItems="center" justifyContent="space-between" flexDirection="row">
-          <Typography fontSize={minimal ? "1em" : "p"}>
+          <Typography height={data.isAtlas ? "5px" : "auto"} fontSize={minimal ? "1em" : "p"}> {/* This is the issue. Set the height here. */}
             {data?.type === "team" ? data.title : data.text}
           </Typography>
           {data?.type === "team" && data.added && (
