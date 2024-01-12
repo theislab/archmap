@@ -178,7 +178,10 @@ const update_project_results = (): Router => {
       let project = await ProjectService.getProjectById(tokenObject._projectId);
 
       if (!project) return res.status(404).send("Project not found");
-      if (project.status === ProjectStatus.DONE) return res.status(200).send("OK");
+      console.log(`Project ${project._id} has status ${project.status}`);
+      if(project.status === ProjectStatus.DOWNLOAD_READY){
+        return res.status(200).send("OK");
+      }
 
       if (conditionForFailure) {
         const updateStatusAndErrorMessage : UpdateProjectDTO = {
@@ -202,6 +205,12 @@ const update_project_results = (): Router => {
           status: ProjectStatus.DONE,
         };
         await ProjectService.updateProjectById(project._id, updateLocationAndStatus);
+      } else if (project.status === ProjectStatus.DONE) {
+        const updateStatus: UpdateProjectDTO = {
+          status: ProjectStatus.DOWNLOAD_READY,
+          outputFileWithCounts: `results/${project._id}/query_cxg_with_count.h5ad`
+        };
+        await ProjectService.updateProjectById(project._id, updateStatus);
       } else {
         console.log(`Trying to update project with token, but status is already ${project.status}`)
       }

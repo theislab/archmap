@@ -48,6 +48,23 @@ export default class AtlasModelAssociationService {
     return await AtlasModelAssociation.find({ model: modelId }).populate('atlas model').exec();
   }
 
+  
+  /**
+   * Get all associations for a specific modelUploadId.
+   *  
+   * @param modelUploadId - The ID of the modelUploadId
+   * @returns An array of associations for the given modelUploadId
+   * 
+   * 
+   *  
+    */
+
+  static async getAssociationByModelUploadId(
+    modelUploadId: string
+  ): Promise<IAtlasModelAssociation[]> {
+    return await AtlasModelAssociation.find({ modelUploadId: modelUploadId }).exec();
+  }
+
     /**
      * Create an atlas-model association.
      *
@@ -80,4 +97,68 @@ export default class AtlasModelAssociationService {
   ): Promise<IAtlasModelAssociation | null> {
     return await AtlasModelAssociation.findOne({ atlas: atlasId, model: modelId }).populate('atlas model').exec();
   }
+
+  /**
+   * Update modelUploadID by id of atlas_model_association
+   * 
+   * @param atlasModelID
+   * @param modelUploadId
+   * 
+   */
+  static async updateModelByModelUploadId(
+    atlasModelID: ObjectId | string,
+    modelUploadId: string
+  ) {
+    // await atlasModel.updateOne({ atlasID }, { encoderUploadPath: encoderUploadPath }).exec();
+    await  AtlasModelAssociation.updateOne({ _id: atlasModelID }, { modelUploadId: modelUploadId }).exec();
+  }
+
+  /**
+   * Update model path by id of atlas_model_association
+   * 
+   * @param _id
+   * @param modelUploadPath
+   * 
+   */
+  static async updateModelPathByModelUploadId(
+    _id: ObjectId | string,
+    modelUploadPath: string
+  ) {
+    
+    await  AtlasModelAssociation.updateOne({ _id }, { modelUploadPath: modelUploadPath }).exec();
+  }
+
+  
+  /**
+   * Update model upload status by id of atlas_model_association
+   * 
+   * @param _id
+   * @param modelUploadStatus
+   * 
+   * 
+    */
+  static async updateModelUploadStatusByModelId(
+      _id: ObjectId | string,
+      modelUploadStatus: string
+    ) {
+      await  AtlasModelAssociation.updateOne({ _id }, { modelUploadStatus: modelUploadStatus }).exec(); 
+    }
+
+  /**
+   * Update model file size by id of atlas_model_association
+   * 
+   * @param _id
+   * @param modelFilesize
+   * 
+   * 
+   * 
+    */
+    static async updateModelFilesizeByModelId(
+      _id: ObjectId | string,
+      modelFilesize: number
+    ) {
+      await  AtlasModelAssociation.updateOne({ _id }, { modelFilesize: modelFilesize }).exec(); 
+    }
+
+
 }
