@@ -28,6 +28,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { GeneralCard } from 'components/Cards/GeneralCard';
 import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
+import axiosInstance from 'shared/services/axiosInstance';
 
 function ProcessingStatus() {
   return (
@@ -138,19 +139,14 @@ export default function ProjectBarCard({
     setFetchUrlError(null);
 
     try {
-      const response = await fetch('/file_download/results', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: projectId }),
+      const response = await axiosInstance.post('/file_download/results', {
+        id: projectId,
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      
 
-      const data = await response.json();
+      const data = await response.data;
       const presignedUrl = data.presignedUrl;
-
       // Create a temporary anchor tag and programmatically click it to download the file
       const link = document.createElement('a');
       link.href = presignedUrl;
