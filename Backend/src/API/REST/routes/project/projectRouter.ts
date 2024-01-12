@@ -214,7 +214,9 @@ const update_project_results = (): Router => {
       } else {
         console.log(`Trying to update project with token, but status is already ${project.status}`)
       }
-      try_delete_object_from_s3(query_path(project.id));
+      if(project.status != ProjectStatus.DONE){
+        try_delete_object_from_s3(query_path(project.id));
+      }
       return res.status(200).send("OK");
     } catch (e) {
       console.error(e);
