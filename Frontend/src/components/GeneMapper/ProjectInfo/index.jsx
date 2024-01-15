@@ -16,20 +16,20 @@ function ProjectInfo({ project, atlas, model }) {
     <>
       <Typography>
         {`Atlas: ${atlas?.name}`}
-        {atlas._id && <IconButton size="small" onClick={() => setAtlasInfoOpen(true)}>
+        {atlas?._id && <IconButton size="small" onClick={() => setAtlasInfoOpen(true)}>
           <InfoOutlinedIcon fontSize="small" />
         </IconButton>}
       </Typography>
       <Typography>
         {`Model: ${model?.name}`}
-        {model._id && <IconButton size="small" onClick={() => setModelInfoOpen(true)}>
+        {model?._id && <IconButton size="small" onClick={() => setModelInfoOpen(true)}>
           <InfoOutlinedIcon fontSize="small" />
         </IconButton>}
       </Typography>
       <Typography>{`Dataset: ${project?.fileName}`}</Typography>
-      {atlas._id
+      {atlas?._id
       && <AtlasInfo id={atlas._id} open={atlasInfoOpen} setOpen={setAtlasInfoOpen} />}
-      {model._id
+      {model?._id
       && <ModelInfo id={model._id} open={modelInfoOpen} setOpen={setModelInfoOpen} />}
     </>
   );
