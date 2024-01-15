@@ -35,7 +35,7 @@ Steps to upload atlases to the archmap:
    .. image:: ../_static/beta_feature/upload_atlas.png
       :alt: upload atlas
 
-6. To upload an atlas, Click on Upload Atlas button. You will ge t a form where you will have to fill in the details of the atlas.
+6. To upload an atlas, Click on Upload Atlas button. You will get a form where you will have to fill in the details of the atlas.
 
    .. image:: ../_static/beta_feature/upload_atlas_form.png
       :alt: upload atlas form
