@@ -170,7 +170,7 @@ const Home = () => {
                           textDecoration: "none",
                           color: colors.primary[400],
                           '&:hover': { color: colors.primary[900] },
-                        }} href="https://genecruncher.readthedocs.io/en/latest/">Docs
+                        }} href="https://archmap-docu.readthedocs.io/">Docs
                       </a>
                     </Typography>
                   </Box>

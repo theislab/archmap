@@ -45,7 +45,17 @@ Steps to upload atlases to the archmap:
    .. image:: ../_static/beta_feature/upload_atlas_form_option.png
       :alt: upload atlas form
 
-8. Once the atlas is uploaded, you can see the atlas in the list of atlases uploaded.
+8. To add the compatible model associated with it, you can select the compatible model and then upload it by clicking on the upload button.
+
+   .. image:: ../_static/beta_feature/upload_atlas_form_model.png
+      :alt: upload model form
+
+9. You can also choose to upload a classifier along with it optionally. To do so, you can select the classifier and then upload it by clicking on the upload button.
+
+   .. image:: ../_static/beta_feature/upload_atlas_form_classifier.png
+      :alt: upload classifier form
+
+10. Once the atlas, model and classifier(optional) are uploaded, you can see it in the list of atlases uploaded.
 
    .. image:: ../_static/beta_feature/uploaded_atlas.png
       :alt: uploaded atlas
