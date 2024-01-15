@@ -9,7 +9,7 @@ import ProjectBarCard from 'components/GeneMapper/projectBarCard';
 import SearchIcon from '@mui/icons-material/Search';
 import { colors } from 'shared/theme/colors';
 import ProjectService from 'shared/services/Project.service';
-import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
+
 import {
   MULTIPART_UPLOAD_STATUS, PROJECTS_UPDATE_INTERVAL, PROJECT_STATUS, statusIsError,
 } from 'shared/utils/common/constants';

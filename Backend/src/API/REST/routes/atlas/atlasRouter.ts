@@ -13,10 +13,14 @@ import fs from "fs";
 import { atlasModel } from "../../../../database/models/atlas";
 import axios from "axios";
 import { upload_permission_auth } from "../../middleware/check_institution_auth";
+import { AtlasModelAssociation } from "../../../../database/models/atlas_model_association";
+import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
+import ModelService from "../../../../database/services/model.service";
 
 
 
 const uploadDirectory = "/tmp/"; // for gcp 
+const bucketName = process.env.S3_BUCKET_NAME; // for gcp
 
 
 if(!fs.existsSync(uploadDirectory)){
@@ -32,6 +36,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
+
 
 const upload = multer({ storage: storage });
 
@@ -198,19 +203,41 @@ const upload_atlas = (): Router => {
   let router = express.Router();
 
 
-  router.post('/atlases/upload', validationMdw, upload_permission_auth() ,upload.single('file'), async (req: any, res) => {
+  router.post('/atlases/upload', validationMdw, upload_permission_auth() ,upload.fields([
+      { name: 'atlasFile', maxCount: 1 },
+      { name: 'modelFile_scANVI', maxCount: 1 },
+      { name: 'modelFile_scVI', maxCount: 1 },
+      { name: 'classifierFile', maxCount: 1 }, // Optional
+      { name: 'encoderFile', maxCount: 1 } // Optional
+    ]), async (req: any, res) => {
       
     let atlasDocument;
     try {
-      if (!req.file && !req.body.atlasUrl) {
-        
-        res.status(400).send("No file uploaded.");
+      if (!req.files.atlasFile && !req.body.atlasUrl) {
+        res.status(400).send("No atlas file uploaded.");
         return;
       }
+      
 
-      if (!req.file && req.body.atlasUrl === "") {
-        
-        res.status(400).send("No file uploaded.");
+      // Validate and process classifier files
+      if (req.body.selectedClassifier && (!req.files.classifierFile || req.files.classifierFile.length === 0) && (!req.files.encoderFile || req.files.encoderFile.length === 0) ) {
+        return res.status(400).send("Classifier file is required when a classifier is selected.");
+      }
+      
+      const compatibleModels = req.body.compatibleModels ? JSON.parse(req.body.compatibleModels) : [];
+      
+      for (const modelName of compatibleModels) {
+        const fieldName = `modelFile_${modelName}`;
+        if (!req.files[fieldName] || req.files[fieldName].length === 0) {
+          return res.status(400).send(`File for model ${modelName} not uploaded.`);
+        }
+      }
+
+
+
+      if (!req.files.atlasFile && req.body.atlasUrl === "") {
+        console.log("No atlas file uploaded.")
+        res.status(400).send("No Atlas  file uploaded.");
         return;
       }
 
@@ -223,7 +250,12 @@ const upload_atlas = (): Router => {
       if(req.body.atlasUrl == undefined){
         req.body.atlasUrl = "";
       }
+      
+      
 
+      //a variable to keep track of all the stuffs that are uploaded to gcp bucket
+      let uploadedFiles = [];
+      
       const atlasData = {
         name: req.body.name,
         previewPictureURL: req.body.previewPictureURL,
@@ -250,41 +282,42 @@ const upload_atlas = (): Router => {
       });
 
 
-      if(atlasData.atlasUrl == ""){
-        const filename = req.file.filename;
-        const originalName = req.file.originalname;
-        const filePath = req.file.path;
-
+      if(atlasData.atlasUrl == "" ){
+        const atlasFile = req.files.atlasFile[0];
+        const atlasFilename = atlasFile.filename;
+        const atlasFilePath = atlasFile.path;
+      
         const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-        const blob = bucket.file(`atlas/${atlasDocument._id}/data.h5ad`);
-        const blobStream = blob.createWriteStream({
+        const atlasBlob = bucket.file(`atlas/${atlasDocument._id}/data.h5ad`);
+
+        const fileNameTxt = `atlas/${atlasDocument._id}/${atlasDocument.name}.txt`;
+
+        const file = storage.bucket(bucketName).file(fileNameTxt);
+        await file.save(''); // Creates an empty file for naming consistency
+
+        const atlasBlobStream = atlasBlob.createWriteStream({
           metadata: {
             contentType: "application/octet-stream",
           },
         });
-        blobStream.on("error", (err) => {
+      
+        atlasBlobStream.on("error", (err) => {
           console.error(err);
-          res.status(500).send("Failed to upload file to GCP");
+          res.status(500).send("Failed to upload atlas file to GCP");
         });
-        blobStream.on("finish", async () => {
-          console.log("File uploaded to GCP");
-
-          // Return the Atlas ID as a response
-          res.json({
-            atlasId: atlasDocument._id,
-            message: `File uploaded to gcp in the path: atlas/${atlasDocument._id}/data.h5ad`,
-          });
+      
+        atlasBlobStream.on("finish", async () => {
+          console.log("Atlas file uploaded to GCP");
+          uploadedFiles.push(atlasBlob.name);
+          
         });
-
-        const readStream = fs.createReadStream(filePath);
-        readStream.pipe(blobStream);
-        blobStream.on("close", () => {
-          console.log("Response sent");
-          // Delete the file from the server
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      
+        const atlasReadStream = fs.createReadStream(atlasFilePath);
+        atlasReadStream.pipe(atlasBlobStream);
+        atlasBlobStream.on("close", () => {
+          console.log("Atlas file upload process completed");
+          if (fs.existsSync(atlasFilePath)) fs.unlinkSync(atlasFilePath);
         });
-
-
       } else {
 
         console.log("Downloading file from url: " + atlasData.atlasUrl + " using the post request to the server " + process.env.ATLAS_UPLOAD_URI);
@@ -295,17 +328,150 @@ const upload_atlas = (): Router => {
         });
         
         // check if its not 200
-
+        
         if (response.status !== 200) {
           res.status(500).send("Failed to upload file to GCP");
           return;
         }
         // Return the Atlas ID as a response
-        res.json({
-          atlasId: atlasDocument._id,
-          message: `File uploaded to gcp in the path: atlas/${atlasDocument._id}/data.h5ad`,
+        uploadedFiles.push(`atlas/${atlasDocument._id}/data.h5ad`);
+      }
+      
+      // now upload the model file. Model file path is obtained from AtlasModelAssociation atlas service
+
+      for (const modelName of compatibleModels) {
+        const fieldName = `modelFile_${modelName}`;
+        const modelFile = req.files[fieldName][0];
+        const modelFilename = modelFile.filename;
+        const modelFilePath = modelFile.path;
+
+        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+        const model = await ModelService.getModelByName(modelName);
+        const modelMongoId = await AtlasModelAssociationService.createAssociation(atlasDocument._id, model._id);
+        const fileName = 'models/' + modelMongoId._id + '/' + atlasDocument.name + '-' + model.name + '.txt'; 
+
+        const file = storage.bucket(bucketName).file(fileName);
+        await file.save(''); // Creates an empty file for naming consistency
+        console.log("sucessfully created empty file for model " + model.name + " and atlas " + atlasDocument.name);
+        console.log("file name is " + fileName);
+        const modelBlob = bucket.file(`models/${modelMongoId._id}/model.pt`);
+        const modelBlobStream = modelBlob.createWriteStream({
+          metadata: {
+            contentType: "application/octet-stream",
+          },
+        });
+        modelBlobStream.on("error", (err) => {
+          console.error(err);
+          res.status(500).send("Failed to upload model file to GCP");
+        });
+  
+        modelBlobStream.on("finish", async () => {
+          console.log("Model file uploaded to GCP");
+          uploadedFiles.push(modelBlob.name);
+          if(!req.files.classifierFile){
+            console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
+            // return the successfull status with uploaded files
+            return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
+          }
+
+        });
+  
+        const modelBlobReadStream = fs.createReadStream(modelFilePath);
+        modelBlobReadStream.pipe(modelBlobStream);
+        modelBlobStream.on("close", () => {
+          console.log("Model file upload process completed");
+          if (fs.existsSync(modelFilePath)) fs.unlinkSync(modelFilePath);
+        });
+
+      }
+
+      // and then upload the classifier file if it exists
+      console.log("now uploading classifier file", req.body.selectedClassifier)
+      if(req.files.classifierFile && req.body.selectedClassifier){
+        const classifierFile = req.files.classifierFile[0];
+        const classifierFilename = classifierFile.filename;
+        const classifierFilePath = classifierFile.path;
+        console.log("now uploading classifier file 2")
+
+        let classifierFilePathInBucket = `classifiers/${atlasDocument._id}/`;
+        switch (req.body.selectedClassifier) {
+          case "KNN":
+            classifierFilePathInBucket += "classifier_knn.pickle";
+            break;
+          case "XGBoost":
+            classifierFilePathInBucket += "classifier_xgb.ubj";
+            break;
+          default:
+            return res.status(400).send("Invalid classifier selected");
+            
+        }
+
+        
+        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+        const classifierBlob = bucket.file(classifierFilePathInBucket);
+        const classifierBlobStream = classifierBlob.createWriteStream({
+          metadata: {
+            contentType: "application/octet-stream",
+          },
+        });
+
+        classifierBlobStream.on("error", (err) => {
+          console.error(err);
+          res.status(500).send("Failed to upload classifier file to GCP");
+        });
+
+        classifierBlobStream.on("finish", async () => {
+          console.log("Classifier file uploaded to GCP");
+          uploadedFiles.push(classifierBlob.name);
+        });
+
+        const classifierReadStream = fs.createReadStream(classifierFilePath);
+        classifierReadStream.pipe(classifierBlobStream);
+        classifierBlobStream.on("close", () => {
+          console.log("Classifier file upload process completed");
+          if (fs.existsSync(classifierFilePath)) fs.unlinkSync(classifierFilePath);
         });
       }
+
+      // and then upload the encoder file if it exists the same steps except the file name is classifier_encoding.pickle in the end
+
+      if (req.files.encoderFile && req.body.selectedClassifier) {
+        const encoderFile = req.files.encoderFile[0];
+        const encoderFilename = encoderFile.filename;
+        const encoderFilePath = encoderFile.path;
+
+        let encoderFilePathInBucket = `classifiers/${atlasDocument._id}/classifier_encoding.pickle`;
+        
+
+        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+        const encoderBlob = bucket.file(encoderFilePathInBucket);
+        const encoderBlobStream = encoderBlob.createWriteStream({
+          metadata: {
+            contentType: "application/octet-stream",
+          },
+        });
+
+        encoderBlobStream.on("error", (err) => {
+          console.error(err);
+          res.status(500).send("Failed to upload encoder file to GCP");
+        });
+
+        encoderBlobStream.on("finish", async () => {
+          console.log("Encoder file uploaded to GCP");
+          uploadedFiles.push(encoderBlob.name);
+          console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
+          // return the successfull status with uploaded files
+          return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
+        });
+
+        const encoderReadStream = fs.createReadStream(encoderFilePath);
+        encoderReadStream.pipe(encoderBlobStream);
+        encoderBlobStream.on("close", () => {
+          console.log("Encoder file upload process completed");
+          if (fs.existsSync(encoderFilePath)) fs.unlinkSync(encoderFilePath);
+        });
+      }
+      
       
        
     } catch (err) {
@@ -363,12 +529,52 @@ export const deleteAtlasById = async (atlasId) => {
   const bucketName = process.env.S3_BUCKET_NAME;
   const fileName = `atlas/${atlasId}/data.h5ad`;
   const file = storage.bucket(bucketName).file(fileName);
+
   const [exists] = await file.exists();
   if (exists) {
     await file.delete();
-    return true;
+    console.log("Atlas file deleted from GCP", fileName);
+    
   }
-  return false;
+  // check for the model files and delete them as well
+  const modelAssociation = await AtlasModelAssociation.findOne({atlasId: atlasId});
+  if(modelAssociation){
+    const model = await ModelService.getModelById(modelAssociation._id);
+    const modelFileName = `models/${modelAssociation._id}/model.pt`;
+    const modelFile = storage.bucket(bucketName).file(modelFileName);
+    const [exists] = await modelFile.exists();
+    if (exists) {
+
+      await modelFile.delete();
+      console.log("Model file deleted from GCP", modelFileName);
+    }
+  }
+
+  // check if the classifier files and encoder files are present as well
+  const classifierFileNameKNN = `classifiers/${atlasId}/classifier_knn.pickle`;
+  const classifierFileKNN = storage.bucket(bucketName).file(classifierFileNameKNN);
+  const [existsKNN] = await classifierFileKNN.exists();
+  if (existsKNN) {
+    await classifierFileKNN.delete(); 
+    console.log("KNN classifier file deleted from GCP", classifierFileNameKNN);
+  }
+
+  const classifierFileNameXGB = `classifiers/${atlasId}/classifier_xgb.ubj`;
+  const classifierFileXGB = storage.bucket(bucketName).file(classifierFileNameXGB);
+  const [existsXGB] = await classifierFileXGB.exists();
+  if (existsXGB) {
+    await classifierFileXGB.delete(); 
+    console.log("XGB classifier file deleted from GCP", classifierFileNameXGB);
+  }
+
+  const encoderFileName = `classifiers/${atlasId}/classifier_encoding.pickle`;
+  const encoderFile = storage.bucket(bucketName).file(encoderFileName);
+  const [existsEncoder] = await encoderFile.exists();
+  if (existsEncoder) {
+    await encoderFile.delete(); 
+    console.log("Encoder file deleted from GCP", encoderFileName);
+  }
+  return true;
 };
 
 

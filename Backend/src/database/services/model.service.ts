@@ -22,4 +22,16 @@ export default class ModelService {
   static async getAllModels(): Promise<(IModel & { _id: ObjectId })[]> {
     return await modelModel.find().exec();
   }
+
+  /**
+   *  Get model by name.
+   *
+   *  @param   name
+   * @returns model - matched model to name or null
+   */
+  static async getModelByName( name: string ): Promise<(IModel & { _id: ObjectId }) | null> {
+
+    return await modelModel.findOne({name: name}).exec();
+  }
+
 }

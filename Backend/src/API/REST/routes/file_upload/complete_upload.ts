@@ -33,7 +33,7 @@ import {
 } from "./bucket_filepaths";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 
-const MAX_EPOCH_QUERY = 2;
+const MAX_EPOCH_QUERY = 1;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
@@ -75,7 +75,6 @@ export default function upload_complete_upload_route() {
         //Query file size and save in project
         try {
           let request: S3.HeadObjectRequest = { Key: data.Key, Bucket: data.Bucket };
-          console.log("request inside complete upload is ", request);
           let result = await s3.headObject(request).promise();
           const updateFileAndStatus: UpdateProjectDTO = {
             fileSize: result.ContentLength,
@@ -189,7 +188,7 @@ export default function upload_complete_upload_route() {
                 pre_trained_scVI: true,
                 ref_path: "model.pt",
                 async: false,
-                scvi_max_epochs_query: 1, // TODO: make this a standard parameter
+                scvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
             } else if (model && model.name == "scANVI") {

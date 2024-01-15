@@ -1,12 +1,14 @@
 import { red, green, yellow, grey, blue } from "@mui/material/colors";
 
-const DEV_BACKEND_ADDRESS = "https://devversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
+const DEV_BACKEND_ADDRESS =
+  "https://devversion-dot-custom-helix-329116.ey.r.appspot.com/v1";
 const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
-const PRODUCTION_BACKEND_ADDRESS = "https://custom-helix-329116.ey.r.appspot.com/v1";
+const PRODUCTION_BACKEND_ADDRESS =
+  "https://custom-helix-329116.ey.r.appspot.com/v1";
 export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
 
-// const names for indexed DB variables 
-// const names for indexed DB variables 
+// const names for indexed DB variables
+// const names for indexed DB variables
 export const INDEXED_DB_NAME = "indexedDB-archmap-projects";
 export const DB_VERSION = 1;
 
@@ -26,11 +28,21 @@ export const MULTIPART_UPLOAD_STATUS = {
   UPLOAD_STARTING: "upload_starting",
   ERROR_START: "error_start",
   UPLOAD_PROGRESS: "upload_progress",
+  UPLOAD_FINISHING: "upload_finishing",
+  UPLOAD_PENDING: "UPLOAD_PENDING",
+  UPLOAD_COMPLETE: "UPLOAD_COMPLETE",
   ERROR_PROGRESS: "error_progress",
   UPLOAD_FINISHING: "upload_finishing",
   ERROR_FINISH: "error_finish",
   COMPLETE: "complete",
   CANCELING: "canceling",
+};
+
+export const UPLOAD_FILE_TYPE = {
+  ATLAS: "atlas",
+  CLASSIFIER: "classifier",
+  MODEL: "model",
+  ENCODER: "encoder",
 };
 export const statusIsUpload = (status) => status.startsWith("upload_");
 export const statusIsError = (status) => status.startsWith("error_");
@@ -59,4 +71,5 @@ export const PROJECT_STATUS = {
   PROCESSING_FAILED: "PROCESSING_FAILED",
   ABORTED: "ABORTED",
   DONE: "DONE",
+  DOWNLOAD_READY: "DOWNLOAD_READY",
 };

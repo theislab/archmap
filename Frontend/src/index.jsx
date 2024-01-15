@@ -6,15 +6,19 @@ import App from './App';
 import { AuthProvider } from 'shared/context/authContext';
 import { SubmissionProgressProvider } from 'shared/context/submissionProgressContext';
 import LoginProvider from 'shared/context/loginContext';
+import { UploadProgressProvider } from 'shared/context/UploadProgressContext';
 
 ReactDOM.render(
   <>
     <CssBaseline />
     <AuthProvider>
       <SubmissionProgressProvider>
-        <LoginProvider>
-          <App />
-        </LoginProvider>
+        <UploadProgressProvider>
+
+          <LoginProvider>
+            <App />
+          </LoginProvider>
+        </UploadProgressProvider>
       </SubmissionProgressProvider>
     </AuthProvider>
   </>,
