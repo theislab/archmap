@@ -36,6 +36,47 @@
       }
     }
   },
+  "/file_upload/complete_upload_for_atlas": {
+    "post": {
+      "summary": "Complete upload for Atlas",
+      "tags": ["Project"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ETag": {
+                        "type": "string"
+                      },
+                      "PartNumber": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "uploadId": {
+                  "type": "string"
+                },
+                "uploadFileType": {
+                  "type": "string"
+                }
+              },
+              "required": ["parts", "uploadId", "uploadFileType"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+
   "/file_upload/get_upload_url": {
     "get": {
       "summary": "Get upload URL",
@@ -64,8 +105,58 @@
           "description": "Failed. Bad post data."
         }
       }
+    },
+    "post": {
+      "summary": "Get upload URL",
+      "tags": ["Project"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "partNumber": {
+                  "type": "number"
+                },
+                "uploadId": {
+                  "type": "string"
+                },
+                "keyPath": {
+                  "type": "string"
+                }
+              },
+              "required": ["partNumber", "uploadId", "keyPath"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "presignedUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Failed. Bad post data."
+        },
+        "500": {
+          "description": "Internal Server Error"
+        }
+      }
     }
   },
+
   "/file_upload/start_upload": {
     "post": {
       "summary": "Start upload",
@@ -111,6 +202,95 @@
         },
         "400": {
           "description": "Failed. Bad post data."
+        }
+      }
+    }
+  },
+  "/file_upload/start_upload_for_atlas": {
+    "post": {
+      "summary": "Start upload for atlas",
+      "tags": ["Atlas"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "previewPictureURL": {
+                  "type": "string"
+                },
+                "modalities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "numberOfCells": {
+                  "type": "number"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "compatibleModels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "uploadedBy": {
+                  "type": "string"
+                },
+                "atlasUrl": {
+                  "type": "string"
+                },
+                "selectedClassifier": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "modalities",
+                "numberOfCells",
+                "species",
+                "compatibleModels",
+                "uploadedBy"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "atlas": {
+                    "$ref": "#/components/schemas/Atlas"
+                  },
+                  "models": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Model"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Failed. Bad post data."
+        },
+        "500": {
+          "description": "Server error"
         }
       }
     }

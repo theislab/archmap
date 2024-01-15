@@ -105,6 +105,7 @@ import { get_classifier, get_classifiers } from "./routes/classifier/classifierR
 
 import { exec_task_queues } from "./routes/taskQueuesRouter"
 import createAllAssociations from "./routes/atlas_model/atlasModelRouter";
+import upload_start_upload_for_atlas_route, { complete_upload_for_atlas } from "./routes/file_upload/start_upload_for_atlas";
 
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {
@@ -210,6 +211,8 @@ export function express_routes(): Router {
   router.use(upload_get_upload_url_route());
   router.use(upload_start_upload_route());
   router.use(upload_complete_upload_route());
+  router.use(upload_start_upload_for_atlas_route());
+  router.use(complete_upload_for_atlas());
 
   //executing the task queues
   router.use(exec_task_queues())

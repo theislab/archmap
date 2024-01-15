@@ -28,6 +28,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { GeneralCard } from 'components/Cards/GeneralCard';
 import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
+import axiosInstance from 'shared/services/axiosInstance';
 
 function ProcessingStatus() {
   return (
@@ -85,7 +86,7 @@ export default function ProjectBarCard({
     TeamService.addProject(teamId, project._id);
   };
 
-  const color = project.status === PROJECT_STATUS.DONE
+  const color = project.status === PROJECT_STATUS.DONE || project.status === PROJECT_STATUS.DOWNLOAD_READY
     ? 'lightGreen'
     : project.status === PROJECT_STATUS.ABORTED
       || (!submissionProgress && project.status === PROJECT_STATUS.UPLOAD_PENDING)
@@ -101,6 +102,9 @@ export default function ProjectBarCard({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [open, setOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [fetchUrlError, setFetchUrlError] = useState(null);
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -128,6 +132,35 @@ export default function ProjectBarCard({
 
   const handleClickCard = () => {
     setOpen(!open);
+  };
+
+  const fetchPresignedUrlAndDownload = async (projectId) => {
+    setFetchingUrl(true);
+    setFetchUrlError(null);
+
+    try {
+      const response = await axiosInstance.post('/file_download/results', {
+        id: projectId,
+      });
+
+      
+
+      const data = await response.data;
+      const presignedUrl = data.presignedUrl;
+      // Create a temporary anchor tag and programmatically click it to download the file
+      const link = document.createElement('a');
+      link.href = presignedUrl;
+      link.download = `${project.name}.h5ad`; // Set the download filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (err) {
+      console.error('Error fetching presigned URL:', err);
+      setFetchUrlError('Failed to download file.');
+    } finally {
+      setFetchingUrl(false);
+    }
   };
 
   // Cellxgene-specific variables
@@ -234,6 +267,7 @@ export default function ProjectBarCard({
                       && <CanceldOrFailedStatus />}
                     {submissionProgress.status === MULTIPART_UPLOAD_STATUS.COMPLETE
                       && project.status !== PROJECT_STATUS.DONE
+                      && project.status !== PROJECT_STATUS.DOWNLOAD_READY
                       && project.status !== PROJECT_STATUS.ABORTED
                       && project.status !== PROJECT_STATUS.PROCESSING_FAILED
                       && <ProcessingStatus />}
@@ -318,11 +352,13 @@ export default function ProjectBarCard({
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
-                          disabled={project.status !== 'DONE'}
+                          // disable it if the project status is neither done nor DOWNLOAD_READY
+                          disabled={project.status !== "DONE" && project.status !== "DOWNLOAD_READY"}
                         >
                           <Typography>Launch</Typography>
                         </CustomButton>)
                       }
+                      
                       {/* View Button */}
                       {cellxgene.status === "launching"
                         && (<CustomButton type="primary" disabled={cellxgene.status !== "ready"} style={{ display: 'flex', alignItems: 'center' }}>
@@ -382,12 +418,12 @@ export default function ProjectBarCard({
                       </Snackbar>
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                          href={project.location}
-                          download={`${project.name}.tsv`}
-                          disabled={project.status !== 'DONE'}
-                        >
-                          <DownloadIcon />
+                            onClick={() => fetchPresignedUrlAndDownload(project._id)}
+                            disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
+                          >
+                            {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
                         </IconButton>
+                        {fetchUrlError && <Typography color="error">{fetchUrlError}</Typography>}
                         <IconButton onClick={() => handleDelete()}>
                         {deleted
                           ? <ReplayIcon />

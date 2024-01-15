@@ -9,7 +9,7 @@ import { result_path } from "../file_upload/bucket_filepaths";
 
 export default function download_results_route() {
   let router = express.Router();
-  router.post("/file_download/results", validationMdw, check_auth(), async (req: ExtRequest, res) => {
+  router.post("/file_download/results", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/results");
     let { id } = req.body;
     try {
@@ -21,21 +21,18 @@ export default function download_results_route() {
       if (!project) {
         return res.status(404).send("Project not found.");
       }
-      if (project.status != ProjectStatus[ProjectStatus.DONE]) {
-        return res.status(400).send("Project not completed.");
+      if (project.status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
+        return res.status(400).send("File not download ready.");
       }
-      if (project.owner != req.user_id) {
-        return res.status(400).send("User not authorized to access file.");
+      if(!project.outputFileWithCounts) {
+        return res.status(400).send("Project has no output file with counts.");
       }
-
       let params: any = {
         Bucket: process.env.S3_BUCKET_NAME!,
-        Key: result_path(project._id),
+        Key: project.outputFileWithCounts,
         Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
       };
-      console.log("Generating presigned URL for: ", params)
       let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
-      console.log("Presigned URL: ", presignedUrl)
       return res.status(200).send({ presignedUrl });
     } catch (err) {
       console.log(err);

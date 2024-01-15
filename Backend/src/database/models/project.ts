@@ -7,6 +7,13 @@ export enum ProjectStatus {
   PROCESSING_FAILED = "PROCESSING_FAILED",
   ABORTED = "ABORTED",
   DONE = "DONE",
+  DOWNLOAD_READY = "DOWNLOAD_READY",
+}
+
+export enum AtlasUploadStatus {
+  UPLOAD_PENDING = "UPLOAD_PENDING",
+  UPLOAD_COMPLETE = "UPLOAD_COMPLETE",
+  UPLOAD_FAILED = "UPLOAD_FAILED",
 }
 
 export interface IProject extends Document {
@@ -19,6 +26,7 @@ export interface IProject extends Document {
   classifierId?: Schema.Types.ObjectId; 
   model_setup_anndata_args?: object;
   scviHubId?: string;
+  outputFileWithCounts?: string;
 
   // file
   uploadId: string;
@@ -84,6 +92,7 @@ const projectSchema = new Schema<IProject>({
   model_setup_anndata_args: {type: Object, require: false},
   scviHubId: {type: String, require: false},
   classifierId: { type: Schema.Types.ObjectId, require: false },
+  outputFileWithCounts: { type: String, require: false },
 
   // file
   uploadId: { type: String, require: false },
