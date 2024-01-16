@@ -190,7 +190,7 @@ export default function ProjectBarCard({
   // Set cellxgene state based on the cache value
   useEffect(() => {
     const cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
-    const cxgValue = cachedProjects[project._id]["cellxgene"];
+    const cxgValue = cachedProjects[project._id]?.cellxgene;
     if(cxgValue)  setCellxgene({ ...cxgValue, status: "ready" })
   }, [project]);
 
