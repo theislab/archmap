@@ -99,7 +99,7 @@ function DrawerBar({ open, setOpen, executeScroll }) {
               </Link>
             </Box>
             <LinkBox to="/references"><DrawerNavlink>References</DrawerNavlink></LinkBox>
-            <DrawerNavlink onClick={() => window.open('https://genecruncher.readthedocs.io/')}>Docs</DrawerNavlink>
+            <DrawerNavlink onClick={() => window.open('https://archmap-docu.readthedocs.io/')}>Docs</DrawerNavlink>
             <Box onClick={executeScroll} sx={{ cursor: 'pointer' }}><DrawerNavlink>Contact</DrawerNavlink></Box>
           </Box>
         </Drawer>
@@ -290,7 +290,7 @@ export default function Navbar({
           </LinkBox>
           <LinkBox to="/genemapper"><Navlink>Map</Navlink></LinkBox>
           <LinkBox to="/references"><Navlink>References</Navlink></LinkBox>
-          <Box sx={{ cursor: 'pointer' }} onClick={() => window.open('https://genecruncher.readthedocs.io/')}><Navlink>Docs</Navlink></Box>
+          <Box sx={{ cursor: 'pointer' }} onClick={() => window.open('https://archmap-docu.readthedocs.io/')}><Navlink>Docs</Navlink></Box>
           {/* The about page is removed for now because it isn't up-to-date */}
           {/* <LinkBox to="/about"><Navlink>About</Navlink></LinkBox> */}
           <Box sx={{ cursor: 'pointer' }} onClick={executeScroll}><Navlink>Contact</Navlink></Box>
