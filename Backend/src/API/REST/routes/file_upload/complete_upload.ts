@@ -324,7 +324,7 @@ export default function upload_complete_upload_route() {
                 },
               },
               dispatchDeadline: { // Timeout
-                seconds: 30*60
+                seconds: 60*60
               }
             };
 
