@@ -60,7 +60,7 @@ const exec_task_queues = (): Router => {
               },
             },
             dispatchDeadline: { // Timeout
-              seconds: 60*60
+              seconds: 30*60
             }
         };
 
