@@ -59,11 +59,15 @@ const exec_task_queues = (): Router => {
                   serviceAccountEmail,
               },
             },
+            dispatchDeadline: { // Timeout
+              seconds: 30*60
+            }
         };
 
         if(payload){
             task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString('base64');
         }
+
         const call_options = {
           // 60 minutes in millis
           timeout:  60 * 60 * 1000, 
@@ -75,6 +79,7 @@ const exec_task_queues = (): Router => {
         //FIX THE CODE HERE
         const [response] = await tasks.createTask(request, call_options);
         console.log(`Created task ${response.name}`);
+        console.log('The task details are: ', JSON.stringify(response, null, 2));
 
         // const [tasks_in_queue] = await tasks.listTasks({parent: parent});
         // const names = tasks_in_queue.map((t) => t.name)
