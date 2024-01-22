@@ -47,16 +47,16 @@ function GeneMapperState({ path }) {
   const handleModelSelection = (newModel) => {
     setSelectedModel(newModel);
     let {batch_key, cell_type_key} = selectedAtlas
-    selectedAtlas.requirements = [
+    newModel.requirements = [
       'Ensure your data is in h5ad format',
       `Batch/Study information is mandatory and should be labeled as “${batch_key}”`,
     ];
     if (newModel.name === 'scVI') {
-      selectedAtlas.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
-      selectedAtlas.requirements.push(`For unlabeled cells, the value for “${cell_type_key}” should be “Unknown”`);
+      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+      newModel.requirements.push(`For unlabeled cells, the value for “${cell_type_key}” should be “Unknown”`);
     }
     else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
-      selectedAtlas.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
     }
     setSelectedClassifier('')
   };
