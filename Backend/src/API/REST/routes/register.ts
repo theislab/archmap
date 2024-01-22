@@ -39,7 +39,9 @@ export default function register_route(): Router {
       const tokenToAdd: AddTokenDTO = { _userId: userAdded._id };
       const token = await TokenService.addToken(tokenToAdd);
       // Make sure to uncomment this line
-      mailer.send_verification_mail(first_name, email, token.token);
+      if(process.env.NODE_ENV === 'production'){
+        mailer.send_verification_mail(first_name, email, token.token);
+      }
       return res.status(201).json(userSecure);
     } catch (err) {
       console.error("Error registering user!");
