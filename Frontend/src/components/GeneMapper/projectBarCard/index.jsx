@@ -116,8 +116,6 @@ export default function ProjectBarCard({
           // If the project belongs to the team, add the team to updatedProjectTeam.
           if (projects.length > 0) {
             updatedProjectTeam.push(team);
-            console.log('The updated projects are: ', updatedProjectTeam);
-            console.log('The type is: ', typeof updatedProjectTeam);
           }
         })
       );
@@ -191,7 +189,7 @@ export default function ProjectBarCard({
   useEffect(() => {
     const cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
     const cxgValue = cachedProjects[project._id]?.cellxgene;
-    if(cxgValue)  setCellxgene({ ...cxgValue, status: "ready" })
+    if(cxgValue && cxgValue.timeout > Date.now())  setCellxgene({ ...cxgValue, status: "ready" })
   }, [project]);
 
   return (
@@ -348,7 +346,7 @@ export default function ProjectBarCard({
                           ))
                       }
                       {/* Launch Button */}
-                      {(!cellxgene.status || Date.now() > cellxgene.timeout)
+                      {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}

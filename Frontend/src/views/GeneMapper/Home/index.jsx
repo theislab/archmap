@@ -246,7 +246,6 @@ function GeneMapperHome({ style, loggedIn }) {
                 })}
             </div>
           )}
-        {console.log('The projects are here: ', projects)}
         {loggedIn && deletedProjects.length > 0
           && (
             <Box>
