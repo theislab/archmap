@@ -18,7 +18,7 @@ import { useAuth } from "shared/context/authContext";
 import AtlasService from "shared/services/Atlas.service";
 import ClassifierService from "shared/services/Classifier.service";
 import ModelService from "shared/services/Model.service";
-import { MULTIPART_UPLOAD_STATUS } from "shared/utils/common/constants";
+import { MULTIPART_UPLOAD_STATUS, getUploadStatusMessage } from "shared/utils/common/constants";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { green } from "@mui/material/colors";
 
@@ -31,7 +31,6 @@ const styles = {
     flexGrow: 1,
   },
   gridForCard: {
-    margin: 10,
     cursor: "pointer",
   },
 };
@@ -181,7 +180,7 @@ const AtlasUpload = () => {
           <Card key={uploadId} sx={{ width: '100%', mb: 2 }}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                Status: {progress.status}
+                Status: {getUploadStatusMessage(progress.status)}
                 {progress.status === MULTIPART_UPLOAD_STATUS.COMPLETE && (
                   <CheckCircleIcon sx={{ color: green[500], ml: 1 }} />
                 )}
@@ -267,51 +266,30 @@ const AtlasUpload = () => {
         </Box>
       )}
 
-      <Grid
-        container
-        spacing={2}
-        justify="center"
-        marginLeft={10}
-        paddingTop={2}
-        marginRight={25}
-      >
-        {atlases &&
-          atlases.map((atlas) => (
-            
-            <Grid className={classes.gridForCard} item key={atlas._id}>
-              <Card
-                onClick={() => {
-                  console.log("Clicked");
-                }}
-              >
-                <CardMedia
-                  style={{ height: 0, paddingTop: "56.25%" }}
-                  image={atlas.previewPictureURL}
-                  title={atlas.name}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {atlas.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {atlas.name}
-                  </Typography>
-                  {atlas.atlasUploadId && (
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Status: {atlas.status === "UPLOAD_COMPLETE" ? "Upload Complete" : "Upload Incomplete"}
-                    </Typography>
-                  )}
-
-
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-      </Grid>
+      <Grid container spacing={2} justifyContent="center" sx={{ paddingLeft: '75px', paddingRight: '75px', marginTop: '16px', width: 'auto', overflow: 'hidden' }}>
+      {atlases.map((atlas) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={atlas._id}>
+          <Card onClick={() => console.log("Clicked")} elevation={4}>
+            <CardMedia
+              component="img"
+              image={atlas.previewPictureURL}
+              alt={atlas.name}
+              sx={{ height: 140, objectFit: 'contain' }}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="h2">
+                {atlas.name}
+              </Typography>
+              {atlas.atlasUploadId && (
+                <Typography variant="body2" color="textSecondary">
+                  Status: {atlas.status === "UPLOAD_COMPLETE" ? "Upload Complete" : "Upload Incomplete"}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
       <Dialog
         className={classes.root}
         open={isAddModalOpen}
