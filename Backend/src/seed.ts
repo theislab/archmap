@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-import seedDataForProject from '../test_files/test-seed-data-project.json'; 
-import seedDataForAtlas  from '../test_files/test-seed-data-atlas.json';
+import seedDataForProject from './test_files/test-seed-data-project.json'; 
+import seedDataForAtlas  from './test_files/test-seed-data-atlas.json';
 
 import dotenv from 'dotenv';
 import { projectModel } from './database/models/project';
