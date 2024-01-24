@@ -73,3 +73,22 @@ export const PROJECT_STATUS = {
   DONE: "DONE",
   DOWNLOAD_READY: "DOWNLOAD_READY",
 };
+
+export const getUploadStatusMessage = (status) => {
+  const statusMessages = {
+    idle: "Idle",
+    selected: "File Selected",
+    upload_starting: "Starting Upload",
+    error_start: "Error at Start",
+    upload_progress: "Upload in Progress",
+    upload_finishing: "Finishing Upload",
+    UPLOAD_PENDING: "Upload Pending",
+    UPLOAD_COMPLETE: "Upload Complete",
+    error_progress: "Error during Upload",
+    error_finish: "Error at Finish",
+    complete: "Complete",
+    canceling: "Canceling",
+  };
+
+  return statusMessages[status] || "Unknown Status";
+};

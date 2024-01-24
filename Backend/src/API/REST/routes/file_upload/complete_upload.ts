@@ -323,6 +323,9 @@ export default function upload_complete_upload_route() {
                   serviceAccountEmail,
                 },
               },
+              dispatchDeadline: { // Timeout
+                seconds: 30*60
+              }
             };
 
             if (payload) {
@@ -338,6 +341,7 @@ export default function upload_complete_upload_route() {
 
             const [response] = await tasks.createTask(request, call_options);
             console.log(`Created task ${response.name}`);
+            console.log('The task details are: ', JSON.stringify(response, null, 2));
             if (!response || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
                 status: ProjectStatus.PROCESSING_FAILED,

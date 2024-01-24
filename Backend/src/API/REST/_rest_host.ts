@@ -29,4 +29,7 @@ export default class REST_Host {
     console.log(`REST-Server operational.`);
     return this;
   }
+  getExpressApp() {
+    return this.expressApp;
+  }
 }

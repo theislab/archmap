@@ -22,4 +22,8 @@ export default class API_Host {
 
     return this;
   }
+  getExpressApp() {
+    return this.rest_host.getExpressApp();
+  }
+
 }

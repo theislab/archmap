@@ -3,8 +3,12 @@ import jwt from "jsonwebtoken";
 import UserService from "../../../database/services/user.service";
 import bcrypt from "bcrypt";
 import { validationMdw } from "../middleware/validation";
+import dotenv from "dotenv";
 
 const INCORRECT_CREDENTIALS = "The email or password is incorrect";
+if(process.env.JWT_SECRET === undefined) {
+ dotenv.config();
+}
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 export default function auth_route() {
