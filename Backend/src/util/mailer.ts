@@ -67,7 +67,7 @@ class Mailer {
     console.log(attachmentsWithCid);
 
     let mail = {
-      from: `GeneCruncher <noreply@${process.env.MAIL_DOMAIN}>`,
+      from: `archmap <noreply@${process.env.MAIL_DOMAIN}>`,
       to: to,
       subject: subject,
       text: rendered_txt,
@@ -95,7 +95,7 @@ class Mailer {
       {
         link: `${process.env.API_URL}/verify/${token}`,
         firstname: firstname,
-        genecruncher_logo: `${process.env.STATIC_FILES_URL}/genecruncher_logo_email.svg`,
+        archmap_logo: `${process.env.BACKEND_URL}/src/assets/logo.png`,
       },
     );
   }
@@ -103,26 +103,26 @@ class Mailer {
   async send_password_reset_request_mail(firstname: string, recipient: string, token: string) {
     return this.send(
       recipient,
-      "[GeneCruncher] Please reset your password",
+      "[ArchMap] Please reset your password",
       "password_reset_request_email",
       {
         firstname: firstname,
-        link: `${process.env.FRONTEND_URL}/password_reset?token=${token}`,
-        new_reset_link: `${process.env.FRONTEND_URL}/password_reset`,
-        genecruncher_logo: `${process.env.STATIC_FILES_URL}/genecruncher_logo_email.svg`,
+        link: `${process.env.FRONTEND_URL}/#/password_reset?token=${token}`,
+        new_reset_link: `${process.env.FRONTEND_URL}/#/password_reset`,
+        archmap_logo: `${process.env.BACKEND_URL}/src/assets/logo.png`,
       },
     );
   }
   async send_password_reset_confirmation_mail(firstname: string, recipient: string) {
     return this.send(
       recipient,
-      "[GeneCruncher] Your password was reset successfully",
+      "[ArchMap] Your password was reset successfully",
       "password_reset_confirmation_email",
       {
         firstname: firstname,
         email: recipient,
-        link: `${process.env.FRONTEND_URL}/password_reset`,
-        genecruncher_logo: `${process.env.STATIC_FILES_URL}/genecruncher_logo_email.svg`,
+        link: `${process.env.FRONTEND_URL}/#/password_reset`,
+        archmap_logo: `${process.env.BACKEND_URL}/src/assets/logo.png`,
       },
     );
   }
@@ -135,14 +135,14 @@ class Mailer {
   ) {
     return this.send(
       recipient,
-      "[GeneCruncher] Invitation to an institution",
+      "[ArchMap] Invitation to an institution",
       "invitation_to_institution",
       {
         institution,
         country,
         firstname,
         link,
-        genecruncher_logo: `${process.env.STATIC_FILES_URL}/genecruncher_logo_email.svg`,
+        archmap_logo: `${process.env.BACKEND_URL}/src/assets/logo.png`,
       },
     );
   }
@@ -154,13 +154,13 @@ class Mailer {
   ) {
     return this.send(
       recipient,
-      "[GeneCruncher] Invitation to a team",
+      "[ArchMap] Invitation to a team",
       "invitation_to_team",
       {
         firstname,
         teamname,
         link,
-        genecruncher_logo: `${process.env.STATIC_FILES_URL}/genecruncher_logo_email.svg`,
+        archmap_logo: `${process.env.BACKEND_URL}/src/assets/logo.png`,
       }
     );
   }
