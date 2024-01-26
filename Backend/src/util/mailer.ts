@@ -95,7 +95,7 @@ class Mailer {
       {
         link: `${process.env.API_URL}/verify/${token}`,
         firstname: firstname,
-        archmap_logo: `${process.env.STATIC_FILES_URL}/logo.png`,
+        archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
     );
   }
@@ -109,7 +109,7 @@ class Mailer {
         firstname: firstname,
         link: `${process.env.FRONTEND_URL}/#/password_reset?token=${token}`,
         new_reset_link: `${process.env.FRONTEND_URL}/#/password_reset`,
-        archmap_logo: `${process.env.STATIC_FILES_URL}/logo.png`,
+        archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
     );
   }
@@ -122,7 +122,7 @@ class Mailer {
         firstname: firstname,
         email: recipient,
         link: `${process.env.FRONTEND_URL}/#/password_reset`,
-        archmap_logo: `${process.env.STATIC_FILES_URL}/logo.png`,
+        archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
     );
   }
@@ -142,7 +142,7 @@ class Mailer {
         country,
         firstname,
         link,
-        archmap_logo: `${process.env.STATIC_FILES_URL}/logo.png`,
+        archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
     );
   }
@@ -160,7 +160,7 @@ class Mailer {
         firstname,
         teamname,
         link,
-        archmap_logo: `${process.env.STATIC_FILES_URL}/logo.png`,
+        archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       }
     );
   }
