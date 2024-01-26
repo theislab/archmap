@@ -13,7 +13,7 @@ import {
 import { useHistory, useLocation } from 'react-router-dom';
 import NavBar from 'components/NavBar';
 import styles from './passwordresetpage.module.css';
-import logo from 'assets/logo.svg';
+import logo from 'assets/logo-white-mode.svg';
 import { BACKEND_ADDRESS } from 'shared/utils/common/constants';
 import Input from 'components/Input/Input';
 import CustomButton from 'components/CustomButton/index';
@@ -27,16 +27,23 @@ function PasswordResetPage(props) {
   });
 
   const location = useLocation();
+  const history = useHistory();
 
   const boxStyle = {
     position: 'relative',
     align: 'center',
-    width: '60%',
+    width: '30%',
+    height: '80%',
     bgcolor: 'background.paper',
     boxShadow: 3,
-    top: 32,
+    top: '50%',
+    transform: 'translateY(-50%)',
     p: 12,
     borderRadius: 3,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   };
 
   function validateInput() {
@@ -75,7 +82,9 @@ function PasswordResetPage(props) {
       },
     );
     setSnackbarVisible(true);
-    // history.push('/');
+    setTimeout(() => {
+      history.push('');
+    }, 500)
   }
 
   function onSnackbarClose() {
@@ -96,13 +105,13 @@ function PasswordResetPage(props) {
   return (
     <div className={styles.headerContainer}>
       <NavBar />
-      <Box justifyContent="center" display="flex">
+      <Box justifyContent="center" display="flex" height="80vh">
         <Box sx={boxStyle}>
           <Grid>
             <Grid container direction="row" justifyContent="center">
               <Grid xs item />
               <Grid align="center">
-                <Avatar src={logo} sx={{ width: 72, height: 72 }} />
+                <Avatar src={logo} sx={{ width: 100, height: 100, padding: "15px" }} />
                 <h1>Password Reset</h1>
               </Grid>
               <Grid xs align="right" item />
