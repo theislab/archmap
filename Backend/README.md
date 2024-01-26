@@ -64,7 +64,7 @@ Information about Models and Atlases are entered by hand into the database, and 
 
 ## Static files
 
-At the moment, the icons for Atlases and the GeneCruncher logo in emails are also hosted on a public S3 storage.
+At the moment, the icons for Atlases and the ArchMap logo in emails are also hosted on a public S3 storage.
 
 # Control flow with Machine Learning API
 

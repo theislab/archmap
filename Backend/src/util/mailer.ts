@@ -107,7 +107,7 @@ class Mailer {
       "password_reset_request_email",
       {
         firstname: firstname,
-        link: `${process.env.FRONTEND_URL}/#/password_reset?token=${token}`,
+        link: `${process.env.FRONTEND_URL}/password_reset?token=${token}`,
         new_reset_link: `${process.env.FRONTEND_URL}/#/password_reset`,
         archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
@@ -121,7 +121,7 @@ class Mailer {
       {
         firstname: firstname,
         email: recipient,
-        link: `${process.env.FRONTEND_URL}/#/password_reset`,
+        link: `${process.env.FRONTEND_URL}/password_reset`,
         archmap_logo: "https://storage.googleapis.com/jst-2021-bucket-static/logo.png",
       },
     );

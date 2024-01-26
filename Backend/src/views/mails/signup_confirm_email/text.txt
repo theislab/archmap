@@ -1,4 +1,4 @@
-Confirm your registration at genecruncher.com
+Confirm your registration at ArchMap.bio
 
 Hey {{firstname}},
 thanks for taking interest in our service! One last step before you can use our platform: Please confirm your email address by clicking the link below.
@@ -6,4 +6,4 @@ thanks for taking interest in our service! One last step before you can use our 
 Click here to confirm your email: {{link}}
 
 Best Regards,
-- the genecruncher-Team
+- the ArchMap Team

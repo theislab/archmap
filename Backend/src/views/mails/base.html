@@ -17,7 +17,7 @@
   <mj-body width="800px">
     <mj-section mj-class="bg-email">
       <mj-column width="76px" padding-left="10px">
-        <mj-image width="56px" padding="0" href="https://www.archmap.bio" src="https://storage.googleapis.com/jst-2021-bucket-static/logo.png"/>  <!--Fix the logo on the left-->
+        <mj-image width="56px" padding="0" href="https://www.archmap.bio" src="{{process.env.STATIC_FILES_URL}}/logo.png"/>  <!--Fix the logo on the left-->
       </mj-column>
       <mj-column width="704px" vertical-align="bottom">
         <mj-button background-color="transparent" mj-class="fg-header font-bold size-header" align="left" href="https://www.archmap.bio" padding="0" text-decoration="underline">archmap.bio</mj-button>
