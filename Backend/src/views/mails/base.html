@@ -5,33 +5,34 @@
       <mj-class name="bg-footer" background-color="#212529" />
       <mj-class name="fg-footer" color="#ffffff" />
       <mj-class name="bg-email" background-color="#F8FBFF" />
-      <mj-class name="fg-header" color="#184060" />
+      <mj-class name="fg-header" color="#184060" font-size="14px" font-weight="normal"/>
       <mj-class name="size-header" font-size="20px" />
-      <mj-clasS name="greeting" color="#002644" font-weight="bold" font-size="30px" />
+      <mj-class name="greeting" color="#002644" font-weight="bold" font-size="30px" />
       <mj-class name="font-bold" font-weight="bold" />
       <mj-class name="action-button"  background-color="#5676E4" color="#ffffff" border-radius="999px"/>
+      <mj-class name="footer-text" font-size="14px" font-weight="normal" color="#ffffff" />
       <mj-section full-width="full-width" background-color="#F8FBFF"></mj-section>
     </mj-attributes>
   </mj-head>
   <mj-body width="800px">
     <mj-section mj-class="bg-email">
       <mj-column width="76px" padding-left="10px">
-        <mj-image width="56px" padding="0" href="https://www.genecruncher.com" src="{{genecruncher_logo}}" />
+        <mj-image width="56px" padding="0" href="https://www.archmap.bio" src="https://storage.googleapis.com/jst-2021-bucket-static/logo.png"/>  <!--Fix the logo on the left-->
       </mj-column>
       <mj-column width="704px" vertical-align="bottom">
-        <mj-button background-color="transparent" mj-class="fg-header font-bold size-header" align="left" href="https://www.genecruncher.com" padding="0" text-decoration="underline">genomics.ai</mj-button>
+        <mj-button background-color="transparent" mj-class="fg-header font-bold size-header" align="left" href="https://www.archmap.bio" padding="0" text-decoration="underline">archmap.bio</mj-button>
       </mj-column>
     </mj-section>
     <mj-include path="./content.mjml.html" />
     <mj-section mj-class="bg-footer">
     	<mj-column>
-      	<mj-text mj-class="fg-footer font-bold">
-          © Copyright TUM 2022
+      	<mj-text mj-class="fg-footer font-bold" padding="10px 20px">
+          © Copyright 2024 Helmholtz
         </mj-text>
       </mj-column>
     	<mj-column>
-      	<mj-button padding="0" background-color="transparent" mj-class="fg-footer font-bold" align="right" href="https://www.genecruncher.com">
-          genecruncher.com
+      	<mj-button padding="0" background-color="transparent" mj-class="fg-footer font-bold" align="right" href="https://www.archmap.bio">
+          archmap.bio
         </mj-button>
       </mj-column>
     </mj-section>

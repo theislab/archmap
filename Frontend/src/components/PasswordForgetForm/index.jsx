@@ -16,7 +16,7 @@ import { useHistory } from "react-router-dom";
 import validator from "validator";
 import { BACKEND_ADDRESS } from "../../shared/utils/common/constants";
 import styles from "./passwordforgetform.module.css";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo-white-mode.svg";
 import Input from "../Input/Input";
 import CustomButton from "components/CustomButton";
 import { LoginContext } from "shared/context/loginContext";
@@ -110,7 +110,7 @@ function PasswordForgetForm(props) {
             <Grid container direction="row" justifyContent="center">
               <Grid xs item />
               <Grid align="center">
-                <Avatar src={logo} sx={{ width: 72, height: 72 }} />
+                <Avatar src={logo} sx={{ width: 100, height: 100, padding: "25px" }} />
                 <h2>Forgot Password</h2>
               </Grid>
               <Grid xs align="right" item>
