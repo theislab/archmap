@@ -30,7 +30,7 @@ export default class ProjectService {
   static async deleteProjectById(
     project_id: ObjectId | string
   ): Promise<(IProject & { _id: ObjectId }) | null> {
-    return await projectModel.findByIdAndRemove(project_id).exec();
+    return await projectModel.findByIdAndDelete(project_id).exec();
   }
 
   /**

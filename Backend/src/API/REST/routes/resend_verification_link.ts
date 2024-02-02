@@ -21,7 +21,7 @@ export default function resend_verification_link(): Router {
     // delete old token
     const token = await TokenService.getTokenByUserId(user._id);
     // TODO verify token is old enough (has to be at least 60 seconds old)
-    if (token) await token.delete();
+    if (token) await token.deleteOne();
 
     // create new token and send new verification-mail
     const tokenToAdd: AddTokenDTO = { _userId: user._id };

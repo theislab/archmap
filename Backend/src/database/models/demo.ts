@@ -2,15 +2,15 @@ import { Document, model, Schema } from "mongoose";
 
 export interface IDemo extends Document {
     name: string;
-    model: string; 
-    atlas: string;
+    modelName: string; 
+    atlasName: string;
     dataURL: string;
 }
 
 const demoSchema = new Schema<IDemo>({
     name: { type: String, required: true},
-    model: { type: String, required: true},
-    atlas: { type: String, required: true},
+    modelName: { type: String, required: true, alias: "model"},
+    atlasName: { type: String, required: true, alias: "atlas"},
     dataURL: { type: String, required: true},
 })
 

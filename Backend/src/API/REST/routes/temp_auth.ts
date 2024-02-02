@@ -39,7 +39,7 @@ export default function temp_auth(): Router {
 
             // get expiration time
             let expirationDate;
-            jwt.verify(token, JWT_SECRET, (err, decoded)=>{
+            jwt.verify(token, JWT_SECRET, (err, decoded: jwt.JwtPayload)=>{
                 expirationDate = decoded.exp;
             })
 

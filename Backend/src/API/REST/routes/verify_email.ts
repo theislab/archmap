@@ -17,7 +17,7 @@ export default function verify_email(): Router {
 
     if (user.isEmailVerified) {
       res.status(200).send("User has already been verified.");
-      return tokenObj.delete();
+      return tokenObj.deleteOne();
     }
 
     user.isEmailVerified = true;
@@ -28,7 +28,7 @@ export default function verify_email(): Router {
       .send(
         `<h2>User Email has been verified successfully. click <a href='${process.env.FRONTEND_URL}/'>here</a> to return</h2>`
       );
-    tokenObj.delete();
+    tokenObj.deleteOne();
   });
 
   return router;

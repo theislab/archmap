@@ -47,7 +47,7 @@ export default class AtlasService {
   static async deleteAtlasById(
     atlasId: ObjectId | string
   ): Promise<(IAtlas & { _id: ObjectId }) | null> {
-    return await atlasModel.findByIdAndRemove(atlasId).exec();
+    return await atlasModel.findByIdAndDelete(atlasId).exec();
   }
 
   /**

@@ -102,7 +102,7 @@ export const upload_permission_auth = () => {
     if(req.header("auth") || req.header("Authorization")) {
       const jwtToken = req.header("auth") || req.header("Authorization")?.split(" ")[1] || "";
       try {
-        jwt.verify(jwtToken, JWT_SECRET, async function (err, decoded) {
+        jwt.verify(jwtToken, JWT_SECRET, async function (err, decoded: jwt.JwtPayload) {
           if(err || !decoded || !decoded.email || !decoded.id) {
             console.log(err?.name);
             if(err?.name == "TokenExpiredError")
