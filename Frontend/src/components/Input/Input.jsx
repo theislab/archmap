@@ -31,7 +31,7 @@ import { colors } from 'shared/theme/colors';
  */
 const Input = (props) => { 
 
-  const {id,helperText, placeholder, errorHandler, disabledHandler, isRequired=false, defaultValue, value, multiline=false, onChangeEvent=null, onBlurEvent=null, onFocusEvent=null, label='Required', maxLength=40, type='text'} = props
+  const {id,helperText, placeholder, errorHandler, disabledHandler, isRequired=false, defaultValue, value, multiline=false, onChangeEvent=null, onBlurEvent=null, onFocusEvent=null, label='Required', maxLength=50, type='text'} = props
   return (
   <Box
     component="form"
