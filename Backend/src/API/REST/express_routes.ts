@@ -18,7 +18,7 @@ import verify_email_route from "./routes/verify_email";
 import password_reset_route from "./routes/password_reset";
 
 import resend_verification_link from "./routes/resend_verification_link";
-import upload_complete_upload_route from "./routes/file_upload/complete_upload";
+import upload_complete_upload_route from "./routes/file_upload/complete_upload.js";
 import upload_start_upload_route from "./routes/file_upload/start_upload";
 import upload_get_upload_url_route from "./routes/file_upload/get_upload_url";
 import download_results_route from "./routes/file_download/results";
@@ -103,7 +103,7 @@ import { get_allDemos } from "./routes/demo/demoRouter";
 import { change_permission } from "./routes/admin/adminRouter";
 import { get_classifier, get_classifiers } from "./routes/classifier/classifierRouter";
 
-import { exec_task_queues } from "./routes/taskQueuesRouter"
+import { exec_task_queues } from "./routes/taskQueuesRouter.js"
 import createAllAssociations from "./routes/atlas_model/atlasModelRouter";
 import upload_start_upload_for_atlas_route, { complete_upload_for_atlas } from "./routes/file_upload/start_upload_for_atlas";
 

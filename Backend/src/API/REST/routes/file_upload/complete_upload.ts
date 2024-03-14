@@ -7,21 +7,21 @@ import {
 import { AWSError, S3 } from "aws-sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 
-import check_auth from "../../middleware/check_auth";
-import { ExtRequest } from "../../../../definitions/ext_request";
-import ProjectService from "../../../../database/services/project.service";
-import { UpdateProjectDTO } from "../../../../database/dtos/project.dto";
-import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
+import check_auth from "../../middleware/check_auth.js";
+import { ExtRequest } from "../../../../definitions/ext_request.js";
+import ProjectService from "../../../../database/services/project.service.js";
+import { UpdateProjectDTO } from "../../../../database/dtos/project.dto.js";
+import s3, { try_delete_object_from_s3 } from "../../../../util/s3.js";
 import { GoogleAuth } from "google-auth-library";
 import { request as gaxiosRequest } from "gaxios";
-import { ProjectStatus } from "../../../../database/models/project";
-import AtlasService from "../../../../database/services/atlas.service";
-import ModelService from "../../../../database/services/model.service";
+import { ProjectStatus } from "../../../../database/models/project.js";
+import AtlasService from "../../../../database/services/atlas.service.js";
+import ModelService from "../../../../database/services/model.service.js";
 
-import { validationMdw } from "../../middleware/validation";
-import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service";
+import { validationMdw } from "../../middleware/validation.js";
+import ProjectUpdateTokenService from "../../../../database/services/project_update_token.service.js";
 
-import ClassifierService from "../../../../database/services/classifier.service";
+import ClassifierService from "../../../../database/services/classifier.service.js";
 import {
   get_classifier_path,
   get_encoder_path,
@@ -30,8 +30,8 @@ import {
   query_path,
   result_model_path,
   result_path,
-} from "./bucket_filepaths";
-import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
+} from "./bucket_filepaths.js";
+import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service.js";
 
 const MAX_EPOCH_QUERY = 10;
 

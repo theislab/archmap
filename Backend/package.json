@@ -32,7 +32,7 @@
   "private": false,
   "dependencies": {
     "@google-cloud/storage": "7.7.0",
-    "@google-cloud/tasks": "^4.0.1",
+    "@google-cloud/tasks": "4.0.1",
     "@huggingface/hub": "0.13.0",
     "@types/swagger-ui-express": "4.1.6",
     "ajv": "^8.12.0",
