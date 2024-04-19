@@ -31,6 +31,7 @@ function ProjectInfo({ project, atlas, model }) {
       && <AtlasInfo id={atlas._id} open={atlasInfoOpen} setOpen={setAtlasInfoOpen} />}
       {model?._id
       && <ModelInfo id={model._id} open={modelInfoOpen} setOpen={setModelInfoOpen} />}
+      <Typography>{`Mapping Info: ${() => fetchRatio(project?._id)}`}</Typography>
     </>
   );
 }

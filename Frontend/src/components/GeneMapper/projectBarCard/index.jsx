@@ -29,6 +29,7 @@ import { GeneralCard } from 'components/Cards/GeneralCard';
 import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
 import axiosInstance from 'shared/services/axiosInstance';
+import InfoIcon from '@mui/icons-material/Info';
 
 function ProcessingStatus() {
   return (
@@ -104,7 +105,11 @@ export default function ProjectBarCard({
   const [showInfo, setShowInfo] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [fetchUrlError, setFetchUrlError] = useState(null);
+  const [fetchingRatio, setFetchingRatio] = useState(false);
+  const [fetchedRatio, setFetchedRatio] = useState('');
+  const [fetchRatioError, setFetchRatioError] = useState(null);
 
+  // const [mappingInfo, MappingInfo] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -125,8 +130,37 @@ export default function ProjectBarCard({
     fetchProjects();
   }, [userTeams, project._id]);
 
+  useEffect(() => {
+    fetchRatio();
+  }, []);
+
+  const fetchRatio = async (projectId) => {
+
+    setFetchingRatio(true);
+    setFetchRatioError(null);
+
+    try {
+      const response = await axiosInstance.post('/ratio', {
+        id: projectId,
+      });
+
+      const data = await response.json()
+      // const data = await response.data;
+      setFetchedRatio(data.ratio);
+
+    } catch (err) {
+      console.error('Error fetching ratio:', err);
+      setFetchRatioError('Failed to fetch ratio.');
+    } finally {
+      setFetchingRatio(false);
+    }
+  };
+
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
+
+  // const handleOpenInfo = () => MappingInfo(true);
+  // const handleCloseInfo = () => MappingInfo(false);
 
   const handleClickCard = () => {
     setOpen(!open);
@@ -345,6 +379,17 @@ export default function ProjectBarCard({
                             </Button>
                           ))
                       }
+                      {/* Mapping info button */}
+                      <Box sx={{paddingLeft: '10px'}}>
+                        <IconButton
+                            onClick={() => fetchRatio(project._id)}
+                            disabled={project.status !== 'DONE' || fetchingRatio}
+                          >
+                            {fetchingRatio ? <CircularProgress size={24} /> : <InfoIcon />}
+                        </IconButton>
+                        {fetchedRatio && <Typography color="error">{fetchedRatio}</Typography>}
+                        {fetchRatioError && <Typography color="error">{fetchRatioError}</Typography>}
+                      </Box>
                       {/* Launch Button */}
                       {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))
                         && (<CustomButton
@@ -438,7 +483,7 @@ export default function ProjectBarCard({
         <Collapse in={open} timeout="auto">
           <Divider variant="middle" />
           <Box sx={{ pl: 11.5, pb: 1, pt: 1 }}>
-            <ProjectInfo project={project} atlas={atlas} model={model} />
+            <ProjectInfo project={project} atlas={atlas} model={model} />           
           </Box>
         </Collapse>
 
@@ -492,7 +537,7 @@ export default function ProjectBarCard({
             </Box>
           </Box>
 
-        </Modal>
+        </Modal>    
         {userTeams?.length === 0
           && (
             <Alert severity="info">
@@ -539,6 +584,23 @@ export default function ProjectBarCard({
           </Box>
         </Box>
       </Modal>
+
+      {/* <Modal
+        isOpen={mappingInfo}
+        setOpen={MappingInfo}
+        sx={{ position: 'fixed', top: '20%' }}
+      >
+        <ModalTitle>
+          <Stack direction="row" alignItems="center">
+            Mapping Info: 
+            <IconButton size="small" onClick={() => setShowInfo(true)}>
+              <InfoOutlined fontSize="small" />
+            </IconButton>
+          </Stack>
+        </ModalTitle>
+
+        </Modal> */}
+
     </Box>
   );
 }
