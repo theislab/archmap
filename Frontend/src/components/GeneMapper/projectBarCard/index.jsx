@@ -108,6 +108,7 @@ export default function ProjectBarCard({
   const [fetchingRatio, setFetchingRatio] = useState(false);
   const [fetchedRatio, setFetchedRatio] = useState('');
   const [fetchRatioError, setFetchRatioError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // const [mappingInfo, MappingInfo] = useState(false);
 
@@ -131,36 +132,40 @@ export default function ProjectBarCard({
   }, [userTeams, project._id]);
 
   useEffect(() => {
-    fetchRatio();
-  }, []);
+    const fetchRatio = async (projectId) => {
 
-  const fetchRatio = async (projectId) => {
+      setFetchingRatio(true);
+      setFetchRatioError(null);
 
-    setFetchingRatio(true);
-    setFetchRatioError(null);
+      try {
+        const response = await axiosInstance.post('/ratio', {
+          id: projectId,
+        });
 
-    try {
-      const response = await axiosInstance.post('/ratio', {
-        id: projectId,
-      });
 
-      const data = await response.json()
-      // const data = await response.data;
-      setFetchedRatio(data.ratio);
+        // const data = await response.json()
+        const data = await response.data;
+        setFetchedRatio(data.ratio);
 
-    } catch (err) {
-      console.error('Error fetching ratio:', err);
-      setFetchRatioError('Failed to fetch ratio.');
-    } finally {
-      setFetchingRatio(false);
-    }
-  };
+      } catch (err) {
+        console.error('Error fetching ratio:', err);
+        setFetchRatioError('Failed to fetch ratio.');
+      } finally {
+        setFetchingRatio(false);
+      }
+    };
+    fetchRatio(project._id);
+  }, [project._id]);
 
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
 
-  // const handleOpenInfo = () => MappingInfo(true);
+  const handleOpenInfo = () => setIsModalOpen(true);
   // const handleCloseInfo = () => MappingInfo(false);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleClickCard = () => {
     setOpen(!open);
@@ -382,13 +387,23 @@ export default function ProjectBarCard({
                       {/* Mapping info button */}
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                            onClick={() => fetchRatio(project._id)}
-                            disabled={project.status !== 'DONE' || fetchingRatio}
+                            onClick={handleOpenInfo}
+                            // disabled={project.status !== 'DONE' || fetchingRatio}
                           >
-                            {fetchingRatio ? <CircularProgress size={24} /> : <InfoIcon />}
+                            {<InfoIcon />}
                         </IconButton>
-                        {fetchedRatio && <Typography color="error">{fetchedRatio}</Typography>}
-                        {fetchRatioError && <Typography color="error">{fetchRatioError}</Typography>}
+                        <Modal
+                          isOpen={isModalOpen}
+                          setOpen={setIsModalOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                          >
+                            <ModalTitle>
+                              Mapping info
+                              {fetchedRatio && <Typography> The proportion of reference var names in the quety data is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality. </Typography>}
+                            </ModalTitle>
+                        </Modal>
+                        {/* {fetchedRatio && <Typography color="error">{fetchedRatio}</Typography>} */}
+                        {/* {fetchRatioError && <Typography color="error">{fetchRatioError}</Typography>} */}
                       </Box>
                       {/* Launch Button */}
                       {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))
@@ -483,7 +498,7 @@ export default function ProjectBarCard({
         <Collapse in={open} timeout="auto">
           <Divider variant="middle" />
           <Box sx={{ pl: 11.5, pb: 1, pt: 1 }}>
-            <ProjectInfo project={project} atlas={atlas} model={model} />           
+            <ProjectInfo project={project} atlas={atlas} model={model} ratio={fetchedRatio} />           
           </Box>
         </Collapse>
 
@@ -584,23 +599,6 @@ export default function ProjectBarCard({
           </Box>
         </Box>
       </Modal>
-
-      {/* <Modal
-        isOpen={mappingInfo}
-        setOpen={MappingInfo}
-        sx={{ position: 'fixed', top: '20%' }}
-      >
-        <ModalTitle>
-          <Stack direction="row" alignItems="center">
-            Mapping Info: 
-            <IconButton size="small" onClick={() => setShowInfo(true)}>
-              <InfoOutlined fontSize="small" />
-            </IconButton>
-          </Stack>
-        </ModalTitle>
-
-        </Modal> */}
-
     </Box>
   );
 }
