@@ -181,7 +181,7 @@ export function express_routes(): Router {
   router.use(restore_deleted_project());
   router.use(cleanup_old_projects());
   router.use(update_project_results());
-  router.use(update_ratio());
+  // router.use(update_ratio());
 
   // classifiers routes
   router.use(get_classifier());
