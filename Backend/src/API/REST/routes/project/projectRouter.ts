@@ -200,7 +200,7 @@ const sanitizeErrorMessage = (errorMessage: string) => {
 // Save gene ratio from ML pipeline to database
 const update_ratio = (): Router => {
   let router = express.Router();
-  router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {
+  router.post("/projects/ratio/:token", validationMdw, async (req, res) => {
     try {
       const updateToken = req.params.token;
       // get body from request
@@ -228,17 +228,27 @@ const update_project_results = (): Router => {
       const updateToken = req.params.token;
       // get body from request
       let body = req.body;
-      let conditionForFailure = body.hasOwnProperty("error") ;
+      let conditionForFailure = body.hasOwnProperty("error");
+      let hasRatio = body.hasOwnProperty("ratio");
+      console.log(`Ratio in request: ${hasRatio}`)
 
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
+      
+      if (hasRatio){
+        console.log(`Ratio in request: ${hasRatio}`)
+        let ratio = req.body.ratio;
 
-      let ratio = req.body.ratio;
+        const updateRatio: UpdateProjectDTO = {
+          ratio: ratio
+        };
+        await ProjectService.updateProjectById(project._id, updateRatio);
+        return res.status(200).send("Updated Ratio");
+      }
+      if (!hasRatio){
+        console.log(`Ratio in request: ${hasRatio}`)
+      }
 
-      const updateRatio: UpdateProjectDTO = {
-        ratio: ratio
-      };
-      await ProjectService.updateProjectById(project._id, updateRatio);
 
       if (!project) return res.status(404).send("Project not found");
       console.log(`Project ${project._id} has status ${project.status}`);
