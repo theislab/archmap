@@ -232,19 +232,18 @@ const update_project_results = (): Router => {
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
       
-      // if (hasRatio){
-      //   console.log(`Ratio in request: ${hasRatio}`)
-      //   let ratio = req.body.ratio;
+      if (hasRatio){
+        console.log(`Ratio in request: ${hasRatio}`)
+        let ratio = req.body.ratio;
 
-      //   const updateRatio: UpdateProjectDTO = {
-      //     ratio: ratio
-      //   };
-      //   await ProjectService.updateProjectById(project._id, updateRatio);
-      // }
-      // if (!hasRatio){
-      //   console.log(`Ratio in request: ${hasRatio}`)
-      // }
-
+        const updateRatio: UpdateProjectDTO = {
+          ratio: ratio
+        };
+        await ProjectService.updateProjectById(project._id, updateRatio);
+      }
+      if (!hasRatio){
+        console.log(`Ratio in request: ${hasRatio}`)
+      }
 
       if (!project) return res.status(404).send("Project not found");
       console.log(`Project ${project._id} has status ${project.status}`);
