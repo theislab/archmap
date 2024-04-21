@@ -33,11 +33,8 @@ const get_ratio = (): Router => {
         return;
         
       }
-      console.log("Project: ", project);
-      console.log("Ratio: ", project.ratio);
       let ratio = project.ratio;
       res.json({ ratio: ratio });
-      return res.status(200).send({ ratio });
       
     } catch (err) {
       console.log(err);
