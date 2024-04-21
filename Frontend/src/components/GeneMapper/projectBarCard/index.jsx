@@ -155,7 +155,7 @@ export default function ProjectBarCard({
       }
     };
     fetchRatio(project._id);
-  }, [project._id]);
+  }, []);
 
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
