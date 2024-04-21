@@ -240,7 +240,6 @@ const update_project_results = (): Router => {
           ratio: ratio
         };
         await ProjectService.updateProjectById(project._id, updateRatio);
-        return res.status(200).send("Updated Ratio");
       }
       if (!hasRatio){
         console.log(`Ratio in request: ${hasRatio}`)
