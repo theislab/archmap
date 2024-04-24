@@ -231,6 +231,12 @@ const update_project_results = (): Router => {
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
 
+      if (!project) return res.status(404).send("Project not found");
+      console.log(`Project ${project._id} has status ${project.status}`);
+      if(project.status === ProjectStatus.DOWNLOAD_READY){
+        return res.status(200).send("OK");
+      }
+
       if (conditionForFailure) {
         const updateStatusAndErrorMessage : UpdateProjectDTO = {
           status: ProjectStatus.PROCESSING_FAILED,
