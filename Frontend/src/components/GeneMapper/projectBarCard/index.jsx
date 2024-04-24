@@ -110,8 +110,6 @@ export default function ProjectBarCard({
   const [fetchRatioError, setFetchRatioError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const [mappingInfo, MappingInfo] = useState(false);
-
   useEffect(() => {
     const fetchProjects = async () => {
       const updatedProjectTeam = [];
@@ -142,8 +140,6 @@ export default function ProjectBarCard({
           id: projectId,
         });
 
-
-        // const data = await response.json()
         const data = await response.data;
         setFetchedRatio(data.ratio);
 
@@ -161,11 +157,6 @@ export default function ProjectBarCard({
   const handleClose = () => setAddTeam(false);
 
   const handleOpenInfo = () => setIsModalOpen(true);
-  // const handleCloseInfo = () => MappingInfo(false);
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleClickCard = () => {
     setOpen(!open);
@@ -408,8 +399,6 @@ export default function ProjectBarCard({
                               
                             </ModalTitle>
                         </Modal>
-                        {/* {fetchedRatio && <Typography color="error">{fetchedRatio}</Typography>} */}
-                        {/* {fetchRatioError && <Typography color="error">{fetchRatioError}</Typography>} */}
                       </Box>
                       {/* Launch Button */}
                       {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))

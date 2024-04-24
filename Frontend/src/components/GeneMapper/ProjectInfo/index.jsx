@@ -9,7 +9,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
  * @param atlas Object containing atlas data
  * @param model Object containing model data
  */
-function ProjectInfo({ project, atlas, model, ratio }) {
+function ProjectInfo({ project, atlas, model }) {
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
   return (
@@ -31,7 +31,6 @@ function ProjectInfo({ project, atlas, model, ratio }) {
       && <AtlasInfo id={atlas._id} open={atlasInfoOpen} setOpen={setAtlasInfoOpen} />}
       {model?._id
       && <ModelInfo id={model._id} open={modelInfoOpen} setOpen={setModelInfoOpen} />}
-      {/* <Typography>{`Mapping Info: ${ratio}`}</Typography> */}
     </>
   );
 }

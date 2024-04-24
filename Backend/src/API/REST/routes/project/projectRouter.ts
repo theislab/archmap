@@ -227,30 +227,9 @@ const update_project_results = (): Router => {
       // get body from request
       let body = req.body;
       let conditionForFailure = body.hasOwnProperty("error");
-      // let hasRatio = body.hasOwnProperty("ratio");
-      // console.log(`Ratio in request: ${hasRatio}`)
 
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
-      
-      // if (hasRatio){
-      //   console.log(`Ratio in request: ${hasRatio}`)
-      //   let ratio = req.body.ratio;
-
-      //   const updateRatio: UpdateProjectDTO = {
-      //     ratio: ratio
-      //   };
-      //   await ProjectService.updateProjectById(project._id, updateRatio);
-      // }
-      // if (!hasRatio){
-      //   console.log(`Ratio in request: ${hasRatio}`)
-      // }
-
-      // if (!project) return res.status(404).send("Project not found");
-      // console.log(`Project ${project._id} has status ${project.status}`);
-      // if(project.status === ProjectStatus.DOWNLOAD_READY){
-      //   return res.status(200).send("OK");
-      // }
 
       if (conditionForFailure) {
         const updateStatusAndErrorMessage : UpdateProjectDTO = {
@@ -280,16 +259,6 @@ const update_project_results = (): Router => {
           outputFileWithCounts: `results/${project._id}/query_cxg_with_count.h5ad`
         };
         await ProjectService.updateProjectById(project._id, updateStatus);
-
-        // save ratio to db
-        // console.log(`Ratio in request: ${hasRatio}`)
-        // let ratio = req.body.ratio;
-
-        // const updateRatio: UpdateProjectDTO = {
-        //   ratio: ratio
-        // };
-        // await ProjectService.updateProjectById(project._id, updateRatio);
-
       } else {
         console.log(`Trying to update project with token, but status is already ${project.status}`)
       }
