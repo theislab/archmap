@@ -129,11 +129,8 @@ function GeneMapperState({ path }) {
           'Ensure your data is in h5ad format',
           'Ensure your data has raw expression counts stored in the .X attribute',
           'Ensure the gene names of your query are stored in the var_names attribute',
-          'Batch/study information is mandatory and should be labeled as “batch”',
-          'Please note, query genes will be subsetted to match the genes of the atlas and for any missing genes, expression values will be padded with zeros, which may lead to inaccuracy in results',
-          "ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream."
-      
-          
+          'Batch/study information is mandatory and should be labeled as “batch”'
+         
         ];
         if (model.name === 'scVI') {
           model.requirements.push('Cell type information should be labeled as “cell_type”');

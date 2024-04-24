@@ -155,7 +155,7 @@ export default function ProjectBarCard({
       }
     };
     fetchRatio(project._id);
-  }, []);
+  }, [project]);
 
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
@@ -399,7 +399,13 @@ export default function ProjectBarCard({
                           >
                             <ModalTitle>
                               Mapping info
-                              {fetchedRatio && <Typography> The proportion of reference var names in the quety data is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality. </Typography>}
+                              {<Typography> 
+                                <p>During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.</p></Typography>}
+                              {fetchedRatio && <Typography> <p>The proportion of reference var names in the query data for this mapping is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality.</p></Typography>}
+                              {<Typography> 
+                              <p>ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream.</p>
+                              </Typography>}
+                              
                             </ModalTitle>
                         </Modal>
                         {/* {fetchedRatio && <Typography color="error">{fetchedRatio}</Typography>} */}
@@ -498,7 +504,7 @@ export default function ProjectBarCard({
         <Collapse in={open} timeout="auto">
           <Divider variant="middle" />
           <Box sx={{ pl: 11.5, pb: 1, pt: 1 }}>
-            <ProjectInfo project={project} atlas={atlas} model={model} ratio={fetchedRatio} />           
+            <ProjectInfo project={project} atlas={atlas} model={model}/>           
           </Box>
         </Collapse>
 
