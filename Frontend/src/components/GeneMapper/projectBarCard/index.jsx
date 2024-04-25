@@ -29,6 +29,7 @@ import { GeneralCard } from 'components/Cards/GeneralCard';
 import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
 import axiosInstance from 'shared/services/axiosInstance';
+import InfoIcon from '@mui/icons-material/Info';
 
 function ProcessingStatus() {
   return (
@@ -104,7 +105,10 @@ export default function ProjectBarCard({
   const [showInfo, setShowInfo] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [fetchUrlError, setFetchUrlError] = useState(null);
-
+  const [fetchingRatio, setFetchingRatio] = useState(false);
+  const [fetchedRatio, setFetchedRatio] = useState('');
+  const [fetchRatioError, setFetchRatioError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -125,8 +129,34 @@ export default function ProjectBarCard({
     fetchProjects();
   }, [userTeams, project._id]);
 
+  useEffect(() => {
+    const fetchRatio = async (projectId) => {
+
+      setFetchingRatio(true);
+      setFetchRatioError(null);
+
+      try {
+        const response = await axiosInstance.post('/ratio', {
+          id: projectId,
+        });
+
+        const data = await response.data;
+        setFetchedRatio(data.ratio);
+
+      } catch (err) {
+        console.error('Error fetching ratio:', err);
+        setFetchRatioError('Failed to fetch ratio.');
+      } finally {
+        setFetchingRatio(false);
+      }
+    };
+    fetchRatio(project._id);
+  }, [project]);
+
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
+
+  const handleOpenInfo = () => setIsModalOpen(true);
 
   const handleClickCard = () => {
     setOpen(!open);
@@ -345,6 +375,31 @@ export default function ProjectBarCard({
                             </Button>
                           ))
                       }
+                      {/* Mapping info button */}
+                      <Box sx={{paddingLeft: '10px'}}>
+                        <IconButton
+                            onClick={handleOpenInfo}
+                            // disabled={project.status !== 'DONE' || fetchingRatio}
+                          >
+                            {<InfoIcon />}
+                        </IconButton>
+                        <Modal
+                          isOpen={isModalOpen}
+                          setOpen={setIsModalOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                          >
+                            <ModalTitle>
+                              Mapping info
+                              {<Typography> 
+                                <p>During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.</p></Typography>}
+                              {fetchedRatio && <Typography> <p>The proportion of reference var names in the query data for this mapping is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality.</p></Typography>}
+                              {<Typography> 
+                              <p>ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream.</p>
+                              </Typography>}
+                              
+                            </ModalTitle>
+                        </Modal>
+                      </Box>
                       {/* Launch Button */}
                       {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))
                         && (<CustomButton
@@ -438,7 +493,7 @@ export default function ProjectBarCard({
         <Collapse in={open} timeout="auto">
           <Divider variant="middle" />
           <Box sx={{ pl: 11.5, pb: 1, pt: 1 }}>
-            <ProjectInfo project={project} atlas={atlas} model={model} />
+            <ProjectInfo project={project} atlas={atlas} model={model}/>           
           </Box>
         </Collapse>
 
@@ -492,7 +547,7 @@ export default function ProjectBarCard({
             </Box>
           </Box>
 
-        </Modal>
+        </Modal>    
         {userTeams?.length === 0
           && (
             <Alert severity="info">

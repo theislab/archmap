@@ -127,7 +127,10 @@ function GeneMapperState({ path }) {
       m.map((model) => {
         model.requirements = [
           'Ensure your data is in h5ad format',
-          'Batch/study information is mandatory and should be labeled as “batch”',
+          'Ensure your data has raw expression counts stored in the .X attribute',
+          'Ensure the gene names of your query are stored in the var_names attribute',
+          'Batch/study information is mandatory and should be labeled as “batch”'
+         
         ];
         if (model.name === 'scVI') {
           model.requirements.push('Cell type information should be labeled as “cell_type”');

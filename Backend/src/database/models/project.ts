@@ -7,7 +7,7 @@ export enum ProjectStatus {
   PROCESSING_FAILED = "PROCESSING_FAILED",
   ABORTED = "ABORTED",
   DONE = "DONE",
-  DOWNLOAD_READY = "DOWNLOAD_READY",
+  DOWNLOAD_READY = "DOWNLOAD_READY"
 }
 
 export enum AtlasUploadStatus {
@@ -34,11 +34,13 @@ export interface IProject extends Document {
   fileName: string;
   fileSize: number; // (of bytes)
   uploadDate: Date;
+  
 
   // project
   status: string;
   resultName: string;
   resultSize: number;
+  ratio: String;
 
   //error Message
   errorMessage: string;
@@ -103,6 +105,9 @@ const projectSchema = new Schema<IProject>({
 
   // project
   status: { type: String, require: true, enum: ProjectStatus },
+
+  // ratio
+  ratio: {type: String, require: false},
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },

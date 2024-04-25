@@ -16,6 +16,35 @@ import { ProjectStatus } from "../../../../database/models/project";
 import { query_path, result_model_path, result_path } from "../file_upload/bucket_filepaths";
 import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
+
+const get_ratio = (): Router => {
+  let router = express.Router();
+  router.post("/ratio", validationMdw, async (req: any, res) => {
+    console.log("POST /ratio")
+    let { id } = req.body;
+    try {
+      const project = await ProjectService.getProjectById(id);
+
+      if (!project) {
+        return res.status(404).send("Project not found.");
+      }
+      if (!project.ratio) {
+        console.log(`Ratio not found in the database`);
+        return;
+        
+      }
+      let ratio = project.ratio;
+      res.json({ ratio: ratio });
+      
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    
+  }})
+  return router;
+};
+
+
 const get_projects = (): Router => {
   let router = express.Router();
   router.get("/projects", check_auth(), async (req: any, res) => {
@@ -165,6 +194,31 @@ const sanitizeErrorMessage = (errorMessage: string) => {
   return 'An error occurred.';
 };
 
+// Save gene ratio from ML pipeline to database
+const update_ratio = (): Router => {
+  let router = express.Router();
+  router.post("/projects/ratio/:token", validationMdw, async (req, res) => {
+    try {
+      const updateToken = req.params.token;
+      // get body from request
+      let body = req.body.ratio;
+
+      let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
+      let project = await ProjectService.getProjectById(tokenObject._projectId);
+      const updateRatio: UpdateProjectDTO = {
+        ratio: body
+      };
+      await ProjectService.updateProjectById(project._id, updateRatio);
+      return res.status(200).send("OK");
+  
+    } catch (e) {
+      console.error(e);
+      return res.status(500).send("Internal server error");
+    }
+  });
+  return router;
+};
+
 const update_project_results = (): Router => {
   let router = express.Router();
   router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {
@@ -172,7 +226,7 @@ const update_project_results = (): Router => {
       const updateToken = req.params.token;
       // get body from request
       let body = req.body;
-      let conditionForFailure = body.hasOwnProperty("error") ;
+      let conditionForFailure = body.hasOwnProperty("error");
 
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
@@ -350,9 +404,11 @@ export {
   get_userProjects,
   get_project_by_id,
   get_users_projects,
+  update_ratio,
   update_project_results,
   delete_project,
   get_deleted_projects,
   restore_deleted_project,
   cleanup_old_projects,
+  get_ratio
 };

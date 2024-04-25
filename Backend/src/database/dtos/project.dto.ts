@@ -9,6 +9,7 @@ export interface UpdateProjectDTO {
   location?: string;
   errorMessage?: string;
   outputFileWithCounts?: string;
+  ratio?: string;
 }
 
 /**
