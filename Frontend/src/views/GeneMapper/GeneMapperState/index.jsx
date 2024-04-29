@@ -46,6 +46,20 @@ function GeneMapperState({ path }) {
   };
   const handleModelSelection = (newModel) => {
     setSelectedModel(newModel);
+    let {batch_key, cell_type_key} = selectedAtlas
+    let var_names = selectedAtlas.vars
+    newModel.requirements = [
+      'Ensure your data is in h5ad format',
+      `Batch/Study information is mandatory and should be labeled as “${batch_key}”`,
+      `Ensure ${var_names} are stored in the var_names AnnData object attribute of your query`,
+    ];
+    if (newModel.name === 'scVI') {
+      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+      newModel.requirements.push(`For unlabeled cells, the value for “${cell_type_key}” should be “Unknown”`);
+    }
+    else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
+      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+    }
     setSelectedClassifier('')
   };
 
@@ -125,20 +139,6 @@ function GeneMapperState({ path }) {
 
     ModelService.getModels().then((m) => {
       m.map((model) => {
-        model.requirements = [
-          'Ensure your data is in h5ad format',
-          'Ensure your data has raw expression counts stored in the .X attribute',
-          'Ensure the gene names of your query are stored in the var_names attribute',
-          'Batch/study information is mandatory and should be labeled as “batch”'
-         
-        ];
-        if (model.name === 'scVI') {
-          model.requirements.push('Cell type information should be labeled as “cell_type”');
-          model.requirements.push('For unlabeled cells, the value for “cell_type” should be “Unknown”');
-        }
-        if (model.name === 'scANVI') {
-          model.requirements.push('Cell type information should be labeled as “cell_type”');
-        }
         if (model._id === modelId) {
           setSelectedModel(model);
         }
