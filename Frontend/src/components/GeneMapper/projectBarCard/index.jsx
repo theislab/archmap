@@ -130,18 +130,20 @@ export default function ProjectBarCard({
   }, [userTeams, project._id]);
 
   useEffect(() => {
-    const fetchRatio = async (projectId) => {
+    const fetchRatio = async () => {
+    // const fetchRatio = async (projectId) => {
 
       setFetchingRatio(true);
       setFetchRatioError(null);
 
       try {
-        const response = await axiosInstance.post('/ratio', {
-          id: projectId,
-        });
+        // const response = await axiosInstance.post('/ratio', {
+        //   id: projectId,
+        // });
 
-        const data = await response.data;
-        setFetchedRatio(data.ratio);
+        // const data = await response.data;
+        // setFetchedRatio(data.ratio);
+        setFetchedRatio(project.ratio)
 
       } catch (err) {
         console.error('Error fetching ratio:', err);

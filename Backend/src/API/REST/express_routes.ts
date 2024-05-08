@@ -86,7 +86,7 @@ import {
   get_deleted_projects,
   restore_deleted_project,
   cleanup_old_projects,
-  get_ratio,
+  // get_ratio,
 } from "./routes/project/projectRouter";
 
 import {
@@ -224,7 +224,7 @@ export function express_routes(): Router {
   router.use(download_results_route());
 
   // get ratio routes
-  router.use(get_ratio());
+  // router.use(get_ratio());
 
   //contact routes
   router.use(contact_us());

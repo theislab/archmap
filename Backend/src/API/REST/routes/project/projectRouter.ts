@@ -17,32 +17,32 @@ import { query_path, result_model_path, result_path } from "../file_upload/bucke
 import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
 
-const get_ratio = (): Router => {
-  let router = express.Router();
-  router.post("/ratio", validationMdw, async (req: any, res) => {
-    console.log("POST /ratio")
-    let { id } = req.body;
-    try {
-      const project = await ProjectService.getProjectById(id);
+// const get_ratio = (): Router => {
+//   let router = express.Router();
+//   router.post("/ratio", validationMdw, async (req: any, res) => {
+//     console.log("POST /ratio")
+//     let { id } = req.body;
+//     try {
+//       const project = await ProjectService.getProjectById(id);
 
-      if (!project) {
-        return res.status(404).send("Project not found.");
-      }
-      if (!project.ratio) {
-        console.log(`Ratio not found in the database`);
-        return;
+//       if (!project) {
+//         return res.status(404).send("Project not found.");
+//       }
+//       if (!project.ratio) {
+//         console.log(`Ratio not found in the database`);
+//         return;
         
-      }
-      let ratio = project.ratio;
-      res.json({ ratio: ratio });
+//       }
+//       let ratio = project.ratio;
+//       res.json({ ratio: ratio });
       
-    } catch (err) {
-      console.log(err);
-      return res.status(500).send(err);
+//     } catch (err) {
+//       console.log(err);
+//       return res.status(500).send(err);
     
-  }})
-  return router;
-};
+//   }})
+//   return router;
+// };
 
 
 const get_projects = (): Router => {
@@ -410,5 +410,5 @@ export {
   get_deleted_projects,
   restore_deleted_project,
   cleanup_old_projects,
-  get_ratio
+  // get_ratio
 };
