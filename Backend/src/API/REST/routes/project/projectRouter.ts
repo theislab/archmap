@@ -16,35 +16,6 @@ import { ProjectStatus } from "../../../../database/models/project";
 import { query_path, result_model_path, result_path } from "../file_upload/bucket_filepaths";
 import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
-
-// const get_ratio = (): Router => {
-//   let router = express.Router();
-//   router.post("/ratio", validationMdw, async (req: any, res) => {
-//     console.log("POST /ratio")
-//     let { id } = req.body;
-//     try {
-//       const project = await ProjectService.getProjectById(id);
-
-//       if (!project) {
-//         return res.status(404).send("Project not found.");
-//       }
-//       if (!project.ratio) {
-//         console.log(`Ratio not found in the database`);
-//         return;
-        
-//       }
-//       let ratio = project.ratio;
-//       res.json({ ratio: ratio });
-      
-//     } catch (err) {
-//       console.log(err);
-//       return res.status(500).send(err);
-    
-//   }})
-//   return router;
-// };
-
-
 const get_projects = (): Router => {
   let router = express.Router();
   router.get("/projects", check_auth(), async (req: any, res) => {
