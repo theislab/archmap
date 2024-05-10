@@ -167,31 +167,90 @@ export default function upload_complete_upload_route() {
               console.log("classifier_type is ", classifier_type);
             }
 
-            if (model && (model.name == "scANVI" || model.name == "scVI" || model.name == "scPoli")) {
+            if (model && model.name == "scVI") {
               const modelAssociatedWithAtlas =
-                  await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
-                queryInfo = {
-                  model: model.name,
-                  atlas: atlas.name,
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
 
-                  output_type: {
-                    csv: false,
-                    cxg: true,
-                  },
-                  classifier_type: classifier_type,
-                  classifier_path: classifier_path,
-                  encoder_path: encoder_path,
-                  query_data: query_path(project.id),
-                  output_path: result_path(project.id),
-                  model_path: model_path(modelAssociatedWithAtlas?._id),
-                  reference_data: `atlas/${project.atlasId}/data.h5ad`,
-                  pre_trained_scVI: true,
-                  ref_path: "model.pt",
-                  async: false,
-                  max_epochs_query: MAX_EPOCH_QUERY,
-                  webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
-                  webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
-                };
+                output_type: {
+                  csv: false,
+                  cxg: true,
+                },
+                classifier_type: classifier_type,
+                classifier_path: classifier_path,
+                encoder_path: encoder_path,
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                model_path: model_path(modelAssociatedWithAtlas?._id),
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                pre_trained_scVI: true,
+                ref_path: "model.pt",
+                async: false,
+                scvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+              };
+            } else if (model && model.name == "scANVI") {
+              const modelAssociatedWithAtlas =
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+
+                output_type: {
+                  csv: false,
+                  cxg: true,
+                },
+                classifier_type: classifier_type,
+                classifier_path: classifier_path,
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                encoder_path: encoder_path,
+                model_path: model_path(modelAssociatedWithAtlas?._id),
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                pre_trained_scANVI: true,
+                ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+              };
+            } else if (model && model.name == "scPoli") {
+              const modelAssociatedWithAtlas =
+                await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
+              const { scpoli_attr, scpoli_model_params, scpoli_var_names } = model_path_scpoli(
+                modelAssociatedWithAtlas?._id
+              );
+
+              queryInfo = {
+                model: model.name,
+                atlas: atlas.name,
+
+                output_type: {
+                  csv: false,
+                  cxg: true,
+                },
+                classifier_type: classifier_type,
+                classifier_path: classifier_path,
+                query_data: query_path(project.id),
+                output_path: result_path(project.id),
+                encoder_path: encoder_path,
+
+                scpoli_attr: scpoli_attr,
+                scpoli_model_params: scpoli_model_params,
+                scpoli_var_names: scpoli_var_names,
+
+                reference_data: `atlas/${project.atlasId}/data.h5ad`,
+                // pre_trained_scANVI: true,
+                // ref_path: "model.pt",
+                //ref_path: `models/${project.modelId}/model.pt`,
+                async: false,
+                scpoli_max_epochs: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+              };
             
             } else {
               // Query info for scvi hub atlas
