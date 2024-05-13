@@ -12,4 +12,5 @@ export interface AddAtlasDTO {
     atlasUrl: string;
     atlasUploadId?: string;
     classifierUploadId?: string;
+    vars?: string;
 }

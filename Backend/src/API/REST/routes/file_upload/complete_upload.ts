@@ -190,6 +190,7 @@ export default function upload_complete_upload_route() {
                 async: false,
                 scvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
               };
             } else if (model && model.name == "scANVI") {
               const modelAssociatedWithAtlas =
@@ -215,6 +216,7 @@ export default function upload_complete_upload_route() {
                 async: false,
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
               };
             } else if (model && model.name == "scPoli") {
               const modelAssociatedWithAtlas =
@@ -249,6 +251,7 @@ export default function upload_complete_upload_route() {
                 scpoli_max_epochs: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
               };
+            
             } else {
               // Query info for scvi hub atlas
               if (project.scviHubId && project.model_setup_anndata_args) {
@@ -263,6 +266,7 @@ export default function upload_complete_upload_route() {
                   output_path: result_path(project.id),
                   async: false,
                   webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                  webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 };
               }
             }
