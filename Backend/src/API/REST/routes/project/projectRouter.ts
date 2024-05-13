@@ -190,6 +190,36 @@ const update_ratio = (): Router => {
   return router;
 };
 
+// Save mapping evaluation metricsfrom ML pipeline to database
+const update_metrics = (): Router => {
+  let router = express.Router();
+  router.post("/projects/ratio/:token", validationMdw, async (req, res) => {
+    try {
+      const updateToken = req.params.token;
+      // get body from request
+      let clust_pres_score = req.body.clust_pres_score;
+      let query_with_anchor = req.body.query_with_anchor;
+      let percentage_unknown = req.body.percentage_unknown;
+
+      let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
+      let project = await ProjectService.getProjectById(tokenObject._projectId);
+      const updateMetrics: UpdateProjectDTO = {
+        clust_pres_score: clust_pres_score,
+        query_with_anchor: query_with_anchor,
+        percentage_unknown: percentage_unknown
+        
+      };
+      await ProjectService.updateProjectById(project._id, updateMetrics);
+      return res.status(200).send("OK");
+  
+    } catch (e) {
+      console.error(e);
+      return res.status(500).send("Internal server error");
+    }
+  });
+  return router;
+};
+
 const update_project_results = (): Router => {
   let router = express.Router();
   router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {
@@ -381,5 +411,5 @@ export {
   get_deleted_projects,
   restore_deleted_project,
   cleanup_old_projects,
-  // get_ratio
+  update_metrics
 };

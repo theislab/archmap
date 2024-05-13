@@ -81,12 +81,12 @@ import {
   get_project_by_id,
   get_users_projects,
   update_ratio,
+  update_metrics,
   update_project_results,
   delete_project,
   get_deleted_projects,
   restore_deleted_project,
   cleanup_old_projects,
-  // get_ratio,
 } from "./routes/project/projectRouter";
 
 import {
@@ -182,6 +182,7 @@ export function express_routes(): Router {
   router.use(cleanup_old_projects());
   router.use(update_project_results());
   router.use(update_ratio());
+  router.use(update_metrics());
 
   // classifiers routes
   router.use(get_classifier());
@@ -222,9 +223,6 @@ export function express_routes(): Router {
 
   // download routes
   router.use(download_results_route());
-
-  // get ratio routes
-  // router.use(get_ratio());
 
   //contact routes
   router.use(contact_us());

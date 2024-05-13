@@ -50,6 +50,7 @@ function GeneMapperState({ path }) {
     let var_names = selectedAtlas.vars
     newModel.requirements = [
       'Ensure your data is in h5ad format',
+      'Ensure raw expression counts are saved in .X of the query AnnData object',
       `Batch/Study information is mandatory and should be labeled as “${batch_key}”`,
       `Ensure ${var_names} are stored in the var_names AnnData object attribute of your query`,
     ];

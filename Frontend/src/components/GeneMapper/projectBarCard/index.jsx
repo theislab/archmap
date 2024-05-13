@@ -103,12 +103,18 @@ export default function ProjectBarCard({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [open, setOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [Metric1InfoOpen, setMetric1InfoOpen] = useState(false);
+  const [Metric2InfoOpen, setMetric2InfoOpen] = useState(false);
+  const [Metric3InfoOpen, setMetric3InfoOpen] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [fetchUrlError, setFetchUrlError] = useState(null);
   const [fetchingRatio, setFetchingRatio] = useState(false);
   const [fetchedRatio, setFetchedRatio] = useState('');
   const [fetchRatioError, setFetchRatioError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fetchingMetrics, setFetchingMetrics] = useState(false);
+  const [fetchedMetrics, setFetchedMetrics] = useState('');
+  const [fetchRatioMetrics, setFetchMetricsError] = useState(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -147,6 +153,26 @@ export default function ProjectBarCard({
     };
     fetchRatio(project._id);
   }, [project]);
+
+
+  // useEffect(() => {
+  //   const fetchMetrics = async () => {
+      
+  //     setFetchingMetrics(true);
+  //     setFetchMetricsError(null);
+
+  //     try {
+  //       setFetchedMetrics(project.ratio)
+
+  //     } catch (err) {
+  //       console.error('Error fetching ratio:', err);
+  //       setFetchMetricsError('Failed to fetch ratio.');
+  //     } finally {
+  //       setFetchingMetrics(false);
+  //     }
+  //   };
+  //   fetchMetrics(project._id);
+  // }, [project]);
 
   const handleOpen = () => setAddTeam(true);
   const handleClose = () => setAddTeam(false);
@@ -337,6 +363,151 @@ export default function ProjectBarCard({
               </Grid>
             </Grid>
             <Grid container item md={4} justifyContent="flex-end">
+              {/* Mapping info button */}
+              <Box sx={{paddingLeft: '10px'}}>
+                <IconButton
+                    onClick={handleOpenInfo}
+                  >
+                    {<InfoIcon />}
+                </IconButton>
+                <Modal
+                  isOpen={isModalOpen}
+                  setOpen={setIsModalOpen}
+                  sx={{ position: 'fixed', top: '20%' }}
+                  >
+                    <ModalTitle>
+                      Mapping info
+                      {<Typography> 
+                        <p>During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.</p></Typography>}
+                      {fetchedRatio && <Typography> <p>The proportion of reference var names in the query data for this mapping is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality.</p></Typography>}
+                      {<Typography> 
+                      <p>ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream.</p>
+                      </Typography>}
+
+                      <ModalTitle>
+                        Evaluation Metrics
+                        <Typography>
+                          {`Cluster preservation score: ${project.clust_pres_score}`}
+                          {<IconButton size="small" onClick={() => setMetric1InfoOpen(true)}>
+                            <InfoOutlinedIcon fontSize="small" />
+                          </IconButton>}
+                        </Typography>
+                        <Modal
+                          isOpen={Metric1InfoOpen}
+                          setOpen={setMetric1InfoOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            ml: 3,
+                            mr: 3,
+                          }}
+                          >
+                            <Box sx={{
+                              display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center',
+                            }}
+                            >
+                              <ModalTitle>
+                                Cluster preservation score
+                              </ModalTitle>
+                            </Box>
+
+                            <Box>
+                              <Typography sx={{ width: '100%', maxWidth: '800px' }}>
+                              This score assesses how well unsupervised clustering of the query dataset is preserved after the mapping process.
+                              The mean entropy of cluster labels within each neighborhood is computed for both the original and integrated query.
+                              The median of the differences in mean entropy between the original and integrated query is then calculated. 
+                              Scores are scaled between 0 and 5 with 5 being the best.
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                        </Modal>    
+                        <Typography>
+                          {`Percentage query cells with anchors: ${project.query_with_anchor}`}
+                          { <IconButton size="small" onClick={() => setMetric2InfoOpen(true)}>
+                            <InfoOutlinedIcon fontSize="small" />
+                          </IconButton>}
+                        </Typography>
+                        <Modal
+                          isOpen={Metric2InfoOpen}
+                          setOpen={setMetric2InfoOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            ml: 3,
+                            mr: 3,
+                          }}
+                          >
+                            <Box sx={{
+                              display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center',
+                            }}
+                            >
+                              <ModalTitle>
+                              Percentage query cells with anchors
+                              </ModalTitle>
+                            </Box>
+
+                            <Box>
+                              <Typography sx={{ width: '100%', maxWidth: '800px' }}>
+                              This score quantifies the percentage of query cells that have at least one mutual nearest neighbor among the cells of the reference dataset. These mutual nearest neighbours are termed anchors.
+
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                        </Modal>    
+                        <Typography>
+                          {`Percentage query cells unknown: ${project.percentage_unknown}`}
+                          {<IconButton size="small" onClick={() => setMetric3InfoOpen(true)}>
+                            <InfoOutlinedIcon fontSize="small" />
+                          </IconButton>}
+                        </Typography>
+                        <Modal
+                          isOpen={Metric3InfoOpen}
+                          setOpen={setMetric3InfoOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            ml: 3,
+                            mr: 3,
+                          }}
+                          >
+                            <Box sx={{
+                              display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center',
+                            }}
+                            >
+                              <ModalTitle>
+                              Percentage query cells unknown
+                              </ModalTitle>
+                            </Box>
+
+                            <Box>
+                              <Typography sx={{ width: '100%', maxWidth: '800px' }}>
+                                This score quantifies the percentage of cells that are labelled as "Unknown" during cell type label transfer. It is based on the Mahalanobius uncertainty score for each query cell.
+                                A query cell is classified as having an "Unknown" cell type if its Mahalanobis uncertainty score is above 0.5. 
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                        </Modal>    
+                        
+                      </ModalTitle>
+                      
+                    </ModalTitle>
+                </Modal>
+              </Box>
               <Box sx={{
                 p: 0.1, bgcolor: 'background.paper', borderRadius: 3, width: 'flex', display: 'flex', alignItems: 'center',
               }}
@@ -370,31 +541,7 @@ export default function ProjectBarCard({
                             </Button>
                           ))
                       }
-                      {/* Mapping info button */}
-                      <Box sx={{paddingLeft: '10px'}}>
-                        <IconButton
-                            onClick={handleOpenInfo}
-                            // disabled={project.status !== 'DONE' || fetchingRatio}
-                          >
-                            {<InfoIcon />}
-                        </IconButton>
-                        <Modal
-                          isOpen={isModalOpen}
-                          setOpen={setIsModalOpen}
-                          sx={{ position: 'fixed', top: '20%' }}
-                          >
-                            <ModalTitle>
-                              Mapping info
-                              {<Typography> 
-                                <p>During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.</p></Typography>}
-                              {fetchedRatio && <Typography> <p>The proportion of reference var names in the query data for this mapping is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality.</p></Typography>}
-                              {<Typography> 
-                              <p>ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream.</p>
-                              </Typography>}
-                              
-                            </ModalTitle>
-                        </Modal>
-                      </Box>
+                    
                       {/* Launch Button */}
                       {((!cellxgene.status) || (Date.now() > cellxgene.timeout && cellxgene?.status!=="launching"))
                         && (<CustomButton
