@@ -112,9 +112,9 @@ export default function ProjectBarCard({
   const [fetchedRatio, setFetchedRatio] = useState('');
   const [fetchRatioError, setFetchRatioError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchingMetrics, setFetchingMetrics] = useState(false);
-  const [fetchedMetrics, setFetchedMetrics] = useState('');
-  const [fetchRatioMetrics, setFetchMetricsError] = useState(null);
+  // const [fetchingMetrics, setFetchingMetrics] = useState(false);
+  // const [fetchedMetrics, setFetchedMetrics] = useState('');
+  // const [fetchRatioMetrics, setFetchMetricsError] = useState(null);
 
   useEffect(() => {
     const fetchProjects = async () => {

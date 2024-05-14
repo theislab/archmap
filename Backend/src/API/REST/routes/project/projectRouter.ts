@@ -193,7 +193,7 @@ const update_ratio = (): Router => {
 // Save mapping evaluation metricsfrom ML pipeline to database
 const update_metrics = (): Router => {
   let router = express.Router();
-  router.post("/projects/ratio/:token", validationMdw, async (req, res) => {
+  router.post("/projects/metrics/:token", validationMdw, async (req, res) => {
     try {
       const updateToken = req.params.token;
       // get body from request

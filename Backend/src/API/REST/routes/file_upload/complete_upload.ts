@@ -191,6 +191,7 @@ export default function upload_complete_upload_route() {
                 scvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+                webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
               };
             } else if (model && model.name == "scANVI") {
               const modelAssociatedWithAtlas =
@@ -217,6 +218,7 @@ export default function upload_complete_upload_route() {
                 scanvi_max_epochs_query: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+                webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
               };
             } else if (model && model.name == "scPoli") {
               const modelAssociatedWithAtlas =
@@ -250,6 +252,8 @@ export default function upload_complete_upload_route() {
                 async: false,
                 scpoli_max_epochs: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
+                webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+                webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
               };
             
             } else {
@@ -267,6 +271,7 @@ export default function upload_complete_upload_route() {
                   async: false,
                   webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                   webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
+                  webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
                 };
               }
             }
