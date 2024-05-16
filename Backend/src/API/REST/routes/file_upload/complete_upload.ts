@@ -343,7 +343,7 @@ export default function upload_complete_upload_route() {
             }
             const call_options = {
               // 60 minutes in millis
-              timeout: 60 * 60 * 1000,
+              timeout: 2 * 60 * 60 * 1000,
             };
             console.log("Sending task:");
             console.log(task);

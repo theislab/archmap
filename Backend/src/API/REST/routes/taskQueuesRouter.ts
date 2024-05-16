@@ -69,8 +69,8 @@ const exec_task_queues = (): Router => {
         }
 
         const call_options = {
-          // 60 minutes in millis
-          timeout:  60 * 60 * 1000, 
+          // 120 minutes in millis
+          timeout:  2 * 60 * 60 * 1000, 
         }
         console.log('Sending task:');
         console.log(task);
