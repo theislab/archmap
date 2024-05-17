@@ -56,10 +56,11 @@ function GeneMapperState({ path }) {
     ];
     if (newModel.name === 'scVI') {
       newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
-      newModel.requirements.push(`For unlabeled cells, the value for “${cell_type_key}” should be “Unknown”`);
+      newModel.requirements.push(`For unlabeled cells, the values for “${cell_type_key}” should be “Unknown”`);
     }
     else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
       newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+      newModel.requirements.push(`For unlabeled cells, the values for “${cell_type_key}” should be "unlabeled"`);
     }
     setSelectedClassifier('')
   };

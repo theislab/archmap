@@ -334,7 +334,7 @@ export default function upload_complete_upload_route() {
               },
               dispatchDeadline: {
                 // Timeout
-                seconds: 30 * 60,
+                seconds: 2 * 30 * 60,
               },
             };
 
@@ -342,7 +342,7 @@ export default function upload_complete_upload_route() {
               task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
             }
             const call_options = {
-              // 60 minutes in millis
+              // 120 minutes in millis
               timeout: 2 * 60 * 60 * 1000,
             };
             console.log("Sending task:");
