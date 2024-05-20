@@ -334,7 +334,7 @@ export default function upload_complete_upload_route() {
               },
               dispatchDeadline: {
                 // Timeout
-                seconds: 2 * 30 * 60,
+                seconds: 5 * 60,
               },
             };
 
@@ -342,15 +342,15 @@ export default function upload_complete_upload_route() {
               task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
             }
             const call_options = {
-              // 120 minutes in millis
-              timeout: 2 * 60 * 60 * 1000,
+              // 60 minutes in millis
+              timeout: 5 * 60 * 1000,
             };
-            console.log("Sending task:");
+            console.log("Sent task:");
             console.log(task);
             const request = { parent: parent, task: task };
 
             const [response] = await tasks.createTask(request, call_options);
-            console.log(`Created task ${response.name}`);
+            console.log(`Creating task ${response.name}`);
             console.log("The task details are: ", JSON.stringify(response, null, 2));
             if (!response || !response.name) {
               await ProjectService.updateProjectByUploadId(params.UploadId, {
