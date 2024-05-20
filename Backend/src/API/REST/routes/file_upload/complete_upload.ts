@@ -302,10 +302,14 @@ export default function upload_complete_upload_route() {
             }
 
             // Creating a queue task
+            
             const project_id_gcp = process.env.GCP_PROJECT_ID;
             const queue = process.env.TASK_QUEUE_NAME;
             const location = "europe-west3";
             const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
+            const jobName = "archmap-data-1"
+            const url_task = `https://${location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${project_id_gcp}/jobs/${jobName}:run`;
+
 
             const tasks = new CloudTasksClient({
               projectId: project_id_gcp,
@@ -315,18 +319,23 @@ export default function upload_complete_upload_route() {
               },
               fallback: true,
             });
-
-            const payload = queryInfo;
+            const payload = {
+              containerOverrides: [
+                { name: 'QUERY', value: JSON.stringify(queryInfo) },
+              ]
+            };
+            // const payload = queryInfo;
             // Construct the fully qualified queue name.
             const parent = tasks.queuePath(project_id_gcp, location, queue);
 
             const task = {
               httpRequest: {
                 headers: {
+                  'Authorization': `Bearer $(gcloud auth print-identity-token)`,
                   "Content-Type": "application/json",
                 },
                 httpMethod: "POST" as const,
-                url,
+                url_task,
                 body: "", // or null
                 oidcToken: {
                   serviceAccountEmail,
@@ -345,7 +354,7 @@ export default function upload_complete_upload_route() {
               // 60 minutes in millis
               timeout: 5 * 60 * 1000,
             };
-            console.log("Sent task:");
+            console.log("Sending task:");
             console.log(task);
             const request = { parent: parent, task: task };
 
