@@ -343,7 +343,7 @@ export default function upload_complete_upload_route() {
               },
               dispatchDeadline: {
                 // Timeout
-                seconds: 5 * 60,
+                seconds: 30 * 60,
               },
             };
 
@@ -352,7 +352,7 @@ export default function upload_complete_upload_route() {
             }
             const call_options = {
               // 60 minutes in millis
-              timeout: 5 * 60 * 1000,
+              timeout: 30 * 60 * 1000,
             };
             console.log("Sending task:");
             console.log(task);
