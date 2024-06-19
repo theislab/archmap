@@ -43,7 +43,7 @@ export interface IProject extends Document {
   ratio: String;
   clust_pres_score: number;
   query_with_anchor: number;
-  percentage_unknown: number;
+  percentage_unknown: number | string;
 
   //error Message
   errorMessage: string;
