@@ -54,16 +54,16 @@ export async function get_classifier_path(
   }
 }
 
-export function classifier_path_xgboost(atlasId: ObjectId | string): string {
-  return `classifiers/${atlasId}/classifier_xgb.ubj`;
+export function classifier_path_xgboost(modelId: ObjectId | string): string {
+  return `models/${modelId}/`;
 }
 
-export function classifier_path_knn(atlasId: ObjectId | string): string {
-  return `classifiers/${atlasId}/classifier_knn.pickle`;
+export function classifier_path_knn(modelId: ObjectId | string): string {
+  return `models/${modelId}/`;
 }
 
-function _encoder_path(atlasId: ObjectId | string) {
-  return `classifiers/${atlasId}/classifier_encoding.pickle`;
+function _encoder_path(modelId: ObjectId | string) {
+  return `models/${modelId}/`;
 }
 
 export async function get_encoder_path(

@@ -184,6 +184,7 @@ export default function upload_complete_upload_route() {
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
                 model_path: model_path(modelAssociatedWithAtlas?._id),
+                model_id: project.modelId,
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scVI: true,
                 ref_path: "model.pt",
@@ -210,6 +211,7 @@ export default function upload_complete_upload_route() {
                 output_path: result_path(project.id),
                 encoder_path: encoder_path,
                 model_path: model_path(modelAssociatedWithAtlas?._id),
+                model_id: project.modelId,
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
                 pre_trained_scANVI: true,
                 ref_path: "model.pt",
@@ -240,6 +242,7 @@ export default function upload_complete_upload_route() {
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
                 encoder_path: encoder_path,
+                model_id: project.modelId,
 
                 scpoli_attr: scpoli_attr,
                 scpoli_model_params: scpoli_model_params,
