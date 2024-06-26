@@ -42,7 +42,7 @@ export async function get_classifier_path(
       atlasId,
       modelId
     );
-    return model_path(modelAssociatedWithAtlas._id);
+    return `models/${modelAssociatedWithAtlas._id}/`;
   } 
 
 export function classifier_path_xgboost(modelAssociatedWithAtlas: ObjectId | string): string {
