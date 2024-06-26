@@ -35,24 +35,15 @@ export function model_path_scpoli(modelId: ObjectId | string): {
 //   Native: false
 // };
 export async function get_classifier_path(
-  classifier_type: { XGBoost: boolean; kNN: boolean; Native: boolean },
   atlasId: ObjectId | string,
   modelId: ObjectId | string
 ) {
-  if (classifier_type.XGBoost) {
-    return classifier_path_xgboost(atlasId);
-  } else if (classifier_type.kNN) {
-    return classifier_path_knn(atlasId);
-  } else if (classifier_type.Native) {
-    const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+  const modelAssociatedWithAtlas = await AtlasModelAssociationService.getOneByAtlasAndModelId(
       atlasId,
       modelId
     );
     return model_path(modelAssociatedWithAtlas._id);
-  } else {
-    return null;
-  }
-}
+  } 
 
 export function classifier_path_xgboost(modelAssociatedWithAtlas: ObjectId | string): string {
   return `models/${modelAssociatedWithAtlas}/`;
