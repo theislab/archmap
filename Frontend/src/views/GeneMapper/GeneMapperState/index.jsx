@@ -50,17 +50,20 @@ function GeneMapperState({ path }) {
     let var_names = selectedAtlas.vars
     newModel.requirements = [
       'Ensure your data is in h5ad format',
+      `The number of cells in you data should not exceed 30 000 for your chosen query. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same batch), submit separate mappings, and concatenate your downloaded results.`,
       'Ensure raw expression counts are saved in .X of the query AnnData object',
-      `Batch/Study information is mandatory and should be labeled as “${batch_key}”`,
+      `Batch/Study information is mandatory and should be labeled as “batch”`,
+      `If your query has existing cell type information, this should be labeled as “user_cell_type"`
       `Ensure ${var_names} are stored in the var_names AnnData object attribute of your query`,
+
+
     ];
-    if (newModel.name === 'scVI') {
-      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
-      newModel.requirements.push(`For unlabeled cells, the value for “${cell_type_key}” should be “Unknown”`);
-    }
-    else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
-      newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
-    }
+    // if (newModel.name === 'scVI') {
+    //   newModel.requirements.push(`If your query has existing cell type information, this should be labeled as “user_cell_type`);
+    // }
+    // else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
+    //   newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+    // }
     setSelectedClassifier('')
   };
 
