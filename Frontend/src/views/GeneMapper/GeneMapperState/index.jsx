@@ -53,7 +53,7 @@ function GeneMapperState({ path }) {
       `The number of cells in you data should not exceed 30 000 for your chosen query. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same batch), submit separate mappings, and concatenate your downloaded results.`,
       'Ensure raw expression counts are saved in .X of the query AnnData object',
       `Batch/Study information is mandatory and should be labeled as “batch”`,
-      `If your query has existing cell type information, this should be labeled as “user_cell_type"`
+      `If your query has existing cell type information, this should be labeled as “user_cell_type"`,
       `Ensure ${var_names} are stored in the var_names AnnData object attribute of your query`,
 
 
