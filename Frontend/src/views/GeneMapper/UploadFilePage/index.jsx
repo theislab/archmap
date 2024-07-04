@@ -360,7 +360,7 @@ function UploadFilePage({
               {/* classifier */}
             </Stack>
             <Stack>
-              <Typography variant="h5" fontWeight="bold" pb="1em">Consequent Requirements</Typography>
+              <Typography style={{color: 'red'}} variant="h5" fontWeight="bold" pb="1em">Query Upload Requirements!!</Typography>
               <Card>
                 <Box sx={{ flexDirection: 'column', minHeight: '6em' }}>
                   {requirements
