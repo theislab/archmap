@@ -50,7 +50,7 @@ function GeneMapperState({ path }) {
     let var_names = selectedAtlas.vars
     newModel.requirements = [
       'Ensure your data is in h5ad format',
-      `The number of cells in you data should not exceed 30 000 for your chosen query. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same batch), submit separate mappings, and concatenate your downloaded results.`,
+      `The number of cells in you data should not exceed 50 000. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same batch), submit separate mappings, and concatenate your downloaded results.`,
       'Ensure raw expression counts are saved in .X of the query AnnData object',
       `Batch/Study information is mandatory and should be labeled as “batch”`,
       `If your query has existing cell type information, this should be labeled as “user_cell_type"`,
