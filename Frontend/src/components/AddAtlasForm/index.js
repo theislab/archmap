@@ -364,7 +364,7 @@ const AddAtlasForm = (props) => {
                     fullWidth
                     margin="dense"
                     variant="outlined"
-                    label="Modalities (Proivde comma separated values)"
+                    label="Modalities (Provide comma separated values)"
                     id="modalities"
                     value={modalities}
                     onChange={(e) => {
