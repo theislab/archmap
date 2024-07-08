@@ -315,7 +315,6 @@ export default function ProjectBarCard({
                     {submissionProgress.status === MULTIPART_UPLOAD_STATUS.CANCELING
                       && <CanceldOrFailedStatus />}
                     {submissionProgress.status === MULTIPART_UPLOAD_STATUS.COMPLETE
-                      && project.status !== PROJECT_STATUS.DONE
                       && project.status !== PROJECT_STATUS.DOWNLOAD_READY
                       && project.status !== PROJECT_STATUS.ABORTED
                       && project.status !== PROJECT_STATUS.PROCESSING_FAILED
@@ -547,7 +546,7 @@ export default function ProjectBarCard({
                         && (<CustomButton
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
-                          // disable it if the project status is neither done nor DOWNLOAD_READY
+                          // disable it if the project status is not DOWNLOAD_READY
                           disabled={project.status !== "DOWNLOAD_READY"}
                         >
                           <Typography>Launch</Typography>
