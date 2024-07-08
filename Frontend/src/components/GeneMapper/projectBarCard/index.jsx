@@ -87,7 +87,7 @@ export default function ProjectBarCard({
     TeamService.addProject(teamId, project._id);
   };
 
-  const color = project.status === PROJECT_STATUS.DONE || project.status === PROJECT_STATUS.DOWNLOAD_READY
+  const color = project.status === PROJECT_STATUS.DOWNLOAD_READY
     ? 'lightGreen'
     : project.status === PROJECT_STATUS.ABORTED
       || (!submissionProgress && project.status === PROJECT_STATUS.UPLOAD_PENDING)
@@ -548,7 +548,7 @@ export default function ProjectBarCard({
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
                           // disable it if the project status is neither done nor DOWNLOAD_READY
-                          disabled={project.status !== "DONE" && project.status !== "DOWNLOAD_READY"}
+                          disabled={project.status !== "DOWNLOAD_READY"}
                         >
                           <Typography>Launch</Typography>
                         </CustomButton>)
