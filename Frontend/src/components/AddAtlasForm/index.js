@@ -113,8 +113,7 @@ const AddAtlasForm = (props) => {
         compatibleModels.map((model) => model.name),
         selectedClassifier.name,
         url,
-        user._id,
-        inRevision=true
+        user._id
       );
 
       // Initialize atlas uploads
