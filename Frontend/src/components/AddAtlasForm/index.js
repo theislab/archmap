@@ -159,24 +159,24 @@ const AddAtlasForm = (props) => {
             UPLOAD_FILE_TYPE.MODEL
           );
         }
-        if (pklFile[`${model.name}_pkl`]) {
-          console.log("model upload path", model.pklUploadPath);
-          handleFileUpload(
-            pklFile[`${model.name}_pkl`],
-            model.modelUploadId,
-            model.pklUploadPath,
-            UPLOAD_FILE_TYPE.MODEL
-          );
-        }
-        if (csvFile[`${model.name}_csv`]) {
-          console.log("model upload path", model.csvUploadPath);
-          handleFileUpload(
-            pklFile[`${model.name}_csv`],
-            model.modelUploadId,
-            model.csvUploadPath,
-            UPLOAD_FILE_TYPE.MODEL
-          );
-        }
+        // if (pklFile[`${model.name}_pkl`]) {
+        //   console.log("model upload path", model.pklUploadPath);
+        //   handleFileUpload(
+        //     pklFile[`${model.name}_pkl`],
+        //     model.modelUploadId,
+        //     model.pklUploadPath,
+        //     UPLOAD_FILE_TYPE.MODEL
+        //   );
+        // }
+        // if (csvFile[`${model.name}_csv`]) {
+        //   console.log("model upload path", model.csvUploadPath);
+        //   handleFileUpload(
+        //     pklFile[`${model.name}_csv`],
+        //     model.modelUploadId,
+        //     model.csvUploadPath,
+        //     UPLOAD_FILE_TYPE.MODEL
+        //   );
+        // }
       });
 
       alert("File upload started successfully");
@@ -278,18 +278,7 @@ const AddAtlasForm = (props) => {
       return false; // No models selected
     }
     // Check if each selected model has an associated file
-    return compatibleModels.every((model) => {
-      if (model.name=="scPoli") {
-        (modelFiles[model.name] && pklFile[`${model.name}_pkl`] && csvFile[`${model.name}_csv`]);
-
-      }
-
-      else {
-      modelFiles[model.name];
-      }
-    
-    }
-    );
+    return compatibleModels.every((model) => modelFiles[model.name]);
   };
 
   // Function to validate classifier file uploads
