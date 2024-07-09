@@ -76,6 +76,8 @@ const AddAtlasForm = (props) => {
   const [classifierFile, setClassifierFile] = useState(null);
   // State to keep track of the selected files for each model
   const [modelFiles, setModelFiles] = useState({});
+  const [pklFile, setpklFiles] = useState({});
+  const [csvFile, setcsvFiles] = useState({});
   const [encoderFile, setEncoderFile] = useState(null);
   const [encoderFileName, setEncoderFileName] = useState("");
   const [classifierFileName, setClassifierFileName] = useState("");
@@ -111,7 +113,8 @@ const AddAtlasForm = (props) => {
         compatibleModels.map((model) => model.name),
         selectedClassifier.name,
         url,
-        user._id
+        user._id,
+        inRevision=true
       );
 
       // Initialize atlas uploads
@@ -148,11 +151,29 @@ const AddAtlasForm = (props) => {
       // Initialize model uploads
       models.forEach((model) => {
         if (modelFiles[model.model.name]) {
-          console.log("model upload path", model.modelUploadPath);
+          console.log("model.pt upload path", model.modelUploadPath);
           handleFileUpload(
             modelFiles[model.model.name],
             model.modelUploadId,
             model.modelUploadPath,
+            UPLOAD_FILE_TYPE.MODEL
+          );
+        }
+        if (pklFile[`${model.name}_pkl`]) {
+          console.log("model upload path", model.pklUploadPath);
+          handleFileUpload(
+            pklFile[`${model.name}_pkl`],
+            model.modelUploadId,
+            model.pklUploadPath,
+            UPLOAD_FILE_TYPE.MODEL
+          );
+        }
+        if (csvFile[`${model.name}_csv`]) {
+          console.log("model upload path", model.csvUploadPath);
+          handleFileUpload(
+            pklFile[`${model.name}_csv`],
+            model.modelUploadId,
+            model.csvUploadPath,
             UPLOAD_FILE_TYPE.MODEL
           );
         }
@@ -189,6 +210,8 @@ const AddAtlasForm = (props) => {
       setSelectedClassifier("");
       setClassifierFile(null);
       setModelFiles({});
+      setpklFiles({});
+      setcsvFiles({});
       setEncoderFile(null);
 
       setIsAddModalOpen(false);
@@ -255,7 +278,20 @@ const AddAtlasForm = (props) => {
       return false; // No models selected
     }
     // Check if each selected model has an associated file
-    return compatibleModels.every((model) => modelFiles[model.name]);
+    return compatibleModels.every((model) => {
+      if (model.name=="scPoli") {
+        modelFiles[model.name]
+        pklFile[`${model.name}_pkl`]
+        csvFile[`${model.name}_csv`]
+
+      }
+
+      else {
+      modelFiles[model.name]
+      }
+    
+    }
+    );
   };
 
   // Function to validate classifier file uploads
@@ -289,6 +325,25 @@ const AddAtlasForm = (props) => {
       setModelFiles({
         ...modelFiles,
         [model.name]: event.target.files[0],
+      });
+    }
+  };
+
+
+  const handlePKLFileChange = (model, event) => {
+    if (event.target.files[0]) {
+      setpklFiles({
+        ...pklFile,
+        [`${model.name}_pkl`]: event.target.files[0],
+      });
+    }
+  };
+
+  const handleCSVFileChange = (model, event) => {
+    if (event.target.files[0]) {
+      setcsvFiles({
+        ...csvFile,
+        [`${model.name}_csv`]: event.target.files[0],
       });
     }
   };
@@ -394,11 +449,12 @@ const AddAtlasForm = (props) => {
                     required
                   />
                 </Grid>
-                <Grid container>
-                  {compatibleModels.map((model, index) => (
+                {compatibleModels.map((model, index) => (
+                  <>
                     <Grid item xs={8} key={index}>
                       <Button variant="contained" component="label">
-                        Upload {model.name} File
+                        
+                        Upload model.pt
                         <input
                           type="file"
                           hidden
@@ -406,11 +462,45 @@ const AddAtlasForm = (props) => {
                         />
                       </Button>
                       {modelFiles[model.name] && (
-                        <p>File: {modelFiles[model.name].name}</p>
+                        <span style={{ marginLeft: "20px" }}>
+                        Selected file is: {modelFiles[model.name].name}
+                        </span>
                       )}
                     </Grid>
-                  ))}
-                </Grid>
+                    <Grid item xs={8}>
+                      <Button variant="contained" component="label" disabled={model.name!="scPoli"}>
+                    
+                        Upload attr.pkl
+                        <input
+                          type="file"
+                          hidden
+                          onChange={(e) => handlePKLFileChange(model, e)}
+                        />
+                      </Button>
+                      {pklFile[`${model.name}_pkl`] && (
+                        <span style={{ marginLeft: "20px" }}>
+                        Selected file is: {pklFile[`${model.name}_pkl`].name}
+                        </span>
+                      )}
+                    </Grid>
+                    <Grid item xs={8}>
+                      <Button variant="contained" component="label" disabled={model.name!="scPoli"}>
+                        
+                        Upload var_names.csv
+                        <input
+                          type="file"
+                          hidden
+                          onChange={(e) => handleCSVFileChange(model, e)}
+                        />
+                      </Button>
+                        {csvFile[`${model.name}_csv`] && (
+                          <span style={{ marginLeft: "20px" }}>
+                          Selected file is: {csvFile[`${model.name}_csv`].name}
+                          </span>
+                      )}
+                    </Grid>
+                  </>
+                ))}
 
                 <Grid item xs={8}>
                   <TextField

@@ -26,6 +26,7 @@ export interface IAtlas extends Document {
   classifierUploadPath: string;
   encoderUploadPath: string;
   vars: string;
+  inRevision: boolean;
   
 }
 
@@ -82,6 +83,7 @@ const atlasSchema = new Schema<IAtlas>(
     classifierUploadStatus: { type: String, required: false, default: 'NOT_AVAILABLE' },
     encoderUploadStatus: { type: String, required: false, default: 'NOT_AVAILABLE' },
     vars: { type: String, required: false, default: 'VAR_NAMES_NOT_AVAILABLE' },
+    inRevision: { type: Boolean, required: false, default: false },
 
 
   },

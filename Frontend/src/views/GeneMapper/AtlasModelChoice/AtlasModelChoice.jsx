@@ -80,7 +80,8 @@ function AtlasModelChoice({
       </Typography>
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
-          atlases && atlases.map((a) => (
+          atlases && atlases
+          .map((a) => (
             <Grid item height="330px">
               <AtlasCardSelect
                 width="225px"

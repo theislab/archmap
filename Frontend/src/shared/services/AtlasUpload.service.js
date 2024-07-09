@@ -5,7 +5,7 @@ const { default: axiosInstance } = require("./axiosInstance");
 
 
 const AtlasUploadService = {
-    createAtlas: async (name, previewPictureURL, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId ) => {
+    createAtlas: async (name, previewPictureURL, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId, inRevision) => {
       // Prepare JSON object for request
       
       const atlasData = {
@@ -17,7 +17,8 @@ const AtlasUploadService = {
         compatibleModels: compatibleModels, // Assuming compatibleModels is an array of model names
         selectedClassifier: selectedClassifier,
         atlasUrl: atlasUrl,
-        uploadedBy: String(userId)
+        uploadedBy: String(userId),
+        inRevision: inRevision
         
       };
       console.log("atlas data to be sent to backend", atlasData)

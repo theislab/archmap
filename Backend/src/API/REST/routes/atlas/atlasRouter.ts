@@ -124,7 +124,8 @@ const get_allAtlases = (): Router => {
       }));
       
       const filteredAtlases = atlases_filtered.filter(atlas => atlas !== null);
-      return res.status(200).json(filteredAtlases);
+      const filteredAtlases2 = filteredAtlases.filter(atlas => atlas.inRevision == false);
+      return res.status(200).json(filteredAtlases2);
     } catch (err) {
       console.error("Error accessing the atlases!");
       console.error(JSON.stringify(err));
@@ -207,6 +208,7 @@ const upload_atlas = (): Router => {
       { name: 'atlasFile', maxCount: 1 },
       { name: 'modelFile_scANVI', maxCount: 1 },
       { name: 'modelFile_scVI', maxCount: 1 },
+      { name: 'modelFile_scPoli', maxCount: 1 },
       { name: 'classifierFile', maxCount: 1 }, // Optional
       { name: 'encoderFile', maxCount: 1 } // Optional
     ]), async (req: any, res) => {
@@ -227,7 +229,7 @@ const upload_atlas = (): Router => {
       const compatibleModels = req.body.compatibleModels ? JSON.parse(req.body.compatibleModels) : [];
       
       for (const modelName of compatibleModels) {
-        const fieldName = `modelFile_${modelName}`;
+        const fieldName = `modelFile_${modelName}_pt`;
         if (!req.files[fieldName] || req.files[fieldName].length === 0) {
           return res.status(400).send(`File for model ${modelName} not uploaded.`);
         }
@@ -265,6 +267,7 @@ const upload_atlas = (): Router => {
         compatibleModels: req.body.compatibleModels,
         uploadedBy: req.body.userId,
         atlasUrl: req.body.atlasUrl,
+        inRevision: true
       }
 
       atlasDocument = await atlasModel.create(atlasData);
@@ -340,48 +343,54 @@ const upload_atlas = (): Router => {
       // now upload the model file. Model file path is obtained from AtlasModelAssociation atlas service
 
       for (const modelName of compatibleModels) {
-        const fieldName = `modelFile_${modelName}`;
-        const modelFile = req.files[fieldName][0];
-        const modelFilename = modelFile.filename;
-        const modelFilePath = modelFile.path;
+        if (modelName=="scPoli") {
+          const modelFile = req.files.ptFile[0];
+          const pklFile = req.files.pklFile[0];
+          const csvFile = req.files.csvFile[0];
+        }
+        else {
+          const fieldName = `modelFile_${modelName}_pt`;
+          const modelFile = req.files[fieldName][0];
+          const modelFilename = modelFile.filename;
+          const modelFilePath = modelFile.path;
 
-        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-        const model = await ModelService.getModelByName(modelName);
-        const modelMongoId = await AtlasModelAssociationService.createAssociation(atlasDocument._id, model._id);
-        const fileName = 'models/' + modelMongoId._id + '/' + atlasDocument.name + '-' + model.name + '.txt'; 
+          const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+          const model = await ModelService.getModelByName(modelName);
+          const modelMongoId = await AtlasModelAssociationService.createAssociation(atlasDocument._id, model._id);
+          const fileName = 'models/' + modelMongoId._id + '/' + atlasDocument.name + '-' + model.name + '.txt'; 
 
-        const file = storage.bucket(bucketName).file(fileName);
-        await file.save(''); // Creates an empty file for naming consistency
-        console.log("sucessfully created empty file for model " + model.name + " and atlas " + atlasDocument.name);
-        console.log("file name is " + fileName);
-        const modelBlob = bucket.file(`models/${modelMongoId._id}/model.pt`);
-        const modelBlobStream = modelBlob.createWriteStream({
-          metadata: {
-            contentType: "application/octet-stream",
-          },
-        });
-        modelBlobStream.on("error", (err) => {
-          console.error(err);
-          res.status(500).send("Failed to upload model file to GCP");
-        });
-  
-        modelBlobStream.on("finish", async () => {
-          console.log("Model file uploaded to GCP");
-          uploadedFiles.push(modelBlob.name);
-          if(!req.files.classifierFile){
-            console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
-            // return the successfull status with uploaded files
-            return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
-          }
+          const file = storage.bucket(bucketName).file(fileName);
+          await file.save(''); // Creates an empty file for naming consistency
+          console.log("sucessfully created empty file for model " + model.name + " and atlas " + atlasDocument.name);
+          console.log("file name is " + fileName);
+          const modelBlob = bucket.file(`models/${modelMongoId._id}/model.pt`);
+          const modelBlobStream = modelBlob.createWriteStream({
+            metadata: {
+              contentType: "application/octet-stream",
+            },
+          });
+          modelBlobStream.on("error", (err) => {
+            console.error(err);
+            res.status(500).send("Failed to upload model file to GCP");
+          });
+    
+          modelBlobStream.on("finish", async () => {
+            console.log("Model file uploaded to GCP");
+            uploadedFiles.push(modelBlob.name);
+            if(!req.files.classifierFile){
+              console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
+              // return the successfull status with uploaded files
+              return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
+            }
+          });
 
-        });
-  
-        const modelBlobReadStream = fs.createReadStream(modelFilePath);
-        modelBlobReadStream.pipe(modelBlobStream);
-        modelBlobStream.on("close", () => {
-          console.log("Model file upload process completed");
-          if (fs.existsSync(modelFilePath)) fs.unlinkSync(modelFilePath);
-        });
+          const modelBlobReadStream = fs.createReadStream(modelFilePath);
+          modelBlobReadStream.pipe(modelBlobStream);
+          modelBlobStream.on("close", () => {
+            console.log("Model file upload process completed");
+            if (fs.existsSync(modelFilePath)) fs.unlinkSync(modelFilePath);
+          });
+        } 
 
       }
 

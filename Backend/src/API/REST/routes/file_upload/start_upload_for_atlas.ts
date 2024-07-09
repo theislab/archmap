@@ -59,6 +59,7 @@ export default function upload_start_upload_for_atlas_route() {
                     compatibleModels: compatibleModels,
                     uploadedBy: uploadedBy,
                     atlasUrl: atlasUrl,
+                    inRevision: true
                 };
 
                 const atlas = await AtlasService.createAtlas(atlasToAdd);
@@ -123,19 +124,66 @@ export default function upload_start_upload_for_atlas_route() {
 
                     const model = await ModelService.getModelByName(modelName);
                     const modelMongoId = await AtlasModelAssociationService.createAssociation(atlas._id, model._id);
-                    const pathName = `models/${modelMongoId._id}/model.pt`;
 
-                    let params: S3.CreateMultipartUploadRequest = {
-                        Bucket: process.env.S3_BUCKET_NAME,
-                        Key: pathName,
-                    };
-                    const uploadData = await createMultipartUploadAsync(params);
+                    if (modelName=="scPoli") {
+                        const pathName1 = `models/${modelMongoId._id}/model_params.pt`;
+                        const pathName2 = `models/${modelMongoId._id}/attr.pkl`;
+                        const pathName3 = `models/${modelMongoId._id}/var_names.csv`;
 
-                    if (uploadData.UploadId !== undefined) {
-                        await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData.UploadId);
-                        await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName);
-                        return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
+                        let params1: S3.CreateMultipartUploadRequest = {
+                            Bucket: process.env.S3_BUCKET_NAME,
+                            Key: pathName1,
+                        };
+                        const uploadData1 = await createMultipartUploadAsync(params1);
+    
+                        if (uploadData1.UploadId !== undefined) {
+                            await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData1.UploadId);
+                            await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName1);
+                            return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
+                        }
+    
+                        let params2: S3.CreateMultipartUploadRequest = {
+                            Bucket: process.env.S3_BUCKET_NAME,
+                            Key: pathName2,
+                        };
+                        const uploadData2 = await createMultipartUploadAsync(params2);
+    
+                        if (uploadData2.UploadId !== undefined) {
+                            await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData2.UploadId);
+                            await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName2);
+                            return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
+                        }
+    
+                        let params3: S3.CreateMultipartUploadRequest = {
+                            Bucket: process.env.S3_BUCKET_NAME,
+                            Key: pathName3,
+                        };
+                        const uploadData3 = await createMultipartUploadAsync(params3);
+    
+                        if (uploadData3.UploadId !== undefined) {
+                            await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData3.UploadId);
+                            await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName3);
+                            return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
+                        }
+
+
+                    } else {
+                        const pathName = `models/${modelMongoId._id}/model.pt`;
+
+                        let params: S3.CreateMultipartUploadRequest = {
+                            Bucket: process.env.S3_BUCKET_NAME,
+                            Key: pathName,
+                        };
+                        const uploadData = await createMultipartUploadAsync(params);
+    
+                        if (uploadData.UploadId !== undefined) {
+                            await AtlasModelAssociationService.updateModelByModelUploadId(modelMongoId._id, uploadData.UploadId);
+                            await AtlasModelAssociationService.updateModelPathByModelUploadId(modelMongoId._id, pathName);
+                            return await AtlasModelAssociationService.getAssociationById(modelMongoId._id);
+                        }
                     }
+
+                    
                 });
 
                 // Wait for all model upload operations to complete

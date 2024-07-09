@@ -7,6 +7,8 @@ export interface IAtlasModelAssociation extends Document {
   model: IModel['_id']; // Reference to the Model document's _id
   modelUploadId: string;
   modelUploadPath: string;
+  pklUploadPath: string;
+  csvUploadPath: string;
   status: string;
   modelUploadStatus: string;
   modelFilesize: number;
@@ -34,6 +36,14 @@ const atlasModelAssociationSchema = new Schema<IAtlasModelAssociation>(
       required: false,
     },
     modelUploadPath: {
+      type: String,
+      required: false,
+    },
+    pklUploadPath: {
+      type: String,
+      required: false,
+    },
+    csvUploadPath: {
       type: String,
       required: false,
     },
