@@ -280,14 +280,12 @@ const AddAtlasForm = (props) => {
     // Check if each selected model has an associated file
     return compatibleModels.every((model) => {
       if (model.name=="scPoli") {
-        modelFiles[model.name]
-        pklFile[`${model.name}_pkl`]
-        csvFile[`${model.name}_csv`]
+        (modelFiles[model.name] && pklFile[`${model.name}_pkl`] && csvFile[`${model.name}_csv`]);
 
       }
 
       else {
-      modelFiles[model.name]
+      modelFiles[model.name];
       }
     
     }
