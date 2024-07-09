@@ -200,298 +200,298 @@ const post_anndata_args = (): Router => {
 }
 
 // upload atlas by url or file
-const upload_atlas = (): Router => {
-  let router = express.Router();
+// const upload_atlas = (): Router => {
+//   let router = express.Router();
 
 
-  router.post('/atlases/upload', validationMdw, upload_permission_auth() ,upload.fields([
-      { name: 'atlasFile', maxCount: 1 },
-      { name: 'modelFile_scANVI', maxCount: 1 },
-      { name: 'modelFile_scVI', maxCount: 1 },
-      { name: 'modelFile_scPoli', maxCount: 1 },
-      { name: 'classifierFile', maxCount: 1 }, // Optional
-      { name: 'encoderFile', maxCount: 1 } // Optional
-    ]), async (req: any, res) => {
+//   router.post('/atlases/upload', validationMdw, upload_permission_auth() ,upload.fields([
+//       { name: 'atlasFile', maxCount: 1 },
+//       { name: 'modelFile_scANVI', maxCount: 1 },
+//       { name: 'modelFile_scVI', maxCount: 1 },
+//       { name: 'modelFile_scPoli', maxCount: 1 },
+//       { name: 'classifierFile', maxCount: 1 }, // Optional
+//       { name: 'encoderFile', maxCount: 1 } // Optional
+//     ]), async (req: any, res) => {
       
-    let atlasDocument;
-    try {
-      if (!req.files.atlasFile && !req.body.atlasUrl) {
-        res.status(400).send("No atlas file uploaded.");
-        return;
-      }
-      
-
-      // Validate and process classifier files
-      if (req.body.selectedClassifier && (!req.files.classifierFile || req.files.classifierFile.length === 0) && (!req.files.encoderFile || req.files.encoderFile.length === 0) ) {
-        return res.status(400).send("Classifier file is required when a classifier is selected.");
-      }
-      
-      const compatibleModels = req.body.compatibleModels ? JSON.parse(req.body.compatibleModels) : [];
-      
-      for (const modelName of compatibleModels) {
-        const fieldName = `modelFile_${modelName}_pt`;
-        if (!req.files[fieldName] || req.files[fieldName].length === 0) {
-          return res.status(400).send(`File for model ${modelName} not uploaded.`);
-        }
-      }
-
-
-
-      if (!req.files.atlasFile && req.body.atlasUrl === "") {
-        console.log("No atlas file uploaded.")
-        res.status(400).send("No Atlas  file uploaded.");
-        return;
-      }
-
-      // check if the env variables are set.
-      if (!process.env.GCP_PROJECT_ID || !process.env.GCP_CLIENT_EMAIL || !process.env.GCP_PRIVATE_KEY || !process.env.GCP_CLIENT_ID  || !process.env.S3_BUCKET_NAME) {
-        res.status(500).send("GCP_PROJECT_ID  or S3_BUCKET_NAME or GCP_CLIENT_EMAIL or GCP_PRIVATE_KEY or GCP_CLIENT_ID is not set."); 
-        return;
-      }
-
-      if(req.body.atlasUrl == undefined){
-        req.body.atlasUrl = "";
-      }
-      
+//     let atlasDocument;
+//     try {
+//       if (!req.files.atlasFile && !req.body.atlasUrl) {
+//         res.status(400).send("No atlas file uploaded.");
+//         return;
+//       }
       
 
-      //a variable to keep track of all the stuffs that are uploaded to gcp bucket
-      let uploadedFiles = [];
+//       // Validate and process classifier files
+//       if (req.body.selectedClassifier && (!req.files.classifierFile || req.files.classifierFile.length === 0) && (!req.files.encoderFile || req.files.encoderFile.length === 0) ) {
+//         return res.status(400).send("Classifier file is required when a classifier is selected.");
+//       }
       
-      const atlasData = {
-        name: req.body.name,
-        previewPictureURL: req.body.previewPictureURL,
-        modalities: req.body.modalities,
-        numberOfCells: req.body.numberOfCells,
-        species: req.body.species,
-        compatibleModels: req.body.compatibleModels,
-        uploadedBy: req.body.userId,
-        atlasUrl: req.body.atlasUrl,
-        inRevision: true
-      }
-
-      atlasDocument = await atlasModel.create(atlasData);
-
-      // TODO: use the already used methods
-      // Upload the file to GCP
-      const storage = new Storage({
-        projectId: process.env.GCP_PROJECT_ID,
-        credentials: {
-          client_email: process.env.GCP_CLIENT_EMAIL,
-          private_key: process.env.GCP_PRIVATE_KEY,
-          client_id: process.env.GCP_CLIENT_ID,
-        },
-
-      });
-
-
-      if(atlasData.atlasUrl == "" ){
-        const atlasFile = req.files.atlasFile[0];
-        const atlasFilename = atlasFile.filename;
-        const atlasFilePath = atlasFile.path;
+//       const compatibleModels = req.body.compatibleModels ? JSON.parse(req.body.compatibleModels) : [];
       
-        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-        const atlasBlob = bucket.file(`atlas/${atlasDocument._id}/data.h5ad`);
+//       for (const modelName of compatibleModels) {
+//         const fieldName = `modelFile_${modelName}_pt`;
+//         if (!req.files[fieldName] || req.files[fieldName].length === 0) {
+//           return res.status(400).send(`File for model ${modelName} not uploaded.`);
+//         }
+//       }
 
-        const fileNameTxt = `atlas/${atlasDocument._id}/${atlasDocument.name}.txt`;
 
-        const file = storage.bucket(bucketName).file(fileNameTxt);
-        await file.save(''); // Creates an empty file for naming consistency
 
-        const atlasBlobStream = atlasBlob.createWriteStream({
-          metadata: {
-            contentType: "application/octet-stream",
-          },
-        });
+//       if (!req.files.atlasFile && req.body.atlasUrl === "") {
+//         console.log("No atlas file uploaded.")
+//         res.status(400).send("No Atlas  file uploaded.");
+//         return;
+//       }
+
+//       // check if the env variables are set.
+//       if (!process.env.GCP_PROJECT_ID || !process.env.GCP_CLIENT_EMAIL || !process.env.GCP_PRIVATE_KEY || !process.env.GCP_CLIENT_ID  || !process.env.S3_BUCKET_NAME) {
+//         res.status(500).send("GCP_PROJECT_ID  or S3_BUCKET_NAME or GCP_CLIENT_EMAIL or GCP_PRIVATE_KEY or GCP_CLIENT_ID is not set."); 
+//         return;
+//       }
+
+//       if(req.body.atlasUrl == undefined){
+//         req.body.atlasUrl = "";
+//       }
       
-        atlasBlobStream.on("error", (err) => {
-          console.error(err);
-          res.status(500).send("Failed to upload atlas file to GCP");
-        });
       
-        atlasBlobStream.on("finish", async () => {
-          console.log("Atlas file uploaded to GCP");
-          uploadedFiles.push(atlasBlob.name);
+
+//       //a variable to keep track of all the stuffs that are uploaded to gcp bucket
+//       let uploadedFiles = [];
+      
+//       const atlasData = {
+//         name: req.body.name,
+//         previewPictureURL: req.body.previewPictureURL,
+//         modalities: req.body.modalities,
+//         numberOfCells: req.body.numberOfCells,
+//         species: req.body.species,
+//         compatibleModels: req.body.compatibleModels,
+//         uploadedBy: req.body.userId,
+//         atlasUrl: req.body.atlasUrl,
+//         inRevision: true
+//       }
+
+//       atlasDocument = await atlasModel.create(atlasData);
+
+//       // TODO: use the already used methods
+//       // Upload the file to GCP
+//       const storage = new Storage({
+//         projectId: process.env.GCP_PROJECT_ID,
+//         credentials: {
+//           client_email: process.env.GCP_CLIENT_EMAIL,
+//           private_key: process.env.GCP_PRIVATE_KEY,
+//           client_id: process.env.GCP_CLIENT_ID,
+//         },
+
+//       });
+
+
+//       if(atlasData.atlasUrl == "" ){
+//         const atlasFile = req.files.atlasFile[0];
+//         const atlasFilename = atlasFile.filename;
+//         const atlasFilePath = atlasFile.path;
+      
+//         const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+//         const atlasBlob = bucket.file(`atlas/${atlasDocument._id}/data.h5ad`);
+
+//         const fileNameTxt = `atlas/${atlasDocument._id}/${atlasDocument.name}.txt`;
+
+//         const file = storage.bucket(bucketName).file(fileNameTxt);
+//         await file.save(''); // Creates an empty file for naming consistency
+
+//         const atlasBlobStream = atlasBlob.createWriteStream({
+//           metadata: {
+//             contentType: "application/octet-stream",
+//           },
+//         });
+      
+//         atlasBlobStream.on("error", (err) => {
+//           console.error(err);
+//           res.status(500).send("Failed to upload atlas file to GCP");
+//         });
+      
+//         atlasBlobStream.on("finish", async () => {
+//           console.log("Atlas file uploaded to GCP");
+//           uploadedFiles.push(atlasBlob.name);
           
-        });
+//         });
       
-        const atlasReadStream = fs.createReadStream(atlasFilePath);
-        atlasReadStream.pipe(atlasBlobStream);
-        atlasBlobStream.on("close", () => {
-          console.log("Atlas file upload process completed");
-          if (fs.existsSync(atlasFilePath)) fs.unlinkSync(atlasFilePath);
-        });
-      } else {
+//         const atlasReadStream = fs.createReadStream(atlasFilePath);
+//         atlasReadStream.pipe(atlasBlobStream);
+//         atlasBlobStream.on("close", () => {
+//           console.log("Atlas file upload process completed");
+//           if (fs.existsSync(atlasFilePath)) fs.unlinkSync(atlasFilePath);
+//         });
+//       } else {
 
-        console.log("Downloading file from url: " + atlasData.atlasUrl + " using the post request to the server " + process.env.ATLAS_UPLOAD_URI);
-        const response = await axios.post(process.env.ATLAS_UPLOAD_URI, {
-          url: atlasData.atlasUrl,
-          path_to_store: `atlas/${atlasDocument._id}`,
-          file_name: "data.h5ad",
-        });
+//         console.log("Downloading file from url: " + atlasData.atlasUrl + " using the post request to the server " + process.env.ATLAS_UPLOAD_URI);
+//         const response = await axios.post(process.env.ATLAS_UPLOAD_URI, {
+//           url: atlasData.atlasUrl,
+//           path_to_store: `atlas/${atlasDocument._id}`,
+//           file_name: "data.h5ad",
+//         });
         
-        // check if its not 200
+//         // check if its not 200
         
-        if (response.status !== 200) {
-          res.status(500).send("Failed to upload file to GCP");
-          return;
-        }
-        // Return the Atlas ID as a response
-        uploadedFiles.push(`atlas/${atlasDocument._id}/data.h5ad`);
-      }
+//         if (response.status !== 200) {
+//           res.status(500).send("Failed to upload file to GCP");
+//           return;
+//         }
+//         // Return the Atlas ID as a response
+//         uploadedFiles.push(`atlas/${atlasDocument._id}/data.h5ad`);
+//       }
       
-      // now upload the model file. Model file path is obtained from AtlasModelAssociation atlas service
+//       // now upload the model file. Model file path is obtained from AtlasModelAssociation atlas service
 
-      for (const modelName of compatibleModels) {
-        if (modelName=="scPoli") {
-          const modelFile = req.files.ptFile[0];
-          const pklFile = req.files.pklFile[0];
-          const csvFile = req.files.csvFile[0];
-        }
-        else {
-          const fieldName = `modelFile_${modelName}_pt`;
-          const modelFile = req.files[fieldName][0];
-          const modelFilename = modelFile.filename;
-          const modelFilePath = modelFile.path;
+//       for (const modelName of compatibleModels) {
+//         if (modelName=="scPoli") {
+//           const modelFile = req.files.ptFile[0];
+//           const pklFile = req.files.pklFile[0];
+//           const csvFile = req.files.csvFile[0];
+//         }
+//         else {
+//           const fieldName = `modelFile_${modelName}_pt`;
+//           const modelFile = req.files[fieldName][0];
+//           const modelFilename = modelFile.filename;
+//           const modelFilePath = modelFile.path;
 
-          const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-          const model = await ModelService.getModelByName(modelName);
-          const modelMongoId = await AtlasModelAssociationService.createAssociation(atlasDocument._id, model._id);
-          const fileName = 'models/' + modelMongoId._id + '/' + atlasDocument.name + '-' + model.name + '.txt'; 
+//           const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+//           const model = await ModelService.getModelByName(modelName);
+//           const modelMongoId = await AtlasModelAssociationService.createAssociation(atlasDocument._id, model._id);
+//           const fileName = 'models/' + modelMongoId._id + '/' + atlasDocument.name + '-' + model.name + '.txt'; 
 
-          const file = storage.bucket(bucketName).file(fileName);
-          await file.save(''); // Creates an empty file for naming consistency
-          console.log("sucessfully created empty file for model " + model.name + " and atlas " + atlasDocument.name);
-          console.log("file name is " + fileName);
-          const modelBlob = bucket.file(`models/${modelMongoId._id}/model.pt`);
-          const modelBlobStream = modelBlob.createWriteStream({
-            metadata: {
-              contentType: "application/octet-stream",
-            },
-          });
-          modelBlobStream.on("error", (err) => {
-            console.error(err);
-            res.status(500).send("Failed to upload model file to GCP");
-          });
+//           const file = storage.bucket(bucketName).file(fileName);
+//           await file.save(''); // Creates an empty file for naming consistency
+//           console.log("sucessfully created empty file for model " + model.name + " and atlas " + atlasDocument.name);
+//           console.log("file name is " + fileName);
+//           const modelBlob = bucket.file(`models/${modelMongoId._id}/model.pt`);
+//           const modelBlobStream = modelBlob.createWriteStream({
+//             metadata: {
+//               contentType: "application/octet-stream",
+//             },
+//           });
+//           modelBlobStream.on("error", (err) => {
+//             console.error(err);
+//             res.status(500).send("Failed to upload model file to GCP");
+//           });
     
-          modelBlobStream.on("finish", async () => {
-            console.log("Model file uploaded to GCP");
-            uploadedFiles.push(modelBlob.name);
-            if(!req.files.classifierFile){
-              console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
-              // return the successfull status with uploaded files
-              return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
-            }
-          });
+//           modelBlobStream.on("finish", async () => {
+//             console.log("Model file uploaded to GCP");
+//             uploadedFiles.push(modelBlob.name);
+//             if(!req.files.classifierFile){
+//               console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
+//               // return the successfull status with uploaded files
+//               return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
+//             }
+//           });
 
-          const modelBlobReadStream = fs.createReadStream(modelFilePath);
-          modelBlobReadStream.pipe(modelBlobStream);
-          modelBlobStream.on("close", () => {
-            console.log("Model file upload process completed");
-            if (fs.existsSync(modelFilePath)) fs.unlinkSync(modelFilePath);
-          });
-        } 
+//           const modelBlobReadStream = fs.createReadStream(modelFilePath);
+//           modelBlobReadStream.pipe(modelBlobStream);
+//           modelBlobStream.on("close", () => {
+//             console.log("Model file upload process completed");
+//             if (fs.existsSync(modelFilePath)) fs.unlinkSync(modelFilePath);
+//           });
+//         } 
 
-      }
+//       }
 
-      // and then upload the classifier file if it exists
-      console.log("now uploading classifier file", req.body.selectedClassifier)
-      if(req.files.classifierFile && req.body.selectedClassifier){
-        const classifierFile = req.files.classifierFile[0];
-        const classifierFilename = classifierFile.filename;
-        const classifierFilePath = classifierFile.path;
-        console.log("now uploading classifier file 2")
+//       // and then upload the classifier file if it exists
+//       console.log("now uploading classifier file", req.body.selectedClassifier)
+//       if(req.files.classifierFile && req.body.selectedClassifier){
+//         const classifierFile = req.files.classifierFile[0];
+//         const classifierFilename = classifierFile.filename;
+//         const classifierFilePath = classifierFile.path;
+//         console.log("now uploading classifier file 2")
 
-        let classifierFilePathInBucket = `classifiers/${atlasDocument._id}/`;
-        switch (req.body.selectedClassifier) {
-          case "KNN":
-            classifierFilePathInBucket += "classifier_knn.pickle";
-            break;
-          case "XGBoost":
-            classifierFilePathInBucket += "classifier_xgb.ubj";
-            break;
-          default:
-            return res.status(400).send("Invalid classifier selected");
+//         let classifierFilePathInBucket = `classifiers/${atlasDocument._id}/`;
+//         switch (req.body.selectedClassifier) {
+//           case "KNN":
+//             classifierFilePathInBucket += "classifier_knn.pickle";
+//             break;
+//           case "XGBoost":
+//             classifierFilePathInBucket += "classifier_xgb.ubj";
+//             break;
+//           default:
+//             return res.status(400).send("Invalid classifier selected");
             
-        }
+//         }
 
         
-        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-        const classifierBlob = bucket.file(classifierFilePathInBucket);
-        const classifierBlobStream = classifierBlob.createWriteStream({
-          metadata: {
-            contentType: "application/octet-stream",
-          },
-        });
+//         const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+//         const classifierBlob = bucket.file(classifierFilePathInBucket);
+//         const classifierBlobStream = classifierBlob.createWriteStream({
+//           metadata: {
+//             contentType: "application/octet-stream",
+//           },
+//         });
 
-        classifierBlobStream.on("error", (err) => {
-          console.error(err);
-          res.status(500).send("Failed to upload classifier file to GCP");
-        });
+//         classifierBlobStream.on("error", (err) => {
+//           console.error(err);
+//           res.status(500).send("Failed to upload classifier file to GCP");
+//         });
 
-        classifierBlobStream.on("finish", async () => {
-          console.log("Classifier file uploaded to GCP");
-          uploadedFiles.push(classifierBlob.name);
-        });
+//         classifierBlobStream.on("finish", async () => {
+//           console.log("Classifier file uploaded to GCP");
+//           uploadedFiles.push(classifierBlob.name);
+//         });
 
-        const classifierReadStream = fs.createReadStream(classifierFilePath);
-        classifierReadStream.pipe(classifierBlobStream);
-        classifierBlobStream.on("close", () => {
-          console.log("Classifier file upload process completed");
-          if (fs.existsSync(classifierFilePath)) fs.unlinkSync(classifierFilePath);
-        });
-      }
+//         const classifierReadStream = fs.createReadStream(classifierFilePath);
+//         classifierReadStream.pipe(classifierBlobStream);
+//         classifierBlobStream.on("close", () => {
+//           console.log("Classifier file upload process completed");
+//           if (fs.existsSync(classifierFilePath)) fs.unlinkSync(classifierFilePath);
+//         });
+//       }
 
-      // and then upload the encoder file if it exists the same steps except the file name is classifier_encoding.pickle in the end
+//       // and then upload the encoder file if it exists the same steps except the file name is classifier_encoding.pickle in the end
 
-      if (req.files.encoderFile && req.body.selectedClassifier) {
-        const encoderFile = req.files.encoderFile[0];
-        const encoderFilename = encoderFile.filename;
-        const encoderFilePath = encoderFile.path;
+//       if (req.files.encoderFile && req.body.selectedClassifier) {
+//         const encoderFile = req.files.encoderFile[0];
+//         const encoderFilename = encoderFile.filename;
+//         const encoderFilePath = encoderFile.path;
 
-        let encoderFilePathInBucket = `classifiers/${atlasDocument._id}/classifier_encoding.pickle`;
+//         let encoderFilePathInBucket = `classifiers/${atlasDocument._id}/classifier_encoding.pickle`;
         
 
-        const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
-        const encoderBlob = bucket.file(encoderFilePathInBucket);
-        const encoderBlobStream = encoderBlob.createWriteStream({
-          metadata: {
-            contentType: "application/octet-stream",
-          },
-        });
+//         const bucket = storage.bucket(process.env.S3_BUCKET_NAME);
+//         const encoderBlob = bucket.file(encoderFilePathInBucket);
+//         const encoderBlobStream = encoderBlob.createWriteStream({
+//           metadata: {
+//             contentType: "application/octet-stream",
+//           },
+//         });
 
-        encoderBlobStream.on("error", (err) => {
-          console.error(err);
-          res.status(500).send("Failed to upload encoder file to GCP");
-        });
+//         encoderBlobStream.on("error", (err) => {
+//           console.error(err);
+//           res.status(500).send("Failed to upload encoder file to GCP");
+//         });
 
-        encoderBlobStream.on("finish", async () => {
-          console.log("Encoder file uploaded to GCP");
-          uploadedFiles.push(encoderBlob.name);
-          console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
-          // return the successfull status with uploaded files
-          return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
-        });
+//         encoderBlobStream.on("finish", async () => {
+//           console.log("Encoder file uploaded to GCP");
+//           uploadedFiles.push(encoderBlob.name);
+//           console.log("Atlas upload process completed with the following files uploaded: " , uploadedFiles);
+//           // return the successfull status with uploaded files
+//           return res.status(200).json({atlasId: atlasDocument._id, uploadedFiles: uploadedFiles});
+//         });
 
-        const encoderReadStream = fs.createReadStream(encoderFilePath);
-        encoderReadStream.pipe(encoderBlobStream);
-        encoderBlobStream.on("close", () => {
-          console.log("Encoder file upload process completed");
-          if (fs.existsSync(encoderFilePath)) fs.unlinkSync(encoderFilePath);
-        });
-      }
+//         const encoderReadStream = fs.createReadStream(encoderFilePath);
+//         encoderReadStream.pipe(encoderBlobStream);
+//         encoderBlobStream.on("close", () => {
+//           console.log("Encoder file upload process completed");
+//           if (fs.existsSync(encoderFilePath)) fs.unlinkSync(encoderFilePath);
+//         });
+//       }
       
       
        
-    } catch (err) {
-      console.error(err);
-      return res.status(500).send("Internal error");
-    }
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).send("Internal error");
+//     }
 
     
-  })
-  return router;
-}
+//   })
+//   return router;
+// }
 
 const edit_atlas = (): Router => {
   let router = express.Router();
@@ -617,4 +617,5 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args };
+// export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args };
+export { get_atlas, get_atlas_visualization, get_allAtlases, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args };
