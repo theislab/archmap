@@ -1,4 +1,4 @@
-const options = require("./emails.config.cjs");
+const options = require("./emails.config.js");
 const mjml = require("mjml");
 const fs = require("fs/promises");
 const path = require("path");
