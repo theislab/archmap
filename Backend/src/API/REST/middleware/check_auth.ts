@@ -14,7 +14,7 @@ export default function check_auth() {
     if (req.header("auth") || req.header("Authorization")) {
       const jwtToken = req.header("auth") || req.header("Authorization")?.split(" ")[1] || "";
       try {
-        jwt.verify(jwtToken, JWT_SECRET, async function (err, decoded: jwt.JwtPayload) {
+        jwt.verify(jwtToken, JWT_SECRET, async function (err, decoded) {
           if (err || !decoded || !decoded.email || !decoded.id) {
             console.log(err?.name);
             if (err?.name == "TokenExpiredError")
