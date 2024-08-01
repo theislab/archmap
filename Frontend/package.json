@@ -40,8 +40,8 @@
     "lint-fix": "eslint \"src/**/*.js?(x)\" --fix",
     "build": "react-scripts build",
     "deploy-manual": "gh-pages -d build -b master -o pages",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build && touch build/.nojekyll",
+    "deploy": "gh-pages -d build -t true",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

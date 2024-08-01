@@ -62,7 +62,7 @@ function GeneMapperHome({ style, loggedIn }) {
           // updating the demo dataset
           data[i] = {
             ...data[i],
-            status: PROJECT_STATUS.DONE,
+            status: PROJECT_STATUS.DOWNLOAD_READY,
             location: demos[j].h5adURL,
           };
         }

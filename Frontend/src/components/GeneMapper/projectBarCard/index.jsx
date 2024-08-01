@@ -342,7 +342,7 @@ export default function ProjectBarCard({
                     >
                       {project.status === PROJECT_STATUS.UPLOAD_PENDING
                         && <CanceldOrFailedStatus />}
-                      {project.status === PROJECT_STATUS.PROCESSING_PENDING
+                      {project.status === PROJECT_STATUS.PROCESSING_PENDING 
                         && <ProcessingStatus />}
                       {(project.status === PROJECT_STATUS.ABORTED
                         || project.status === PROJECT_STATUS.PROCESSING_FAILED)

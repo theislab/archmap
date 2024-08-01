@@ -31,7 +31,7 @@ function GeneMapperResultView({ loggedIn = true }) {
           // updating the demo dataset
           updatedData = {
             ...data,
-            status: PROJECT_STATUS.DONE,
+            status: PROJECT_STATUS.DOWNLOAD_READY,
             location: demo.h5adURL,
           };
         }

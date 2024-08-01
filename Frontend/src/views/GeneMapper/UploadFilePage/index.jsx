@@ -60,11 +60,17 @@ function UploadFilePage({
       const matchingDemos = demoDatasets.filter(
         (d) =>
           d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
-          d.model.toLowerCase() === selectedModel.name.toLowerCase()
+          d.model.toLowerCase() === selectedModel.name.toLowerCase() &&
+          d.classifier === "KNN" ||
+          d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
+          d.model.toLowerCase() === selectedModel.name.toLowerCase() &&
+          d.classifier === selectedClassifier.name 
+          
+          
       );
-  
       setAvailableDemos(matchingDemos);
     }
+
   }, [demoDatasets, selectedAtlas.name, selectedModel.name]);
   
   useEffect(() => {
