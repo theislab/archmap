@@ -547,7 +547,7 @@ export default function ProjectBarCard({
                           type="primary"
                           onClick={() => launchCellxgene(project.location)}
                           // disable it if the project status is not DOWNLOAD_READY
-                          disabled={project.status !== "DONE" && project.status !== "DOWNLOAD_READY"}
+                          disabled={project.status !== "DOWNLOAD_READY"}
                         >
                           <Typography>Launch</Typography>
                         </CustomButton>)
