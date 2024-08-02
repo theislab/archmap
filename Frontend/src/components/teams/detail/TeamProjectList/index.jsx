@@ -92,7 +92,7 @@ function TeamProjectList({
             ...data[i],
             status: PROJECT_STATUS.DOWNLOAD_READY,
             location: demos[j].h5adURL,
-          };
+          };         
         }
       }
     }

@@ -28,12 +28,16 @@ function GeneMapperResultView({ loggedIn = true }) {
       demos.forEach((demo) => {
         const id = data.fileName.split('_')[2];
         if (id && id === demo._id) {
-          // updating the demo dataset
+          // updating the demo dataset and add metrics from demo to project
           updatedData = {
             ...data,
             status: PROJECT_STATUS.DOWNLOAD_READY,
             location: demo.h5adURL,
+            query_with_anchor: demo.query_with_anchor,
+            clust_pres_score: demo.clust_pres_score,
+            percentage_unknown: demo.percentage_unknown
           };
+
         }
       });
       setProject(updatedData);
