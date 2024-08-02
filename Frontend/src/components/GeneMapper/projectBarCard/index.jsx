@@ -106,6 +106,7 @@ export default function ProjectBarCard({
   const [Metric1InfoOpen, setMetric1InfoOpen] = useState(false);
   const [Metric2InfoOpen, setMetric2InfoOpen] = useState(false);
   const [Metric3InfoOpen, setMetric3InfoOpen] = useState(false);
+  const [Metric4InfoOpen, setMetric4InfoOpen] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [fetchUrlError, setFetchUrlError] = useState(null);
   const [fetchingRatio, setFetchingRatio] = useState(false);
@@ -374,17 +375,18 @@ export default function ProjectBarCard({
                   setOpen={setIsModalOpen}
                   sx={{ position: 'fixed', top: '20%' }}
                   >
-                    <ModalTitle>
-                      Mapping info
+                    <h1>Evaluation metrics</h1>
                       {<Typography> 
-                        <p>During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.</p></Typography>}
-                      {fetchedRatio && <Typography> <p>The proportion of reference var names in the query data for this mapping is {fetchedRatio}. A value less than 0.8 may contribute to poor mapping quality.</p></Typography>}
-                      {<Typography> 
-                      <p>ArchMap's built-in visualization functionality is done on a subset of the mapping. Therefore, the umap of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream.</p>
+                          Below are the mapping quality metrics for the selected mapping. See the <a
+                            style={{
+                              textDecoration: "none",
+                            }} href="https://archmap-docu.readthedocs.io/en/latest/visualization/index.html#mapping-evaluation"><Typography sx={{
+                              color: colors.primary[400],
+                              ':hover': { color: colors.primary[500] }
+                            }} display="inline">docs </Typography></a>for more info on how to interpret these metrics.
                       </Typography>}
+                      <br />
 
-                      <ModalTitle>
-                        Evaluation Metrics
                         <Typography>
                           {`Cluster preservation score: ${project.clust_pres_score}`}
                           {<IconButton size="small" onClick={() => setMetric1InfoOpen(true)}>
@@ -500,11 +502,56 @@ export default function ProjectBarCard({
                             </Box>
                           </Box>
 
-                        </Modal>    
-                        
-                      </ModalTitle>
+                        </Modal>  
+                        <Typography>
+                          {`Percentage overlapping genes: ${project.ratio}`}
+                          {<IconButton size="small" onClick={() => setMetric4InfoOpen(true)}>
+                            <InfoOutlinedIcon fontSize="small" />
+                          </IconButton>}
+                        </Typography>
+                        <Modal
+                          isOpen={Metric4InfoOpen}
+                          setOpen={setMetric4InfoOpen}
+                          sx={{ position: 'fixed', top: '20%' }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            ml: 3,
+                            mr: 3,
+                          }}
+                          >
+                            <Box sx={{
+                              display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center',
+                            }}
+                            >
+                              <ModalTitle>
+                                Percentage overlapping genes
+                              </ModalTitle>
+                            </Box>
+
+                            <Box>
+                              <Typography sx={{ width: '100%', maxWidth: '800px' }}>
+                              During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.
+                              A value less than 85% may contribute to poor mapping quality.
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                        </Modal>      
+                        <h3>Visualizing downloaded results</h3>
+                          {<Typography> 
+                              ArchMap's built-in visualization functionality includes only a subset of the original reference to aid faster computation. Therefore, the neighbourhood graph of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream. For more info on how to recompute the neighbourhood graph see the <a
+                          style={{
+                            textDecoration: "none",
+                          }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#how-can-i-visualize-my-downloaded-results-myself-in-cellxgene"><Typography sx={{
+                            color: colors.primary[400],
+                            ':hover': { color: colors.primary[500] }
+                          }} display="inline">FAQs</Typography></a> in the docs.
+                              </Typography>}
                       
-                    </ModalTitle>
                 </Modal>
               </Box>
               <Box sx={{

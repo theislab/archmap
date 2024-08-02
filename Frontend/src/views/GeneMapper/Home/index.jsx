@@ -64,6 +64,10 @@ function GeneMapperHome({ style, loggedIn }) {
             ...data[i],
             status: PROJECT_STATUS.DOWNLOAD_READY,
             location: demos[j].h5adURL,
+            query_with_anchor: demos[j].query_with_anchor,
+            clust_pres_score: demos[j].clust_pres_score,
+            percentage_unknown: demos[j].percentage_unknown,
+            ratio: demos[j].ratio
           };
         }
       }
