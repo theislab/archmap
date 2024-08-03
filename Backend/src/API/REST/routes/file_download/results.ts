@@ -12,17 +12,13 @@ export default function download_results_route() {
   router.post("/file_download/results", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/results");
     let { id } = req.body.id;
-    let { status } = req.body.status;
-    let { outputFileWithCounts } = req.body.outputFileWithCounts;
 
     try {
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
       const project = await ProjectService.getProjectById(id);
-      project.status = status;
-      project.outputFileWithCounts = outputFileWithCounts;
-      
+
       console.log("Project: ", project)
       if (!project) {
         return res.status(404).send("Project not found.");
