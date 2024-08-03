@@ -12,6 +12,8 @@ export default function download_results_route() {
   router.post("/file_download/results", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/results");
     let { id } = req.body.id;
+    let { status } = req.body.status;
+    let {outputFileWithCounts} = req.body.outputFileWithCounts;
 
     try {
       if (!process.env.S3_BUCKET_NAME) {
@@ -20,13 +22,14 @@ export default function download_results_route() {
       const project = await ProjectService.getProjectById(id);
 
       console.log("Project: ", project)
+      console.log("id: ", id)
       if (!project) {
         return res.status(404).send("Project not found.");
       }
-      if (project.status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
+      if (status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
         return res.status(400).send("File not download ready.");
       }
-      if(!project.outputFileWithCounts) {
+      if(!outputFileWithCounts) {
         return res.status(400).send("Project has no output file with counts.");
       }
       let params: any = {
