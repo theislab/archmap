@@ -184,13 +184,13 @@ export default function ProjectBarCard({
     setOpen(!open);
   };
 
-  const fetchPresignedUrlAndDownload = async (projectId) => {
+  const fetchPresignedUrlAndDownload = async (project) => {
     setFetchingUrl(true);
     setFetchUrlError(null);
 
     try {
       const response = await axiosInstance.post('/file_download/results', {
-        id: projectId,
+        project: project,
       });
 
       
