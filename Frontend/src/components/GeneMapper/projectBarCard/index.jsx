@@ -190,7 +190,9 @@ export default function ProjectBarCard({
 
     try {
       const response = await axiosInstance.post('/file_download/results', {
-        project: project,
+        id: project._id,
+        status: project.status,
+        outputFileWithCounts: project.outputFileWithCounts
       });
 
       
