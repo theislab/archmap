@@ -67,7 +67,8 @@ function GeneMapperHome({ style, loggedIn }) {
             query_with_anchor: demos[j].query_with_anchor,
             clust_pres_score: demos[j].clust_pres_score,
             percentage_unknown: demos[j].percentage_unknown,
-            ratio: demos[j].ratio
+            ratio: demos[j].ratio,
+            outputFileWithCounts: demos[j].outputFileWithCounts
           };
         }
       }
