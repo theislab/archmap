@@ -12,7 +12,14 @@
               "properties": {
                 "id": {
                   "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "outputFileWithCounts": {
+                  "type": "string"
                 }
+
               },
               "required": ["id"],
               "additionalProperties": false
