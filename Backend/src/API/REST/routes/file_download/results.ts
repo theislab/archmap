@@ -11,30 +11,28 @@ export default function download_results_route() {
   let router = express.Router();
   router.post("/file_download/results", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/results");
-    let { id } = req.body.id;
-    let { status } = req.body.status;
-    let {outputFileWithCounts} = req.body.outputFileWithCounts;
+    let {outputFileWithCounts} = req.body;
 
     try {
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
-      const project = await ProjectService.getProjectById(id);
+      // const project = await ProjectService.getProjectById(id);
 
-      console.log("Project: ", project)
-      console.log("id: ", id)
-      if (!project) {
-        return res.status(404).send("Project not found.");
-      }
-      if (status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
-        return res.status(400).send("File not download ready.");
-      }
+      // console.log("Project: ", project)
+      // console.log("id: ", id)
+      // if (!project) {
+      //   return res.status(404).send("Project not found.");
+      // }
+      // if (status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
+      //   return res.status(400).send("File not download ready.");
+      // }
       if(!outputFileWithCounts) {
         return res.status(400).send("Project has no output file with counts.");
       }
       let params: any = {
         Bucket: process.env.S3_BUCKET_NAME!,
-        Key: project.outputFileWithCounts,
+        Key: outputFileWithCounts,
         Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
       };
       let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
