@@ -36,7 +36,8 @@ function GeneMapperResultView({ loggedIn = true }) {
             query_with_anchor: demo.query_with_anchor,
             clust_pres_score: demo.clust_pres_score,
             percentage_unknown: demo.percentage_unknown,
-            ratio: demo.ratio
+            ratio: demo.ratio,
+            outputFileWithCounts: demo.outputFileWithCounts
           };
 
         }
