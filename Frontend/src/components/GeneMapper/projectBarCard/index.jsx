@@ -184,7 +184,7 @@ export default function ProjectBarCard({
     setOpen(!open);
   };
 
-  const fetchPresignedUrlAndDownload = async (outputFileWithCounts) => {
+  const fetchPresignedUrlAndDownload = async (location) => {
     setFetchingUrl(true);
     setFetchUrlError(null);
 
@@ -192,7 +192,7 @@ export default function ProjectBarCard({
       const response = await axiosInstance.post('/file_download/results', {
         // id: projectId,
         // status: status,
-        outputFileWithCounts: outputFileWithCounts,
+        outputFileWithCounts: location,
 
       });
 
@@ -469,7 +469,7 @@ export default function ProjectBarCard({
 
                         </Modal>    
                         <Typography>
-                          {`Percentage query cells unknown: ${project.result}`}
+                          {`Percentage query cells unknown: ${project.percentage_unknown}`}
                           {<IconButton size="small" onClick={() => setMetric3InfoOpen(true)}>
                             <InfoOutlinedIcon fontSize="small" />
                           </IconButton>}
@@ -662,7 +662,7 @@ export default function ProjectBarCard({
                       </Snackbar>
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                            onClick={() => fetchPresignedUrlAndDownload(project.outputFileWithCounts)}
+                            onClick={() => fetchPresignedUrlAndDownload(project.location)}
                             disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
                           >
                             {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
