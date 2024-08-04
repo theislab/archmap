@@ -96,7 +96,7 @@ function TeamProjectList({
             clust_pres_score: demos[j].clust_pres_score,
             percentage_unknown: demos[j].percentage_unknown,
             ratio: demos[j].ratio,
-            outputFileWithCounts: demos[j].outputFileWithCounts
+            outputFileWithCounts: demos[j].outputFileWithCounts,
           };         
         }
       }

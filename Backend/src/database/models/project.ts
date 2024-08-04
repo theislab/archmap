@@ -26,7 +26,7 @@ export interface IProject extends Document {
   classifierId?: Schema.Types.ObjectId; 
   model_setup_anndata_args?: object;
   scviHubId?: string;
-  outputFileWithCounts?: string;
+  outputFileWithCounts: string;
 
   // file
   uploadId: string;
@@ -44,6 +44,7 @@ export interface IProject extends Document {
   clust_pres_score: number;
   query_with_anchor: number;
   percentage_unknown: number | string;
+  result: string;
 
   //error Message
   errorMessage: string;
@@ -116,6 +117,7 @@ const projectSchema = new Schema<IProject>({
   clust_pres_score: { type: Schema.Types.Number, require: false},
   query_with_anchor: { type: Schema.Types.Number, require: false},
   percentage_unknown: { type: Schema.Types.Number, require: false},
+  result: { type: String, require: false },
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },

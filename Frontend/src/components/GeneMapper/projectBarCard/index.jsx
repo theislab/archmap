@@ -469,7 +469,7 @@ export default function ProjectBarCard({
 
                         </Modal>    
                         <Typography>
-                          {`Percentage query cells unknown: ${project.percentage_unknown}`}
+                          {`Percentage query cells unknown: ${project.result}`}
                           {<IconButton size="small" onClick={() => setMetric3InfoOpen(true)}>
                             <InfoOutlinedIcon fontSize="small" />
                           </IconButton>}
