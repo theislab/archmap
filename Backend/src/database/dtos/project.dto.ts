@@ -13,6 +13,7 @@ export interface UpdateProjectDTO {
   clust_pres_score?: number;
   query_with_anchor?: number;
   percentage_unknown?: number;
+  result?: string;
 }
 
 /**
