@@ -17,12 +17,12 @@ export default function download_results_route() {
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
-      const project = await ProjectService.getProjectById(id);
+      // const project = await ProjectService.getProjectById(id);
 
-      console.log("Project: ", project)
-      if (!project) {
-        return res.status(404).send("Project not found.");
-      }
+      console.log("outputFileWithCounts: ", outputFileWithCounts)
+      // if (!project) {
+      //   return res.status(404).send("Project not found.");
+      // }
       // if (status != ProjectStatus[ProjectStatus.DOWNLOAD_READY]) {
       //   return res.status(400).send("File not download ready.");
       // }
