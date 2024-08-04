@@ -11,7 +11,7 @@ export default function download_results_route() {
   let router = express.Router();
   router.post("/file_download/results", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/results");
-    let {outputFileWithCounts} = req.body.outputFileWithCounts;
+    let {outputFileWithCounts} = req.body;
 
     try {
       if (!process.env.S3_BUCKET_NAME) {
