@@ -184,11 +184,20 @@ export default function ProjectBarCard({
     setOpen(!open);
   };
 
-  const fetchPresignedUrlAndDownload = async (location) => {
+  const fetchPresignedUrlAndDownload = async ([location,outputFileWithCounts]) => {
     setFetchingUrl(true);
     setFetchUrlError(null);
 
-    const outputFile = location.substr(56);
+    
+    let outputFile;
+
+    if (!outputFileWithCounts) {
+    // for demos
+      outputFile = location.substr(56);
+    } else {
+      outputFile = outputFileWithCounts;
+      
+    }
 
 
     try {
@@ -665,7 +674,7 @@ export default function ProjectBarCard({
                       </Snackbar>
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                            onClick={() => fetchPresignedUrlAndDownload(project.location)}
+                            onClick={() => fetchPresignedUrlAndDownload([project.location,project.outputFileWithCounts])}
                             disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
                           >
                             {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
