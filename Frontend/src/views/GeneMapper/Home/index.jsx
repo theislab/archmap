@@ -131,7 +131,6 @@ function GeneMapperHome({ style, loggedIn }) {
         // search for demos and set the information stored about them
         findDemos(data, demos);
         setDemoDatasets(demos);
-        setProjects(data);
 
         // check if indexedDB is available for caching the projects
         if (!window.indexedDB) {

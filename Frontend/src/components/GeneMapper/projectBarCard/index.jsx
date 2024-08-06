@@ -184,9 +184,13 @@ export default function ProjectBarCard({
     setOpen(!open);
   };
 
-  const fetchPresignedUrlAndDownload = async (location) => {
+  const fetchPresignedUrlAndDownload = async ([location,outputFileWithCounts]) => {
     setFetchingUrl(true);
     setFetchUrlError(null);
+
+    if (outputFileWithCounts) {
+      location = outputFileWithCounts
+    }
 
     try {
       const response = await axiosInstance.post('/file_download/results', {
@@ -662,7 +666,7 @@ export default function ProjectBarCard({
                       </Snackbar>
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
-                            onClick={() => fetchPresignedUrlAndDownload(project.location)}
+                            onClick={() => fetchPresignedUrlAndDownload([project.location,project.outputFileWithCounts])}
                             disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
                           >
                             {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
