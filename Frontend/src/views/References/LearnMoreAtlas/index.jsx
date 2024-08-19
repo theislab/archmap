@@ -79,24 +79,34 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {atlas?.species ? atlas.species : "Not available"}
         </Typography>
       </Box>
-      {/* Number of Samples/Individuals */}
+      {/* Number of Samples */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
-          Number of samples/individuals:
+          Number of samples:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
           {atlas?.samples ? atlas.samples : "Not available"}
         </Typography>
       </Box>
-      {/* Number of Studies/Datasets */}
+      {/* Number of Individuals */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
-          Number of Studies:
+          Number of individuals:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.studies ? atlas.studies : "Not available"}
+          {atlas?.individuals ? atlas.individuals : "Not available"}
+        </Typography>
+      </Box>
+      {/* Number of Datasets */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Number of datasets:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.datasets ? atlas.datasets : "Not available"}
         </Typography>
       </Box>
       {/* Cells in reference */}
@@ -132,7 +142,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
       {/* Atlas URL */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
-          URL:
+          Atlas URL:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
@@ -156,7 +166,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.atlas_batch_key ? atlas?.atlas_batch_key : "Not available"}
+          {atlas?.batch_key ? atlas?.batch_key : "Not available"}
         </Typography>
       </Box>
       {/* Create an Edit and Delete Button */}

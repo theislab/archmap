@@ -511,7 +511,7 @@ export default function ProjectBarCard({
 
                             <Box>
                               <Typography sx={{ width: '100%', maxWidth: '800px' }}>
-                                This score quantifies the percentage of cells that are labelled as "Unknown" during cell type label transfer. It is based on the Mahalanobius uncertainty score for each query cell.
+                                This score quantifies the percentage of cells that are labelled as "Unknown" during cell type label transfer. It is based on the Euclidean uncertainty score for each query cell.
                                 A query cell is classified as having an "Unknown" cell type if its Euclidean uncertainty score is above 0.5. 
                               </Typography>
                             </Box>
