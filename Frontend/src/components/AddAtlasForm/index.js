@@ -377,7 +377,7 @@ const AddAtlasForm = (props) => {
                   <Autocomplete
                     multiple
                     id="compatibleModels"
-                    options={modelsList}
+                    options={modelsList.filter((model) => model.name !== 'scPoli')}
                     getOptionLabel={(option) => option.name}
                     value={compatibleModels}
                     onChange={(event, newValue) => {
