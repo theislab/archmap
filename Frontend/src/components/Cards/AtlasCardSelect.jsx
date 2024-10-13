@@ -24,7 +24,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
  * @param learnMoreLink onHover button Learn More url
  */
 export default function AtlasCardSelect({
-  width = "100%", height = "100%", title, imgLink, modalities,
+  width = "100%", height = "100%", title, inrevision, imgLink, modalities,
   cellsInReference, species, mapLink, learnMoreLink, selected=false, 
   onSelect, atlasObject={},isLoading=true
 }) {
@@ -106,7 +106,10 @@ export default function AtlasCardSelect({
                 justifyContent: "space-evenly",
               }}
             >
+              {
+            !inrevision && (
               <OutlinedButtonSelect content="Select" onSelect={() => onSelect(atlasObject)} />
+            )}
               <OutlinedButtonSelect content="Learn More" onSelect={() => setAtlasInfoOpen(true)} />
             </Box>
           </Box>

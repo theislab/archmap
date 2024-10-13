@@ -81,11 +81,30 @@ function AtlasModelChoice({
       <Grid container spacing={2} width="100%" overflow="auto" wrap="nowrap">
         {
           atlases && atlases.map((a) => (
-            <Grid item height="330px">
+            <Grid item height="330px" position="relative">
+              {a.inrevision && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "20px",      // Adjusting to be inside the card from the top
+                    right: "15px",    // Adjusting to be inside the card from the right
+                    backgroundColor: "rgba(255, 0, 0, 0.8)",
+                    color: "white",
+                    padding: "5px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    borderRadius: "4px",
+                    zIndex: 1,
+                  }}
+                >
+                  In Revision
+                </div>
+              )}
               <AtlasCardSelect
                 width="225px"
                 height="97%"
                 title={a.name.includes("atlas") ? a.name.replace("atlas", "") : a.name} 
+                inrevision={a.inrevision}
                 modalities={a.modalities}
                 cellsInReference={a.numberOfCells}
                 species={a.species}

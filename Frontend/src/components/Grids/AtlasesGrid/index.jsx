@@ -21,6 +21,7 @@ const AtlasesGrid = ({
         <Grid key={atlas._id} item xs={12} sm={6} md={4} lg={3}>
           <AtlasCard
             atlasId={atlas._id}
+            inrevision={atlas.inrevision}
             imgLink={atlas.previewPictureURL}
             species={atlas.species}
             modalities={atlas.modalities}

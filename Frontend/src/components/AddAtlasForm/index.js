@@ -63,6 +63,7 @@ const AddAtlasForm = (props) => {
     classifiersList,
   } = props;
   const [atlasName, setAtlasName] = useState("");
+  const [inrevision, setRevisionStatus] = useState(false);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
   const [modalities, setModalities] = useState([]);
   const [compatibleModels, setCompatibleModels] = useState([]);
@@ -111,7 +112,8 @@ const AddAtlasForm = (props) => {
         compatibleModels.map((model) => model.name),
         selectedClassifier.name,
         url,
-        user._id
+        user._id,
+        inrevision
       );
 
       // Initialize atlas uploads
@@ -158,7 +160,7 @@ const AddAtlasForm = (props) => {
         }
       });
 
-      alert("File upload started successfully");
+      alert("File upload started successfully. Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
     } catch (error) {
       console.error("Error during form submission:", error);
       axiosInstance
@@ -177,6 +179,7 @@ const AddAtlasForm = (props) => {
       // Reset the form and state
       setIsLoading(false);
       setAtlasName("");
+      setRevisionStatus(true);
       setPreviewPictureURL("");
       setModalities([]);
       setCompatibleModels([]);
@@ -572,6 +575,10 @@ const AddAtlasForm = (props) => {
                         <Button
                           type="submit"
                           className={classes.addAtlasButton} // Apply the custom style
+                          value={inrevision}
+                          onChange={(e) => {
+                            setRevisionStatus(e.target.value);
+                          }}
                         >
                           Add Atlas
                         </Button>

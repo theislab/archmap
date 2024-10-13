@@ -18,7 +18,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
  * @param learnMoreLink onHover button Learn More url
  */
 export default function AtlasCard({
-  width = '100%', height = '100%', title, atlasId, imgLink, modalities,
+  width = '100%', height = '100%', title, atlasId, inrevision, imgLink, modalities,
   cellsInReference, species, learnMoreLink, onSelect, selected = false, disabled = false,
   isSearchPage = false
 }) {
@@ -112,11 +112,12 @@ export default function AtlasCard({
                 }}
               >
                 {
-                  !isSearchPage &&
+                  !isSearchPage && !inrevision && (
                   <OutlinedButton
                     content="Select"
                     onClick={onSelect}
                   />
+                  )
                 }
                 <OutlinedButton
                   content="Learn More"
