@@ -265,6 +265,7 @@ const upload_atlas = (): Router => {
         compatibleModels: req.body.compatibleModels,
         uploadedBy: req.body.userId,
         atlasUrl: req.body.atlasUrl,
+        inrevision: req.body.inrevision,
       }
 
       atlasDocument = await atlasModel.create(atlasData);

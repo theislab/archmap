@@ -14,4 +14,5 @@ export interface AddAtlasDTO {
     classifierUploadId?: string;
     vars?: string;
     counts?: string;
+    inrevision?: boolean;
 }

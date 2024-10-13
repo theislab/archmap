@@ -35,7 +35,7 @@ export default function upload_start_upload_for_atlas_route() {
         check_auth(),
         async (req: ExtRequest, res) => {
 
-            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl } = req.body;
+            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision } = req.body;
 
 
             const compatibleModels = req.body.compatibleModels || [];
@@ -59,6 +59,7 @@ export default function upload_start_upload_for_atlas_route() {
                     compatibleModels: compatibleModels,
                     uploadedBy: uploadedBy,
                     atlasUrl: atlasUrl,
+                    inrevision: inrevision
                 };
 
                 const atlas = await AtlasService.createAtlas(atlasToAdd);

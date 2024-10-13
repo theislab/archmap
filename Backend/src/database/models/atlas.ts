@@ -27,6 +27,7 @@ export interface IAtlas extends Document {
   encoderUploadPath: string;
   vars: string;
   counts: string;
+  inrevision: boolean;
   
 }
 
@@ -52,6 +53,11 @@ const atlasSchema = new Schema<IAtlas>(
     numberOfCells: {
       type: Number,
       required: true,
+    },
+
+    inrevision: {
+      type: Boolean,
+      required: false,
     },
 
     species: [
