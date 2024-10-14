@@ -159,7 +159,7 @@ const AddAtlasForm = (props) => {
         }
       });
 
-      alert("File upload started successfully.");//Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
+      alert("File upload started successfully. Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
     } catch (error) {
       console.error("Error during form submission:", error);
       axiosInstance

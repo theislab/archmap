@@ -249,6 +249,9 @@
                 },
                 "selectedClassifier": {
                   "type": "string"
+                },
+                "inrevision": {
+                  "type": "boolean"
                 }
               },
               "required": [
