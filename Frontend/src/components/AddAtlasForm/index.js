@@ -63,7 +63,7 @@ const AddAtlasForm = (props) => {
     classifiersList,
   } = props;
   const [atlasName, setAtlasName] = useState("");
-  const [inrevision, setRevisionStatus] = useState(false);
+  // const [inrevision, setRevisionStatus] = useState(false);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
   const [modalities, setModalities] = useState([]);
   const [compatibleModels, setCompatibleModels] = useState([]);
@@ -112,8 +112,7 @@ const AddAtlasForm = (props) => {
         compatibleModels.map((model) => model.name),
         selectedClassifier.name,
         url,
-        user._id,
-        inrevision
+        user._id
       );
 
       // Initialize atlas uploads
@@ -575,10 +574,10 @@ const AddAtlasForm = (props) => {
                         <Button
                           type="submit"
                           className={classes.addAtlasButton} // Apply the custom style
-                          value={inrevision}
-                          onChange={(e) => {
-                            setRevisionStatus(e.target.value);
-                          }}
+                          // value={inrevision}
+                          // onChange={(e) => {
+                          //   setRevisionStatus(e.target.value);
+                          // }}
                         >
                           Add Atlas
                         </Button>
