@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.87fac303.css",
-    "main.js": "/static/js/main.de23baf8.js",
+    "main.js": "/static/js/main.3a85cbdc.js",
     "static/media/Helmholtz_TheisLab_Naturecover_2021.png": "/static/media/Helmholtz_TheisLab_Naturecover_2021.2fd3d8155134e0ceff72.png",
     "static/media/visualisation.png": "/static/media/visualisation.af229bc14cc181c8eeb3.png",
     "static/media/allClusterLabels.png": "/static/media/allClusterLabels.06044daf3adcb3edddd0.png",
@@ -31,10 +31,10 @@
     "static/media/logo.svg": "/static/media/logo.bb7d89dbba3bd20d2238079f9a73c003.svg",
     "static/media/logo-white-mode.svg": "/static/media/logo-white-mode.0c5ca933dc14bd85825c8349b2e508ee.svg",
     "main.87fac303.css.map": "/static/css/main.87fac303.css.map",
-    "main.de23baf8.js.map": "/static/js/main.de23baf8.js.map"
+    "main.3a85cbdc.js.map": "/static/js/main.3a85cbdc.js.map"
   },
   "entrypoints": [
     "static/css/main.87fac303.css",
-    "static/js/main.de23baf8.js"
+    "static/js/main.3a85cbdc.js"
   ]
 }
