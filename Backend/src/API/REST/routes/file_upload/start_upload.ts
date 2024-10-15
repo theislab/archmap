@@ -10,12 +10,23 @@ import express from "express";
 import { validationMdw } from "../../middleware/validation";
 import { ProjectStatus } from "../../../../database/models/project";
 
+import rateLimit from 'express-rate-limit';
+
+const submissionLimitMiddleware = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 minute window
+  max: 2, // Limit each IP to 5 requests per `window` (per minute)
+  message: "Too many upload requests, please try again after a minute.",
+  headers: true, // Sends rate limit headers with the response
+});
+
 export default function upload_start_upload_route() {
   let router = express.Router();
   router.post(
     "/file_upload/start_upload",
+    submissionLimitMiddleware,
     validationMdw,
     check_auth(),
+    
     async (req: ExtRequest, res) => {
       let { projectName, atlasId, modelId, classifierId, fileName } = req.body;
       let scviHubId = req.body?.scviHubId;
