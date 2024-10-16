@@ -60,11 +60,8 @@ function UploadFilePage({
       const matchingDemos = demoDatasets.filter(
         (d) =>
           d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
-          d.model.toLowerCase() === selectedModel.name.toLowerCase() &&
-          d.classifier === "KNN" ||
-          d.atlas.toLowerCase() === selectedAtlas.name.toLowerCase() &&
-          d.model.toLowerCase() === selectedModel.name.toLowerCase() &&
-          d.classifier === selectedClassifier.name 
+          d.model.toLowerCase() === selectedModel.name.toLowerCase() 
+          // d.classifier === selectedClassifier.name 
           
           
       );
@@ -114,6 +111,8 @@ function UploadFilePage({
     return null; // file accepted
   };
 
+
+
   // Fetch the model_setup_anndata_args if the chosen atlas is an scvi hub atlas.
   useEffect(() => {
     const fetchData = async () => {
@@ -157,6 +156,14 @@ function UploadFilePage({
         },
       );
       history.push(path); // go back to GeneMapper home
+
+    }).catch((error) => {
+      if (error.response && error.response.status === 429) {
+        // Display the rate limit message to the user
+        alert("You have exceeded the project submission limit. Please try again in 15 min.");
+      } else {
+        console.error('Error creating project:', error);
+      }
     });
   }, [submissionProgress]);
 
