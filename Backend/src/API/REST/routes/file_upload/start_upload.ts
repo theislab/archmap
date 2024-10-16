@@ -13,9 +13,9 @@ import { ProjectStatus } from "../../../../database/models/project";
 import rateLimit from 'express-rate-limit';
 
 const submissionLimitMiddleware = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 minute window
-  max: 2, // Limit each IP to 5 requests per `window` (per minute)
-  message: "Too many upload requests, please try again after a minute.",
+  windowMs: 60 * 60 * 1000, // 1 hour window
+  max: 5, // Limit each IP to 10 requests per `window` (per hour)
+  message: "Too many upload requests, please try again after 60 minutes.",
   headers: true, // Sends rate limit headers with the response
 });
 

@@ -156,14 +156,6 @@ function UploadFilePage({
         },
       );
       history.push(path); // go back to GeneMapper home
-
-    }).catch((error) => {
-      if (error.response && error.response.status === 429) {
-        // Display the rate limit message to the user
-        alert("You have exceeded the project submission limit. Please try again in 15 min.");
-      } else {
-        console.error('Error creating project:', error);
-      }
     });
   }, [submissionProgress]);
 
