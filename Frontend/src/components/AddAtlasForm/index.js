@@ -64,7 +64,7 @@ const AddAtlasForm = (props) => {
   } = props;
   const [atlasName, setAtlasName] = useState("");
   // const [inrevision, setRevisionStatus] = useState(false);
-  const [previewPictureURL, setPreviewPictureURL] = useState("");
+  const [previewPictureURL, setPreviewPictureURL] = useState("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
   const [modalities, setModalities] = useState([]);
   const [compatibleModels, setCompatibleModels] = useState([]);
   const [numberOfCells, setNumberOfCells] = useState("");
@@ -179,7 +179,7 @@ const AddAtlasForm = (props) => {
       setIsLoading(false);
       setAtlasName("");
       setRevisionStatus(true);
-      setPreviewPictureURL("");
+      setPreviewPictureURL("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
       setModalities([]);
       setCompatibleModels([]);
       setNumberOfCells("");
@@ -358,7 +358,7 @@ const AddAtlasForm = (props) => {
                     onChange={(e) => {
                       setPreviewPictureURL(e.target.value);
                     }}
-                    required
+                    // required
                   />
                 </Grid>
                 <Grid item xs={8}>
