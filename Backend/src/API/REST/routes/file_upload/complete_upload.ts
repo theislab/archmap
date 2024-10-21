@@ -145,8 +145,8 @@ export default function upload_complete_upload_route() {
                 case "KNN":
                   classifier_type.kNN = true;
                   break;
-                //TODO: scpoli have to be added
-                // case "scPoli":
+                case "scPoli":
+                  classifier_type.Native = true;
                 case "scANVI":
                   classifier_type.Native = true;
                   break;
@@ -269,6 +269,7 @@ export default function upload_complete_upload_route() {
                     csv: false,
                     cxg: true,
                   },
+                  classifier_type: classifier_type,
                   query_data: query_path(project.id),
                   output_path: result_path(project.id),
                   async: false,
