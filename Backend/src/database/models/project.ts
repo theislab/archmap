@@ -24,6 +24,7 @@ export interface IProject extends Document {
   atlasId: ObjectId | string; // Allow multiple types: String or object id.
   modelId: ObjectId | string; // Allow multiple types: String or object id. 
   classifierId?: Schema.Types.ObjectId; 
+  classifierName?: string;
   model_setup_anndata_args?: object;
   scviHubId?: string;
   outputFileWithCounts: string;
@@ -97,6 +98,7 @@ const projectSchema = new Schema<IProject>({
   model_setup_anndata_args: {type: Object, require: false},
   scviHubId: {type: String, require: false},
   classifierId: { type: Schema.Types.ObjectId, require: false },
+  classifierName: { type: String, require: false },
   outputFileWithCounts: { type: String, require: false },
 
   // file

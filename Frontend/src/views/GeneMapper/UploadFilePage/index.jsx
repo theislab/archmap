@@ -132,13 +132,14 @@ function UploadFilePage({
     fetchData();
   }, [selectedAtlas]);
 
-  const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, scviHubId = "", model_setup_anndata_args = null}) => {
+  const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, classifierName, scviHubId = "", model_setup_anndata_args = null}) => {
     ProjectService.createProject({
       projectName: projectName,
       atlasId: atlasId,
       modelId: modelId,
       fileName: file.name,
       classifierId: classifierId,
+      classifierName: classifierName,
       scviHubId: scviHubId, 
       model_setup_anndata_args: model_setup_anndata_args,
     }).then((project) => {
@@ -190,6 +191,7 @@ function UploadFilePage({
           modelId: scviHubModel.model, 
           file: uploadedFile[0],
           classifierId: selectedClassifier._id,
+          classifierName: selectedClassifier.name,
           scviHubId: scviHubModel.scviHubId,
           model_setup_anndata_args: model_setup_anndata_args,
         });
@@ -200,7 +202,10 @@ function UploadFilePage({
           atlasId: selectedAtlas._id, 
           modelId: selectedModel._id,
           file: uploadedFile ? uploadedFile[0]: selectedDataset,
-          classifierId: selectedClassifier._id});
+          classifierId: selectedClassifier._id,
+          classifierName: selectedClassifier.name,
+        
+        });
       }
     }
   };

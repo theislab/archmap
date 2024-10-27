@@ -28,6 +28,7 @@ const ProjectService = MOCK_PROJECTS
         modelId,
         fileName,
         classifierId,
+        classifierName,
         scviHubId = null,
         model_setup_anndata_args = null,
       }) => {
@@ -41,6 +42,7 @@ const ProjectService = MOCK_PROJECTS
               modelId,
               fileName,
               classifierId,
+              classifierName,
               scviHubId,
               model_setup_anndata_args,
             }
@@ -54,6 +56,7 @@ const ProjectService = MOCK_PROJECTS
           modelId,
           fileName,
           classifierId,
+          classifierName
         });
 
         return data;

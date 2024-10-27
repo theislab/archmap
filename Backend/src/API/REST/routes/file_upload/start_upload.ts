@@ -29,6 +29,7 @@ export default function upload_start_upload_route() {
     
     async (req: ExtRequest, res) => {
       let { projectName, atlasId, modelId, classifierId, fileName } = req.body;
+      let classifierName = req.body?.classifierName;
       let scviHubId = req.body?.scviHubId;
       let model_setup_anndata_args = req.body?.model_setup_anndata_args;
       if (!process.env.S3_BUCKET_NAME) {
@@ -48,6 +49,7 @@ export default function upload_start_upload_route() {
             status: ProjectStatus.UPLOAD_PENDING,
             modelId: modelId,
             atlasId: atlasId,
+            classifierName: classifierName,
             model_setup_anndata_args: model_setup_anndata_args,
             scviHubId: scviHubId
           };
@@ -58,6 +60,7 @@ export default function upload_start_upload_route() {
             modelId,
             atlasId,
             classifierId,
+            classifierName: classifierName,
             fileName: String(fileName),
             uploadDate: new Date(),
             status: ProjectStatus.UPLOAD_PENDING,

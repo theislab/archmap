@@ -188,6 +188,9 @@
                 },
                 "classifierId": {
                   "type": "string"
+                },
+                "classifierName": {
+                  "type": "string"
                 }
               },
               "required": ["fileName", "projectName"],

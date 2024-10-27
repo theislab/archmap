@@ -228,8 +228,8 @@ function AtlasModelChoice({
                       || !compatibleClassifiers.map( // incomptaible model
                         (cc) => cc.toLowerCase(),
                       ).includes(cl.name.toLowerCase()) 
-                      || compatibleClassifiers.length === 0  
-                      || selectedAtlas?.scviAtlas} // scvi atlas
+                      || compatibleClassifiers.length === 0}  
+                      // || selectedAtlas?.scviAtlas} // scvi atlas
                     isLoading={isLoading}
                   />
                 </Grid>

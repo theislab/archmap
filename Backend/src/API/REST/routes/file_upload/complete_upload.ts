@@ -122,6 +122,8 @@ export default function upload_complete_upload_route() {
                 );
             }
 
+            
+
             //Create a token, which can be used later to update the projects status
             let { token: updateToken } = await ProjectUpdateTokenService.addToken({
               _projectId: project._id,
@@ -134,6 +136,30 @@ export default function upload_complete_upload_route() {
               kNN: false,
               Native: false,
             };
+
+            if (project.scviHubId) {
+              switch (project.classifierName) {
+                case "XGBoost":
+                    classifier_type.XGBoost = true;
+                    break;
+                  case "KNN":
+                    classifier_type.kNN = true;
+                    break;
+                  case "scPoli":
+                    classifier_type.Native = true;
+                  case "scANVI":
+                    classifier_type.Native = true;
+                    break;
+                  default:
+                    return res
+                      .status(500)
+                      .send(
+                        `Unknown classifier: classifier: ${JSON.stringify(classifier)}, name:${
+                          project.classifierName
+                        }`
+                      );
+                }
+              }
             let encoder_path;
             let classifier_path;
             // Optional classifier choice
@@ -166,7 +192,7 @@ export default function upload_complete_upload_route() {
               console.log("encoder_path is ", encoder_path);
               console.log("classifier_type is ", classifier_type);
             }
-
+            
             if (model && model.name == "scVI") {
               const modelAssociatedWithAtlas =
                 await AtlasModelAssociationService.getOneByAtlasAndModelId(atlas._id, model._id);
@@ -262,6 +288,7 @@ export default function upload_complete_upload_route() {
             } else {
               // Query info for scvi hub atlas
               if (project.scviHubId && project.model_setup_anndata_args) {
+
                 queryInfo = {
                   scviHubId: project.scviHubId,
                   model_setup_anndata_args: project.model_setup_anndata_args,
@@ -270,6 +297,7 @@ export default function upload_complete_upload_route() {
                     cxg: true,
                   },
                   classifier_type: classifier_type,
+                  classifier_path: classifier_path,
                   query_data: query_path(project.id),
                   output_path: result_path(project.id),
                   async: false,

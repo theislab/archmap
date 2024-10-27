@@ -28,6 +28,7 @@ export interface AddProjectDTO {
   modelId: ObjectId;
   atlasId: ObjectId;
   classifierId?: ObjectId;
+  classifierName?: string;
 }
 
 /**
@@ -44,4 +45,5 @@ export interface AddScviProjectDTO {
   scviHubId: string,
   model_setup_anndata_args: object,
   classifierId?: ObjectId,
+  classifierName?: string
 }
