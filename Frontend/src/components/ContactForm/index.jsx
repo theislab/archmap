@@ -81,7 +81,7 @@ export default function ContactForm() {
     }}>
       <Stack sx={{ width: "80%", margin: "auto" }} direction="column" spacing={4}>
         <Stack direction="row" justifyContent="space-between" spacing={2}>
-          <Input value={data.email} isRequired label="Email" errorHandler={error.email} helperText={error.email ? "Email cannot be empty!" : ""} onChangeEvent={onChange("email")} onBlurEvent={onBlur("email")} onFocusEvent={onFocus("email")} />
+          <Input value={data.email} isRequired label="Email" maxLength={50} errorHandler={error.email} helperText={error.email ? "Email cannot be empty!" : ""} onChangeEvent={onChange("email")} onBlurEvent={onBlur("email")} onFocusEvent={onFocus("email")} />
           <Input value={data.firstName} isRequired label="First Name" errorHandler={error.firstName} helperText={error.firstName ? "First Name cannot be empty!" : ""} onChangeEvent={onChange("firstName")} onBlurEvent={onBlur("firstName")} onFocusEvent={onFocus("firstName")} />
           <Input value={data.lastName} isRequired label="Last Name" errorHandler={error.lastName} helperText={error.lastName ? "Last Name cannot be empty!" : ""} onChangeEvent={onChange("lastName")} onBlurEvent={onBlur("lastName")} onFocusEvent={onFocus("lastName")} />
         </Stack>
