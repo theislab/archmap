@@ -119,6 +119,7 @@ const References = () => {
           handleAtlasSelection={handleAtlasSelection}
           selectedAtlas={selectedAtlas}
           selectedModel={selectedModel}
+          isSearchPage={true}
         />
       ) : null}
       {value === 1 ? (
