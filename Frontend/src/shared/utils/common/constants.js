@@ -5,7 +5,7 @@ const DEV_BACKEND_ADDRESS =
 const DEV_BACKEND_ADDRESS_LOCAL = "http://localhost:8050/v1";
 const PRODUCTION_BACKEND_ADDRESS =
   "https://custom-helix-329116.ey.r.appspot.com/v1";
-export const BACKEND_ADDRESS = PRODUCTION_BACKEND_ADDRESS;
+export const BACKEND_ADDRESS = DEV_BACKEND_ADDRESS;
 
 // const names for indexed DB variables
 // const names for indexed DB variables
@@ -13,10 +13,10 @@ export const INDEXED_DB_NAME = "indexedDB-archmap-projects";
 export const DB_VERSION = 1;
 
 // const variables for emails to send contact forms to
-// EmailJS Variables for: ronald.skorobogat@helmholtz-muenchen.de
-export const SERVICE_ID = "service_iv3tvs5";
-export const TEMPLATE_ID = "template_3336nfq";
-export const PUBLIC_KEY = "FVrX1Wu4qZfbJBQ5u";
+// EmailJS Variables for: archmap.bio@gmail.com
+export const SERVICE_ID = "service_tnw5sxe";
+export const TEMPLATE_ID = "template_06h0jwa";
+export const PUBLIC_KEY = "uc_E0DXj_zzz-otGd";
 
 export const JOB_QUEUE_UPDATE_INTERVAL = 5000;
 export const PROJECTS_UPDATE_INTERVAL = 5000;
