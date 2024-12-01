@@ -47,6 +47,36 @@
             "schema": {
               "type": "object",
               "properties": {
+                "uploadId": {
+                  "type": "string"
+                },
+                "keyPath": {
+                  "type": "string"
+                },
+                "uploadFileType": {
+                  "type": "string"
+                }
+              },
+              "required": ["uploadId","keyPath", "uploadFileType"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+
+"/trigger_cloud_run_job": {
+    "post": {
+      "summary": "Complete upload for Atlas",
+      "tags": ["Project"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
                 "parts": {
                   "type": "array",
                   "items": {

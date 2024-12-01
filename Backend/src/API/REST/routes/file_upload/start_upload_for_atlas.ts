@@ -11,6 +11,7 @@ import { AtlasUploadStatus, ProjectStatus } from "../../../../database/models/pr
 import ModelService from "../../../../database/services/model.service";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
+import axios from "axios";
 
 
 
@@ -263,3 +264,60 @@ export const complete_upload_for_atlas = () => {
         });
     return router;
 }
+
+
+const { GoogleAuth } = require('google-auth-library');
+
+const auth = new GoogleAuth({
+  scopes: 'https://www.googleapis.com/auth/cloud-platform',
+});
+
+export const trigger_cloud_run_job = () => {
+  let router = express.Router();
+
+  router.post('/trigger_cloud_run_job', async (req, res) => {
+    try {
+      // Extract the variables from the request body
+      const { uploadId, keyPath, uploadFileType } = req.body;
+
+      if (!uploadId || !keyPath || !uploadFileType) {
+        return res.status(400).json({ error: 'Missing gcsPath or data in request body.' });
+      }
+
+
+      const url = `${process.env.CLOUD_RUN_JOB}`;
+
+      // Authenticate with Google Cloud
+      const client = await auth.getClient();
+      const accessToken = await client.getAccessToken();  // Get the access token
+
+      // Trigger the job asynchronously with environment variables passed in the request
+      const response = await axios.post(
+        url,
+        {
+          environmentVariables: {
+            UPLOAD_ID: uploadId,
+            PATH: keyPath,
+            FILETYPE: uploadFileType, // Pass additional variables as needed
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Respond with success
+      res.status(200).send(`Job triggered successfully: ${response.data.name}`);
+    } catch (error) {
+      console.error('Error triggering job:', error.response ? error.response.data : error.message);
+      res.status(500).send('Failed to trigger job');
+    }
+  });
+
+  return router;
+};
+
+

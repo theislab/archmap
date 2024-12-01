@@ -205,17 +205,36 @@ export function finishAtlasUploads(chunkCount, promiseArray, latestUploadProgres
         console.log('Response received from the backend for uploadId, uploadFileType :', response, uploadId, uploadFileType);
         expectStatus(response, 'complete_upload', 200);
       })
-      .then(() => {
+      .then(async () => {
         console.log('Upload complete for uploadId, for uploadFileType:', uploadId, uploadFileType);
         onProgressUpdate(uploadId, { status: MULTIPART_UPLOAD_STATUS.COMPLETE });
+
+        // Trigger Cloud Run Job
+        await fetch(`${BACKEND_ADDRESS}/trigger_cloud_run_job`, {
+          method: 'POST',
+          headers: getAuthAndJsonHeader(),
+          body: JSON.stringify({
+            uploadId: uploadId, // Pass necessary data
+            keyPath: keyPath,
+            uploadFileType: uploadFileType,
+          }),
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to trigger Cloud Run job');
+          }
+          return response.json();
+        }).then(jobResponse => {
+          console.log('Cloud Run job triggered successfully:', jobResponse);
+        });
       })
-      .catch((err) => {
-        console.log('Error in completing upload for uploadId, for uploadFileType:', uploadId, uploadFileType);
-        console.log(err);
-        onProgressUpdate(uploadId, { status: MULTIPART_UPLOAD_STATUS.ERROR_FINISH });
-      });
-      
-    }).catch((err) => console.log(err)); 
+    .catch((err) => {
+      console.error('Error completing upload or triggering Cloud Run job:', err);
+      onProgressUpdate(uploadId, { status: MULTIPART_UPLOAD_STATUS.ERROR_FINISH });
+    });
+})
+.catch((err) => {
+  console.error('Error in finalizing uploads:', err);
+});
 }
 
 
