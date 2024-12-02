@@ -36,7 +36,8 @@
       }
     }
   },
-  "/file_upload/complete_upload_for_atlas": {
+
+  "/trigger_cloud_run_job": {
     "post": {
       "summary": "Complete upload for Atlas",
       "tags": ["Project"],
@@ -66,7 +67,7 @@
     }
   },
 
-"/trigger_cloud_run_job": {
+  "/file_upload/complete_upload_for_atlas": {
     "post": {
       "summary": "Complete upload for Atlas",
       "tags": ["Project"],
