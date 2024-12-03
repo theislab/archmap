@@ -12,6 +12,7 @@ import ModelService from "../../../../database/services/model.service";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 import axios from "axios";
+import { GoogleAuth } from "google-auth-library";
 
 
 
@@ -266,11 +267,8 @@ export const complete_upload_for_atlas = () => {
 }
 
 
-const { GoogleAuth } = require('google-auth-library');
 
-const auth = new GoogleAuth({
-  scopes: 'https://www.googleapis.com/auth/cloud-platform',
-});
+
 
 export const trigger_cloud_run_job = () => {
   let router = express.Router();
@@ -286,6 +284,9 @@ export const trigger_cloud_run_job = () => {
 
 
       const url = `${process.env.CLOUD_RUN_JOB}`;
+      const auth = new GoogleAuth({
+        scopes: 'https://www.googleapis.com/auth/cloud-platform',
+      });
 
       // Authenticate with Google Cloud
       const client = await auth.getClient();
