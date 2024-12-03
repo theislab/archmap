@@ -201,10 +201,10 @@ export function finishAtlasUploads(chunkCount, promiseArray, latestUploadProgres
           uploadFileType: uploadFileType
         }),
       })
-      .then((response) => {
-        console.log('Response received from the backend for uploadId, uploadFileType :', response, uploadId, uploadFileType);
-        expectStatus(response, 'complete_upload', 200);
-      })
+      // .then((response) => {
+      //   console.log('Response received from the backend for uploadId, uploadFileType :', response, uploadId, uploadFileType);
+      //   expectStatus(response, 'complete_upload', 200);
+      // })
       .then(async () => {
         console.log('Upload complete for uploadId, for uploadFileType:', uploadId, uploadFileType);
         onProgressUpdate(uploadId, { status: MULTIPART_UPLOAD_STATUS.COMPLETE });
