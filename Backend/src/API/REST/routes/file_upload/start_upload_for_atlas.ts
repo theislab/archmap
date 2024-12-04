@@ -275,20 +275,16 @@ export const trigger_cloud_run_job = () => {
         check_auth(),
         async (req: ExtRequest, res) => {
             console.log("run trigger")
-            let { uploadId, keyPath, uploadFileType  } = req.body;
-            console.log("request body: ", uploadId, keyPath, uploadFileType )
+            let { modelPath, atlasPath  } = req.body;
+            console.log("request body: ", modelPath, atlasPath )
 
             try {
-
-            if (!uploadId || !keyPath || !uploadFileType) {
-                return res.status(400).json({ error: 'Missing gcsPath or data in request body.' });
-            }
-
 
             const url = `${process.env.CLOUD_RUN_JOB}`;
             const auth = new GoogleAuth({
                 scopes: 'https://www.googleapis.com/auth/cloud-platform',
             });
+
 
             // Authenticate with Google Cloud
             const client = await auth.getClient();
@@ -298,12 +294,17 @@ export const trigger_cloud_run_job = () => {
             const response = await axios.post(
                 url,
                 {
-                environmentVariables: {
-                    UPLOAD_ID: uploadId,
-                    PATH: keyPath,
-                    FILETYPE: uploadFileType, // Pass additional variables as needed
-                },
-                },
+                    taskOverrides: {
+                      containers: [
+                        {
+                          env: [
+                            { name: "modelPath", value: modelPath },
+                            { name: "atlasPath", value: atlasPath },
+                          ]
+                        }
+                      ]
+                    }
+                  },
                 {
                 headers: {
                     Authorization: `Bearer ${accessToken.token}`,
