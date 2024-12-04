@@ -290,19 +290,24 @@ export const trigger_cloud_run_job = () => {
             const client = await auth.getClient();
             const accessToken = await client.getAccessToken();  // Get the access token
 
+            const envVars = {
+                modelPath: modelPath,
+                atlasPath: atlasPath,
+              };
+
             // Trigger the job asynchronously with environment variables passed in the request
             const response = await axios.post(
                 url,
                 {
-                    overrides: {
-                        containerOverrides: {
-                          env: [
-                            { name: "modelPath", value: modelPath },
-                            { name: "atlasPath", value: atlasPath },
-                          ]
-                      }
-                    }
-                  },
+                overrides: {
+                    containerOverrides: [
+                    {
+                        name: 'benchmark-atlas',
+                        env: Object.entries(envVars).map(([key, value]) => ({ name: key, value })),
+                    },
+                    ],
+                },
+                },
                 {
                 headers: {
                     Authorization: `Bearer ${accessToken.token}`,
