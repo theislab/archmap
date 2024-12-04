@@ -294,15 +294,13 @@ export const trigger_cloud_run_job = () => {
             const response = await axios.post(
                 url,
                 {
-                    taskOverrides: {
-                      containers: [
-                        {
+                    overrides: {
+                        containerOverrides: {
                           env: [
                             { name: "modelPath", value: modelPath },
                             { name: "atlasPath", value: atlasPath },
                           ]
-                        }
-                      ]
+                      }
                     }
                   },
                 {
