@@ -267,58 +267,60 @@ export const complete_upload_for_atlas = () => {
 }
 
 
-
-
-
 export const trigger_cloud_run_job = () => {
-  let router = express.Router();
+    let router = express.Router();
+    router.post(
+        "/file_upload/trigger_cloud_run_job",
+        validationMdw,
+        check_auth(),
+        async (req: ExtRequest, res) => {
+            console.log("run trigger")
+            let { uploadId, keyPath, uploadFileType  } = req.body;
+            console.log("request body: ", uploadId, keyPath, uploadFileType )
 
-  router.post('/trigger_cloud_run_job', async (req, res) => {
-    try {
-      // Extract the variables from the request body
-      const { uploadId, keyPath, uploadFileType } = req.body;
+            try {
 
-      if (!uploadId || !keyPath || !uploadFileType) {
-        return res.status(400).json({ error: 'Missing gcsPath or data in request body.' });
-      }
+            if (!uploadId || !keyPath || !uploadFileType) {
+                return res.status(400).json({ error: 'Missing gcsPath or data in request body.' });
+            }
 
 
-      const url = `${process.env.CLOUD_RUN_JOB}`;
-      const auth = new GoogleAuth({
-        scopes: 'https://www.googleapis.com/auth/cloud-platform',
-      });
+            const url = `${process.env.CLOUD_RUN_JOB}`;
+            const auth = new GoogleAuth({
+                scopes: 'https://www.googleapis.com/auth/cloud-platform',
+            });
 
-      // Authenticate with Google Cloud
-      const client = await auth.getClient();
-      const accessToken = await client.getAccessToken();  // Get the access token
+            // Authenticate with Google Cloud
+            const client = await auth.getClient();
+            const accessToken = await client.getAccessToken();  // Get the access token
 
-      // Trigger the job asynchronously with environment variables passed in the request
-      const response = await axios.post(
-        url,
-        {
-          environmentVariables: {
-            UPLOAD_ID: uploadId,
-            PATH: keyPath,
-            FILETYPE: uploadFileType, // Pass additional variables as needed
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken.token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+            // Trigger the job asynchronously with environment variables passed in the request
+            const response = await axios.post(
+                url,
+                {
+                environmentVariables: {
+                    UPLOAD_ID: uploadId,
+                    PATH: keyPath,
+                    FILETYPE: uploadFileType, // Pass additional variables as needed
+                },
+                },
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken.token}`,
+                    'Content-Type': 'application/json',
+                },
+                }
+            );
 
-      // Respond with success
-      res.status(200).send(`Job triggered successfully: ${response.data.name}`);
-    } catch (error) {
-      console.error('Error triggering job:', error.response ? error.response.data : error.message);
-      res.status(500).send('Failed to trigger job');
-    }
-  });
+            // Respond with success
+            res.status(200).send(`Job triggered successfully: ${response.data.name}`);
+            } catch (error) {
+            console.error('Error triggering job:', error.response ? error.response.data : error.message);
+            res.status(500).send('Failed to trigger job');
+            }
+        });
 
-  return router;
+    return router;
 };
 
 
