@@ -13,6 +13,7 @@ import AtlasModelAssociationService from "../../../../database/services/atlas_mo
 import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
+const {JobsClient} = require('@google-cloud/run').v2;
 
 
 
@@ -285,36 +286,23 @@ export const trigger_cloud_run_job = () => {
                 scopes: 'https://www.googleapis.com/auth/cloud-platform',
             });
 
+            const runClient = new JobsClient();
 
-            // Authenticate with Google Cloud
-            const client = await auth.getClient();
-            const accessToken = await client.getAccessToken();  // Get the access token
-
-            const envVars = {
-                modelPath: modelPath,
-                atlasPath: atlasPath,
+            const request = {
+                name: url,
+                overrides: {
+                  containerOverrides: {
+                    env: [
+                        { name: 'modelPath', value: modelPath },
+                        { name: 'atlasPath', value: atlasPath }],
+                  },
+                },
               };
 
-            // Trigger the job asynchronously with environment variables passed in the request
-            const response = await axios.post(
-                url,
-                {
-                overrides: {
-                    containerOverrides: [
-                    {
-                        name: 'benchmark-atlas',
-                        env: Object.entries(envVars).map(([key, value]) => ({ name: key, value })),
-                    },
-                    ],
-                },
-                },
-                {
-                headers: {
-                    Authorization: `Bearer ${accessToken.token}`,
-                    'Content-Type': 'application/json',
-                },
-                }
-            );
+            // Run request
+            const [operation] = await runClient.runJob(request);
+            const [response] = await operation.promise();
+            console.log(response);
 
             // Respond with success
             res.status(200).send(`Job triggered successfully: ${response.data.name}`);
@@ -326,5 +314,49 @@ export const trigger_cloud_run_job = () => {
 
     return router;
 };
+    
+
+
+
+            // // Authenticate with Google Cloud
+            // const client = await auth.getClient();
+            // const accessToken = await client.getAccessToken();  // Get the access token
+
+            // const envVars = {
+            //     modelPath: modelPath,
+            //     atlasPath: atlasPath,
+            //   };
+
+            // // Trigger the job asynchronously with environment variables passed in the request
+            // const response = await axios.post(
+            //     url,
+            //     {
+            //     overrides: {
+            //         containerOverrides: [
+            //         {
+            //             name: 'benchmark-atlas',
+            //             env: Object.entries(envVars).map(([key, value]) => ({ name: key, value })),
+            //         },
+            //         ],
+            //     },
+            //     },
+            //     {
+            //     headers: {
+            //         Authorization: `Bearer ${accessToken.token}`,
+            //         'Content-Type': 'application/json',
+            //     },
+            //     }
+            // );
+
+//             // Respond with success
+//             res.status(200).send(`Job triggered successfully: ${response.data.name}`);
+//             } catch (error) {
+//             console.error('Error triggering job:', error.response ? error.response.data : error.message);
+//             res.status(500).send('Failed to trigger job');
+//             }
+//         });
+
+//     return router;
+// };
 
 
