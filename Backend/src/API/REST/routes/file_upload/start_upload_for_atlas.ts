@@ -13,7 +13,7 @@ import AtlasModelAssociationService from "../../../../database/services/atlas_mo
 import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
-const {JobsClient} = require('@google-cloud/run').v2;
+import { CloudTasksClient } from "@google-cloud/tasks"
 
 
 
@@ -268,52 +268,110 @@ export const complete_upload_for_atlas = () => {
 }
 
 
+
+
 export const trigger_cloud_run_job = () => {
-    let router = express.Router();
-    router.post(
-        "/file_upload/trigger_cloud_run_job",
-        validationMdw,
-        check_auth(),
-        async (req: ExtRequest, res) => {
-            console.log("run trigger")
-            let { modelPath, atlasPath  } = req.body;
-            console.log("request body: ", modelPath, atlasPath )
+        let router = express.Router();
+        router.post(
+            "/file_upload/trigger_cloud_run_job",
+            validationMdw,
+            check_auth(),
+            async (req: ExtRequest, res) => {
+                console.log("run trigger")
+                let { modelPath, atlasPath  } = req.body;
+                console.log("request body: ", modelPath, atlasPath )
+    
+                try {
+    
+                    const url = `${process.env.CLOUD_RUN_JOB}`;
+                    const auth = new GoogleAuth({
+                        scopes: 'https://www.googleapis.com/auth/cloud-platform',
+                    });
 
-            try {
+                    const client = new CloudTasksClient()
 
-            const url = `${process.env.CLOUD_RUN_JOB}`;
-            const auth = new GoogleAuth({
-                scopes: 'https://www.googleapis.com/auth/cloud-platform',
-            });
+                    const project = `${process.env.GCP_PROJECT_ID}`;
+                    const location = "us-europe-west3"
+                    const queueName = `${process.env.TASK_QUEUE_NAME}`;
+                    const taskId = "task-benchmark" // example for item #123
+                    // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
 
-            const runClient = new JobsClient();
-
-            const request = {
-                name: url,
-                overrides: {
-                  containerOverrides: {
-                    env: [
-                        { name: 'modelPath', value: modelPath },
-                        { name: 'atlasPath', value: atlasPath }],
-                  },
-                },
-              };
-
-            // Run request
-            const [operation] = await runClient.runJob(request);
-            const [response] = await operation.promise();
-            console.log(response);
-
-            // Respond with success
-            res.status(200).send(`Job triggered successfully: ${response.data.name}`);
-            } catch (error) {
-            console.error('Error triggering job:', error.response ? error.response.data : error.message);
-            res.status(500).send('Failed to trigger job');
+                    await client.createTask({
+                        parent: client.queuePath(project, location, queueName),
+                        task: {
+                            name: client.taskPath(project, location, queueName, taskId),
+                            httpRequest: {
+                                httpMethod: "POST",
+                                url: url,
+                                oidcToken: {
+                                    serviceAccountEmail: "cloud-task-service-account@my-project.iam.gserviceaccount.com",
+                                    audience: url,
+                                },
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: Buffer.from(JSON.stringify({ overrides: { containerOverrides: [{ args: [`--model-path=${modelPath}`, `--atlas-path=${atlasPath}`] }]}})).toString("base64"),
+                            },
+                        },
+                    })
+                    res.status(202).json({ message: "Task creation initiated successfully." });
+                } catch (error) {
+                console.error("Error creating Cloud Task:", error);
+                res.status(500).json({ error: "Failed to trigger Cloud Run job." });
             }
-        });
+        }
+    );
 
     return router;
 };
+
+
+// export const trigger_cloud_run_job = () => {
+//     let router = express.Router();
+//     router.post(
+//         "/file_upload/trigger_cloud_run_job",
+//         validationMdw,
+//         check_auth(),
+//         async (req: ExtRequest, res) => {
+//             console.log("run trigger")
+//             let { modelPath, atlasPath  } = req.body;
+//             console.log("request body: ", modelPath, atlasPath )
+
+//             try {
+
+//             const url = `${process.env.CLOUD_RUN_JOB}`;
+//             const auth = new GoogleAuth({
+//                 scopes: 'https://www.googleapis.com/auth/cloud-platform',
+//             });
+
+//             const runClient = new JobsClient();
+
+//             const request = {
+//                 name: url,
+//                 overrides: {
+//                   containerOverrides: {
+//                     env: [
+//                         { name: 'modelPath', value: modelPath },
+//                         { name: 'atlasPath', value: atlasPath }],
+//                   },
+//                 },
+//               };
+
+//             // Run request
+//             const [operation] = await runClient.runJob(request);
+//             const [response] = await operation.promise();
+//             console.log(response);
+
+//             // Respond with success
+//             res.status(200).send(`Job triggered successfully: ${response.data.name}`);
+//             } catch (error) {
+//             console.error('Error triggering job:', error.response ? error.response.data : error.message);
+//             res.status(500).send('Failed to trigger job');
+//             }
+//         });
+
+//     return router;
+// };
     
 
 
