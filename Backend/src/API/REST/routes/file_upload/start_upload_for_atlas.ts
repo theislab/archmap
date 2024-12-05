@@ -294,6 +294,8 @@ export const trigger_cloud_run_job = () => {
                     const location = "europe-west3"
                     const queueName = `${process.env.TASK_QUEUE_NAME}`;
                     const taskId = "task-benchmark" // example for item #123
+                    const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
+
                     // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
 
                     await client.createTask({
@@ -304,7 +306,7 @@ export const trigger_cloud_run_job = () => {
                                 httpMethod: "POST",
                                 url: url,
                                 oidcToken: {
-                                    serviceAccountEmail: "cloud-task-service-account@my-project.iam.gserviceaccount.com",
+                                    serviceAccountEmail: serviceAccountEmail,
                                     audience: url,
                                 },
                                 headers: {
