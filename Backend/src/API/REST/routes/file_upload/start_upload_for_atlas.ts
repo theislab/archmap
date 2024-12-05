@@ -14,6 +14,7 @@ import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
 import { CloudTasksClient } from "@google-cloud/tasks"
+const { v4: uuidv4 } = require('uuid');
 
 
 
@@ -297,7 +298,8 @@ export const trigger_cloud_run_job = () => {
                     const project = `${process.env.GCP_PROJECT_ID}`;
                     const location = "europe-west3"
                     const queueName = `${process.env.TASK_QUEUE_NAME}`;
-                    const taskId = "task-benchmark" // example for item #123
+                    const uniqueTaskId = uuidv4(); // Generate a unique ID for the task
+                    const taskId = `task-${uniqueTaskId}`; // Prefix the ID for clarity
                     const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
 
                     const client = new CloudTasksClient({
