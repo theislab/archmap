@@ -291,7 +291,7 @@ export const trigger_cloud_run_job = () => {
                     const client = new CloudTasksClient()
 
                     const project = `${process.env.GCP_PROJECT_ID}`;
-                    const location = "us-europe-west3"
+                    const location = "europe-west3"
                     const queueName = `${process.env.TASK_QUEUE_NAME}`;
                     const taskId = "task-benchmark" // example for item #123
                     // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
