@@ -288,6 +288,10 @@ export const trigger_cloud_run_job = () => {
                         scopes: 'https://www.googleapis.com/auth/cloud-platform',
                     });
 
+                    
+                    // Get an OAuth token
+                    const oauthToken = await auth.getAccessToken();
+
                     // const client = new CloudTasksClient()
 
                     const project = `${process.env.GCP_PROJECT_ID}`;
@@ -316,11 +320,12 @@ export const trigger_cloud_run_job = () => {
                             httpRequest: {
                                 httpMethod: "POST",
                                 url: url,
-                                oidcToken: {
-                                    serviceAccountEmail: serviceAccountEmail,
-                                    audience: url,
-                                },
+                                // oidcToken: {
+                                //     serviceAccountEmail: serviceAccountEmail,
+                                //     audience: url,
+                                // },
                                 headers: {
+                                    "Authorization": `Bearer ${oauthToken}`,
                                     "Content-Type": "application/json",
                                 },
                                 body: Buffer.from(JSON.stringify({ overrides: { containerOverrides: [{ args: [`--model-path=${modelPath}`, `--atlas-path=${atlasPath}`] }]}})).toString("base64"),
