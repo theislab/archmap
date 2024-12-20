@@ -300,7 +300,6 @@ export const trigger_cloud_run_job = () => {
                     const queueName = `${process.env.TASK_QUEUE_NAME}`;
                     const uniqueTaskId = uuidv4(); // Generate a unique ID for the task
                     const taskId = `task-${uniqueTaskId}`; // Prefix the ID for clarity
-                    const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
 
                     const client = new CloudTasksClient({
                         projectId: project,
@@ -320,12 +319,12 @@ export const trigger_cloud_run_job = () => {
                         task: {
                             name: client.taskPath(project, location, queueName, taskId),
                             httpRequest: {
-                                httpMethod: "POST",
+                                httpMethod: "POST" as const,
                                 url: url,
-                                // oidcToken: {
-                                //     serviceAccountEmail: serviceAccountEmail,
-                                //     audience: url,
-                                // },
+                                oidcToken: {
+                                    serviceAccountEmail: process.env.TASK_QUEUE_EMAIL_ID,
+                                    audience: url,
+                                },
                                 headers: {
                                     "Authorization": `Bearer ${oauthToken}`,
                                     "Content-Type": "application/json",
