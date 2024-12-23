@@ -427,7 +427,7 @@ export const trigger_cloud_run_job = () => {
                 const project = `${process.env.GCP_PROJECT_ID}`;
                 const location = "europe-west3"
 
-                const jobId = 'my-job-id';
+                const jobId = 'benchmark-atlas';
                 const parent = `projects/${project}/locations/${location}`;
 
 
@@ -503,18 +503,18 @@ export const trigger_cloud_run_job = () => {
                 // const [response] = await operation.promise();
                 // console.log(response);
 
-                // Run request
-                try {
-                    const [operation] = await runClient.createJob(request);
-                    const [response] = await operation.promise();
-                    console.log(response);
-                } catch (error) {
-                    if (error.code === 6) {
-                      console.log('Job already exists. Skipping creation.');
-                    } else {
-                      throw error;
-                    }
-                }
+                // // Run request
+                // try {
+                //     const [operation] = await runClient.createJob(request);
+                //     const [response] = await operation.promise();
+                //     console.log(response);
+                // } catch (error) {
+                //     if (error.code === 6) {
+                //       console.log('Job already exists. Skipping creation.');
+                //     } else {
+                //       throw error;
+                //     }
+                // }
 
                 
                 
