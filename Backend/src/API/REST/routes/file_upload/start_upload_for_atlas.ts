@@ -427,8 +427,8 @@ export const trigger_cloud_run_job = () => {
                 const project = `${process.env.GCP_PROJECT_ID}`;
                 const location = "europe-west3"
 
-                const jobId = 'benchmark-atlas';
-                const parent = `projects/${project}/locations/${location}`;
+                // const jobId = 'benchmark-atlas';
+                const name = `projects/${project}/locations/${location}/jobs/benchmark-atlas`;
 
 
                 const url = `${process.env.CLOUD_RUN_JOB}`;
@@ -482,10 +482,14 @@ export const trigger_cloud_run_job = () => {
                 };
 
                 const request = {
-                    parent,
-                    job,
-                    jobId,
-                  };
+                    name,
+                  }
+
+                // const request = {
+                //     parent,
+                //     job,
+                //     jobId,
+                //   };
 
                 // const request = {
                 //     name: url,
@@ -524,7 +528,6 @@ export const trigger_cloud_run_job = () => {
 
                 res.status(200).send({
                 message: 'Cloud Run Job created and started successfully.',
-                jobId,
                 executionName: execution.name,
                 });
             } catch (error) {
