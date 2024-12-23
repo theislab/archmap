@@ -15,7 +15,7 @@ import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
 import { CloudTasksClient } from "@google-cloud/tasks"
 const { v4: uuidv4 } = require('uuid');
-
+const {JobsClient} = require('@google-cloud/run').v2;
 
 
 const createMultipartUploadAsync = async (params: S3.CreateMultipartUploadRequest): Promise<S3.CreateMultipartUploadOutput> => {
@@ -268,83 +268,6 @@ export const complete_upload_for_atlas = () => {
     return router;
 }
 
-
-
-
-export const trigger_cloud_run_job = () => {
-        let router = express.Router();
-        router.post(
-            "/file_upload/trigger_cloud_run_job",
-            validationMdw,
-            check_auth(),
-            async (req: ExtRequest, res) => {
-                console.log("run trigger")
-                let { modelPath, atlasPath  } = req.body;
-                console.log("request body: ", modelPath, atlasPath )
-    
-                try {
-    
-                    const url = `${process.env.CLOUD_RUN_JOB}`;
-                    const auth = new GoogleAuth({
-                        scopes: 'https://www.googleapis.com/auth/cloud-platform',
-                    });
-
-                    
-                    // Get an OAuth token
-                    const oauthToken = await auth.getAccessToken();
-
-                    // const client = new CloudTasksClient()
-
-                    const project = `${process.env.GCP_PROJECT_ID}`;
-                    const location = "europe-west3"
-                    const queueName = `${process.env.TASK_QUEUE_NAME}`;
-                    const uniqueTaskId = uuidv4(); // Generate a unique ID for the task
-                    const taskId = `task-${uniqueTaskId}`; // Prefix the ID for clarity
-
-                    const client = new CloudTasksClient({
-                        projectId: project,
-                        credentials: {
-                          client_email: process.env.TASK_QUEUE_EMAIL_ID,
-                          private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
-                        },
-                        fallback: true,
-                      });
-
-
-
-                    // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
-
-                    await client.createTask({
-                        parent: client.queuePath(project, location, queueName),
-                        task: {
-                            name: client.taskPath(project, location, queueName, taskId),
-                            httpRequest: {
-                                httpMethod: "POST" as const,
-                                url: url,
-                                oidcToken: {
-                                    serviceAccountEmail: process.env.TASK_QUEUE_EMAIL_ID,
-                                    audience: url,
-                                },
-                                headers: {
-                                    "Authorization": `Bearer ${oauthToken}`,
-                                    "Content-Type": "application/json",
-                                },
-                                body: Buffer.from(JSON.stringify({ overrides: { containerOverrides: [{ args: [`--model-path=${modelPath}`, `--atlas-path=${atlasPath}`] }]}})).toString("base64"),
-                            },
-                        },
-                    })
-                    res.status(202).json({ message: "Task creation initiated successfully." });
-                } catch (error) {
-                console.error("Error creating Cloud Task:", error);
-                res.status(500).json({ error: "Failed to trigger Cloud Run job." });
-            }
-        }
-    );
-
-    return router;
-};
-
-
 // export const trigger_cloud_run_job = () => {
 //     let router = express.Router();
 //     router.post(
@@ -358,39 +281,260 @@ export const trigger_cloud_run_job = () => {
 
 //             try {
 
-//             const url = `${process.env.CLOUD_RUN_JOB}`;
-//             const auth = new GoogleAuth({
-//                 scopes: 'https://www.googleapis.com/auth/cloud-platform',
-//             });
+//                 const url = `${process.env.CLOUD_RUN_JOB}`;
+//                 const auth = new GoogleAuth({
+//                     scopes: 'https://www.googleapis.com/auth/cloud-platform',
+//                 });
 
-//             const runClient = new JobsClient();
+                
+//                 // Get an OAuth token
+//                 const oauthToken = await auth.getAccessToken();
 
-//             const request = {
-//                 name: url,
-//                 overrides: {
-//                   containerOverrides: {
-//                     env: [
-//                         { name: 'modelPath', value: modelPath },
-//                         { name: 'atlasPath', value: atlasPath }],
-//                   },
-//                 },
-//               };
+//                 // const client = new CloudTasksClient()
 
-//             // Run request
-//             const [operation] = await runClient.runJob(request);
-//             const [response] = await operation.promise();
-//             console.log(response);
+//                 const project = `${process.env.GCP_PROJECT_ID}`;
+//                 const location = "europe-west3"
+//                 const queueName = `${process.env.TASK_QUEUE_NAME}`;
+//                 const uniqueTaskId = uuidv4(); // Generate a unique ID for the task
+//                 const taskId = `task-${uniqueTaskId}`; // Prefix the ID for clarity
 
-//             // Respond with success
-//             res.status(200).send(`Job triggered successfully: ${response.data.name}`);
+//                 const jobId = 'my-job-id';
+//                 const parent = `projects/${project}/locations/${location}`;
+
+
+
+
+//                 // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
+
+//                 await client.createTask({
+//                     parent: client.queuePath(project, location, queueName),
+//                     task: {
+//                         name: client.taskPath(project, location, queueName, taskId),
+//                         httpRequest: {
+//                             httpMethod: "POST" as const,
+//                             url: url,
+//                             oidcToken: {
+//                                 serviceAccountEmail: process.env.TASK_QUEUE_EMAIL_ID,
+//                                 audience: url,
+//                             },
+//                             headers: {
+//                                 "Authorization": `Bearer ${oauthToken}`,
+//                                 "Content-Type": "application/json",
+//                             },
+//                             body: Buffer.from(JSON.stringify({ overrides: { containerOverrides: [{ args: [`--model-path=${modelPath}`, `--atlas-path=${atlasPath}`] }]}})).toString("base64"),
+//                         },
+//                     },
+//                 })
+//                 res.status(202).json({ message: "Task creation initiated successfully." });
 //             } catch (error) {
-//             console.error('Error triggering job:', error.response ? error.response.data : error.message);
-//             res.status(500).send('Failed to trigger job');
+//             console.error("Error creating Cloud Task:", error);
+//             res.status(500).json({ error: "Failed to trigger Cloud Run job." });
+//         }
+//     }
+// );
+
+// return router;
+
+
+// export const trigger_cloud_run_job = () => {
+//         let router = express.Router();
+//         router.post(
+//             "/file_upload/trigger_cloud_run_job",
+//             validationMdw,
+//             check_auth(),
+//             async (req: ExtRequest, res) => {
+//                 console.log("run trigger")
+//                 let { modelPath, atlasPath  } = req.body;
+//                 console.log("request body: ", modelPath, atlasPath )
+    
+//                 try {
+    
+//                     const url = `${process.env.CLOUD_RUN_JOB}`;
+//                     const auth = new GoogleAuth({
+//                         scopes: 'https://www.googleapis.com/auth/cloud-platform',
+//                     });
+
+                    
+//                     // Get an OAuth token
+//                     const oauthToken = await auth.getAccessToken();
+
+//                     // const client = new CloudTasksClient()
+
+//                     const project = `${process.env.GCP_PROJECT_ID}`;
+//                     const location = "europe-west3"
+//                     const queueName = `${process.env.TASK_QUEUE_NAME}`;
+//                     const uniqueTaskId = uuidv4(); // Generate a unique ID for the task
+//                     const taskId = `task-${uniqueTaskId}`; // Prefix the ID for clarity
+
+//                     const client = new CloudTasksClient({
+//                         projectId: project,
+//                         credentials: {
+//                           client_email: process.env.TASK_QUEUE_EMAIL_ID,
+//                           private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
+//                         },
+//                         fallback: true,
+//                       });
+
+
+
+//                     // const url = "https://run.googleapis.com/v2/projects/my-project-id/locations/us-west1/jobs/process-item:run"
+
+//                     await client.createTask({
+//                         parent: client.queuePath(project, location, queueName),
+//                         task: {
+//                             name: client.taskPath(project, location, queueName, taskId),
+//                             httpRequest: {
+//                                 httpMethod: "POST" as const,
+//                                 url: url,
+//                                 oidcToken: {
+//                                     serviceAccountEmail: process.env.TASK_QUEUE_EMAIL_ID,
+//                                     audience: url,
+//                                 },
+//                                 headers: {
+//                                     "Authorization": `Bearer ${oauthToken}`,
+//                                     "Content-Type": "application/json",
+//                                 },
+//                                 body: Buffer.from(JSON.stringify({ overrides: { containerOverrides: [{ args: [`--model-path=${modelPath}`, `--atlas-path=${atlasPath}`] }]}})).toString("base64"),
+//                             },
+//                         },
+//                     })
+//                     res.status(202).json({ message: "Task creation initiated successfully." });
+//                 } catch (error) {
+//                 console.error("Error creating Cloud Task:", error);
+//                 res.status(500).json({ error: "Failed to trigger Cloud Run job." });
 //             }
-//         });
+//         }
+//     );
 
 //     return router;
 // };
+
+
+
+export const trigger_cloud_run_job = () => {
+    let router = express.Router();
+    router.post(
+        "/file_upload/trigger_cloud_run_job",
+        validationMdw,
+        check_auth(),
+        async (req: ExtRequest, res) => {
+            console.log("run trigger")
+            let { modelPath, atlasPath  } = req.body;
+            console.log("request body: ", modelPath, atlasPath )
+
+            try {
+
+                const project = `${process.env.GCP_PROJECT_ID}`;
+                const location = "europe-west3"
+
+                const jobId = 'my-job-id';
+                const parent = `projects/${project}/locations/${location}`;
+
+
+                const url = `${process.env.CLOUD_RUN_JOB}`;
+                const auth = new GoogleAuth({
+                    scopes: 'https://www.googleapis.com/auth/cloud-platform',
+                });
+
+                const runClient = new JobsClient();
+                const jobData = ['foo', 'bar'];
+
+                // the job struct
+                const job = {
+                    template: {
+                    // parallelism: 0,
+                    taskCount: jobData.length,
+                    template: {
+                        containers: [{
+                        args: jobData,
+                        image: process.env.IMAGE_URL,
+                        resources: {
+                            limits: {
+                            cpu: "1000m",
+                            memory: "512Mi"
+                            },
+                            cpuIdle: false,
+                            startupCpuBoost: false
+                        },
+                        // env: [
+                        //     {
+                        //     name: "A container secret",
+                        //     valueSource: {
+                        //         secretKeyRef: {
+                        //         secret: "SUPER_SECRET",
+                        //         version: "latest"
+                        //         }
+                        //     },
+                        //     values: "valueSource"
+                        //     }
+                        // ],
+                        }],
+                        timeout: {
+                        seconds: "1800",
+                        nanos: 0
+                        },
+                        // serviceAccount: 'my-custom-service-account@you.iam.gserviceaccount.com', // optional
+                        maxRetries: 3,
+                        retries: "maxRetries"
+                    }
+                    }
+                };
+
+                const request = {
+                    parent,
+                    job,
+                    jobId,
+                  };
+
+                // const request = {
+                //     name: url,
+                //     overrides: {
+                //       containerOverrides: {
+                //         env: [
+                //             { name: 'modelPath', value: modelPath },
+                //             { name: 'atlasPath', value: atlasPath }],
+                //       },
+                //     },
+                //   };
+
+                // Run request
+                // const [operation] = await runClient.runJob(request);
+                // const [response] = await operation.promise();
+                // console.log(response);
+
+                // Run request
+                try {
+                    const [operation] = await runClient.createJob(request);
+                    const [response] = await operation.promise();
+                    console.log(response);
+                } catch (error) {
+                    if (error.code === 6) {
+                      console.log('Job already exists. Skipping creation.');
+                    } else {
+                      throw error;
+                    }
+                }
+
+                
+                
+
+                const [execution] = await runClient.runJob(request);
+                console.log(`Job started successfully: ${execution.name}`);
+
+                res.status(200).send({
+                message: 'Cloud Run Job created and started successfully.',
+                jobId,
+                executionName: execution.name,
+                });
+            } catch (error) {
+                console.error('Error creating or running Cloud Run Job:', error);
+                res.status(500).send({error: error.message});
+            }
+        });
+
+
+    return router;
+};
     
 
 
