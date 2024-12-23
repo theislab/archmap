@@ -15,7 +15,7 @@ import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
 import { CloudTasksClient } from "@google-cloud/tasks"
 const { v4: uuidv4 } = require('uuid');
-const {JobsClient} = require('@google-cloud/run').v2;
+
 
 
 const createMultipartUploadAsync = async (params: S3.CreateMultipartUploadRequest): Promise<S3.CreateMultipartUploadOutput> => {
@@ -435,7 +435,8 @@ export const trigger_cloud_run_job = () => {
                 const auth = new GoogleAuth({
                     scopes: 'https://www.googleapis.com/auth/cloud-platform',
                 });
-
+                
+                const {JobsClient} = require('@google-cloud/run').v2;
                 const runClient = new JobsClient();
                 const jobData = ['foo', 'bar'];
 
