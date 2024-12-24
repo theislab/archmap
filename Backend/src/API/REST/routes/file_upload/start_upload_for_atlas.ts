@@ -515,6 +515,7 @@ export const trigger_cloud_run_job = () => {
                         nanos: 0
                         },
                         maxRetries: 3,
+                        serviceAccount: process.env.JOB_SERVICE_ACCOUNT,
                         retries: "maxRetries"
                     }
                     }
