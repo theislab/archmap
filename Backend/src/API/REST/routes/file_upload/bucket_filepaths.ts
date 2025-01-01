@@ -6,7 +6,7 @@ export function query_path(projectid: ObjectId | string): string {
 }
 
 export function result_path(projectid: ObjectId | string): string {
-  return `results/${projectid}/query_cxg.h5ad`;
+  return `results/${projectid}/query_model.tar.gz`;
 }
 export function result_model_path(projectid: ObjectId | string): string {
   return `results/${projectid}/model.pt`;

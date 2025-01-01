@@ -263,7 +263,7 @@ const update_project_results = (): Router => {
       } else if (project.status === ProjectStatus.DONE) {
         const updateStatus: UpdateProjectDTO = {
           status: ProjectStatus.DOWNLOAD_READY,
-          outputFileWithCounts: `results/${project._id}/query_cxg_with_count.h5ad`
+          outputFileWithCounts: `results/${project._id}/query_model.tar.gz`
         };
         await ProjectService.updateProjectById(project._id, updateStatus);
       } else {
