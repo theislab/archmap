@@ -456,109 +456,109 @@ export const complete_upload_for_atlas = () => {
 
 
 
-export const trigger_cloud_run_job = () => {
-    let router = express.Router();
-    router.post(
-        "/file_upload/trigger_cloud_run_job",
-        validationMdw,
-        check_auth(),
-        async (req: ExtRequest, res) => {
-            console.log("run trigger")
-            let { modelPath, atlasPath  } = req.body;
-            console.log("request body: ", modelPath, atlasPath )
+// export const trigger_cloud_run_job = () => {
+//     let router = express.Router();
+//     router.post(
+//         "/file_upload/trigger_cloud_run_job",
+//         validationMdw,
+//         check_auth(),
+//         async (req: ExtRequest, res) => {
+//             console.log("run trigger")
+//             let { modelPath, atlasPath  } = req.body;
+//             console.log("request body: ", modelPath, atlasPath )
 
-            try {
+//             try {
 
-                const project = `${process.env.GCP_PROJECT_ID}`;
-                const location = "europe-west3"
+//                 const project = `${process.env.GCP_PROJECT_ID}`;
+//                 const location = "europe-west3"
 
-                const jobId = 'benchmark-atlas';
-                const parent = `projects/${project}/locations/${location}`;
+//                 const jobId = 'benchmark-atlas';
+//                 const parent = `projects/${project}/locations/${location}`;
 
 
-                // const url = `${process.env.CLOUD_RUN_JOB}`;
-                // const auth = new GoogleAuth({
-                //     scopes: 'https://www.googleapis.com/auth/cloud-platform',
-                // });
+//                 // const url = `${process.env.CLOUD_RUN_JOB}`;
+//                 // const auth = new GoogleAuth({
+//                 //     scopes: 'https://www.googleapis.com/auth/cloud-platform',
+//                 // });
                 
-                const {JobsClient} = require('@google-cloud/run').v2;
-                const runClient = new JobsClient();
+//                 const {JobsClient} = require('@google-cloud/run').v2;
+//                 const runClient = new JobsClient();
 
-                // the job struct
-                const job = {
-                    template: {
-                    // parallelism: 0,
-                    template: {
-                        containers: [{
-                        image: process.env.IMAGE_URL,
-                        resources: {
-                            limits: {
-                            cpu: "1000m",
-                            memory: "512Mi"
-                            },
-                            cpuIdle: false,
-                            startupCpuBoost: false
-                        },
-                        env: [
-                            {
-                            name: "modelPath",
-                            values: modelPath
-                            },
-                            {
-                            name: "atlasPath",
-                            values: atlasPath
-                            }
-                        ],
-                        }],
-                        timeout: {
-                        seconds: "1800",
-                        nanos: 0
-                        },
-                        maxRetries: 3,
-                        // serviceAccount: process.env.JOB_SERVICE_ACCOUNT,
-                        retries: "maxRetries"
-                    }
-                    }
-                };
+//                 // the job struct
+//                 const job = {
+//                     template: {
+//                     // parallelism: 0,
+//                     template: {
+//                         containers: [{
+//                         image: process.env.IMAGE_URL,
+//                         resources: {
+//                             limits: {
+//                             cpu: "1000m",
+//                             memory: "512Mi"
+//                             },
+//                             cpuIdle: false,
+//                             startupCpuBoost: false
+//                         },
+//                         env: [
+//                             {
+//                             name: "modelPath",
+//                             values: modelPath
+//                             },
+//                             {
+//                             name: "atlasPath",
+//                             values: atlasPath
+//                             }
+//                         ],
+//                         }],
+//                         timeout: {
+//                         seconds: "1800",
+//                         nanos: 0
+//                         },
+//                         maxRetries: 3,
+//                         // serviceAccount: process.env.JOB_SERVICE_ACCOUNT,
+//                         retries: "maxRetries"
+//                     }
+//                     }
+//                 };
 
-                // const request = {
-                //     name,
-                //   }
+//                 // const request = {
+//                 //     name,
+//                 //   }
 
-                const request = {
-                    parent,
-                    job,
-                    jobId,
-                  };
+//                 const request = {
+//                     parent,
+//                     job,
+//                     jobId,
+//                   };
 
-                // const request = {
-                //     name: url,
-                //     overrides: {
-                //       containerOverrides: {
-                //         env: [
-                //             { name: 'modelPath', value: modelPath },
-                //             { name: 'atlasPath', value: atlasPath }],
-                //       },
-                //     },
-                //   };
+//                 // const request = {
+//                 //     name: url,
+//                 //     overrides: {
+//                 //       containerOverrides: {
+//                 //         env: [
+//                 //             { name: 'modelPath', value: modelPath },
+//                 //             { name: 'atlasPath', value: atlasPath }],
+//                 //       },
+//                 //     },
+//                 //   };
 
-                // Run request
-                // const [operation] = await runClient.runJob(request);
-                // const [response] = await operation.promise();
-                // console.log(response);
+//                 // Run request
+//                 // const [operation] = await runClient.runJob(request);
+//                 // const [response] = await operation.promise();
+//                 // console.log(response);
 
-                // Run request
-                try {
-                    const [operation] = await runClient.createJob(request);
-                    const [response] = await operation.promise();
-                    console.log(response);
-                } catch (error) {
-                    if (error.code === 6) {
-                      console.log('Job already exists. Skipping creation.');
-                    } else {
-                      throw error;
-                    }
-                }
+//                 // Run request
+//                 try {
+//                     const [operation] = await runClient.createJob(request);
+//                     const [response] = await operation.promise();
+//                     console.log(response);
+//                 } catch (error) {
+//                     if (error.code === 6) {
+//                       console.log('Job already exists. Skipping creation.');
+//                     } else {
+//                       throw error;
+//                     }
+//                 }
 
                 
                 
@@ -570,15 +570,15 @@ export const trigger_cloud_run_job = () => {
                 // message: 'Cloud Run Job created and started successfully.',
                 // executionName: execution.name,
                 // });
-            } catch (error) {
-                console.error('Error creating or running Cloud Run Job:', error);
-                res.status(500).send({error: error.message});
-            }
-        });
+//             } catch (error) {
+//                 console.error('Error creating or running Cloud Run Job:', error);
+//                 res.status(500).send({error: error.message});
+//             }
+//         });
 
 
-    return router;
-};
+//     return router;
+// };
     
 
 

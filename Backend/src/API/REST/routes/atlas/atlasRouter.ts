@@ -173,6 +173,45 @@ const get_scvi_atlases = (): Router => {
   return router;
 }
 
+
+const trigger_cloud_run_job = (): Router => {
+  const router = express.Router();
+
+  router.get("/trigger-job", async (req, res) => {
+    try {
+      const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
+
+      // Prepare the request headers
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`, // Ensure valid authentication if required
+      };
+
+      // Send the POST request
+      const response = await axios.post(endpoint, {}, { headers });
+
+      // Respond to the client with the result
+      res.status(200).json({
+        message: "Job triggered successfully",
+        data: response.data,
+      });
+    } catch (error) {
+      // Handle errors gracefully
+      console.error("Error triggering job:", error.message);
+
+      res.status(error.response?.status || 500).json({
+        message: "Failed to trigger the job",
+        error: error.response?.data || error.message,
+      });
+    }
+  });
+
+  // Return the router
+  return router;
+};
+
+
+
 const post_anndata_args = (): Router => {
   let router = express.Router();
 
@@ -609,4 +648,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args };
+export { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job };

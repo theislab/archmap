@@ -31,7 +31,7 @@ import {
   delete_temp_users,
 } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
-import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args } from "./routes/atlas/atlasRouter";
+import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job } from "./routes/atlas/atlasRouter";
 import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -107,7 +107,7 @@ import { get_classifier, get_classifiers } from "./routes/classifier/classifierR
 
 import { exec_task_queues } from "./routes/taskQueuesRouter.js"
 import createAllAssociations from "./routes/atlas_model/atlasModelRouter";
-import upload_start_upload_for_atlas_route, { complete_upload_for_atlas, trigger_cloud_run_job } from "./routes/file_upload/start_upload_for_atlas";
+import upload_start_upload_for_atlas_route, { complete_upload_for_atlas } from "./routes/file_upload/start_upload_for_atlas";
 
 // setup the websocket-server on top of the http_server
 export function express_routes(): Router {

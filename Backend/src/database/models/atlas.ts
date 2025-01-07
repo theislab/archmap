@@ -41,6 +41,7 @@ const atlasSchema = new Schema<IAtlas>(
     previewPictureURL: {
       type: String,
       required: false,
+      default: "https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png"
     },
 
     modalities: [
