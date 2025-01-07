@@ -180,15 +180,16 @@ const trigger_cloud_run_job = (): Router => {
   router.post("/trigger-job", async (req, res) => {
     try {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
+      console.log("endpoint", endpoint)
 
       // Prepare the request headers
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`, // Ensure valid authentication if required
-      };
+      // const headers = {
+      //   "Content-Type": "application/json",
+      //   Authorization: `Bearer ${process.env.ACCESS_TOKEN}`, // Ensure valid authentication if required
+      // };
 
       // Send the POST request
-      const response = await axios.post(endpoint, {}, { headers });
+      const response = await axios.post(endpoint, {});
 
       // Respond to the client with the result
       res.status(200).json({
