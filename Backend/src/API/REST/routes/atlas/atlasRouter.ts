@@ -175,9 +175,9 @@ const get_scvi_atlases = (): Router => {
 
 
 const trigger_cloud_run_job = (): Router => {
-  const router = express.Router();
+  let router = express.Router();
 
-  router.get("/trigger-job", async (req, res) => {
+  router.post("/trigger-job", async (req, res) => {
     try {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
 
@@ -204,11 +204,11 @@ const trigger_cloud_run_job = (): Router => {
         error: error.response?.data || error.message,
       });
     }
-  });
+  })
 
   // Return the router
   return router;
-};
+}
 
 
 
