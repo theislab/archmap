@@ -5,7 +5,8 @@ import {
   useHistory, useLocation,
   useRouteMatch,
 } from 'react-router-dom';
-import { Box, Stack } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
+import { TabCard } from 'components/GeneMapper/TabCard';
 import { TabGroup } from 'components/Tab';
 import Search from 'components/Search';
 import Filter from 'components/ReferencePageComponents/Filter';
@@ -14,7 +15,7 @@ import Breadcrumb from 'components/Breadcrumb';
 import LoginForm from 'components/LoginForm';
 import RegistrationForm from 'components/RegistrationForm';
 import Footer from 'components/Footer';
-
+import ScviAtlasService from 'shared/services/ScviAtlas.service';
 import ModelsService from 'shared/services/Models.service';
 import AtlasService from 'shared/services/Atlas.service';
 import AtlasesGrid from 'components/Grids/AtlasesGrid';
@@ -25,11 +26,17 @@ import ReferenceRoutes from 'components/ReferencePageComponents/ReferenceRoutes'
 import { useAuth } from 'shared/context/authContext';
 import { LoginContext } from 'shared/context/loginContext';
 import PasswordForgetForm from 'components/PasswordForgetForm';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+// import TriggerJobService from 'shared/services/TriggerJob.service';
 
 const tmpObj = [
   {
-    label: 'ATLASES',
+    label: 'CORE ATLASES',
     path: '/references/atlases',
+  },
+  {
+    label: 'SCVI-HUB ATLASES',
+    path: '/references/scvi-atlases',
   },
   {
     label: 'MODELS',
@@ -40,6 +47,8 @@ const tmpObj = [
 const References = () => {
   const [value, setValue] = useState(0);
   const [selectedAtlas, setSelectedAtlas] = useState(null);
+  const [scviHubAtlases, setScviHubAtlases] = useState(null);
+  const [selectedAtlasInfo, setSelectedAtlasInfo] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [mapperVisible, setMapperVisible] = useState(false);
   const { search, pathname } = useLocation();
@@ -84,6 +93,9 @@ const References = () => {
     AtlasService.getAtlases()
       .then((newAtlases) => setAtlases(newAtlases))
       .catch((err) => console.log(err));
+    ScviAtlasService.getAtlases().then((atlases) => {
+      setScviHubAtlases(atlases);
+    })
     ModelsService.getModels()
       .then((newModels) => setModels(newModels))
       .catch((err) => console.log(err));
@@ -93,14 +105,65 @@ const References = () => {
     updateQueryParams('keyword', value);
   };
 
+
+
+  // const handleTriggerJob = async () => {
+  //   try {
+
+  //     req.body.modelname = modelname;
+  //     req.body.modelpath = "655b580a0c9e68011f3a9ea3";
+  //     req.body.atlaspath = "628668716f930d8b7f44d575";
+
+  //     const response = await TriggerJobService.TriggerJob(req.body);
+  //     console.log("Job triggered successfully:", response.data);
+
+  //     // Show a success message to the user
+  //     alert("Job triggered successfully!");
+  //   } catch (error) {
+  //     console.error("Error triggering job:", error.message);
+  //     alert("Failed to trigger the job. Please try again.");
+  //   }
+  // };
+
+  
+
+
+
   const onValueChange = (newValue) => {
     setValue(newValue);
     searchedKeywordChangeHandler('');
   };
 
+
+  // Function to handle click and open a new page
+  const handleAtlasClick = (atlas, num) => {
+
+    console.log(`Model ID: ${atlas.modelIds[num].scviHubId}`)
+    
+    // for (let j = 0; j < atlas.scviHubId.length; j++) {
+    //   console.log(`  Model: ${atlas.modelIds[j]}`);}
+    // atlas.modelIds[1]
+
+    const atlasLink = `https://huggingface.co/${atlas.modelIds[num].scviHubId}`; // Replace with a default link if no link exists
+    window.open(atlasLink, '_blank'); // Open the link in a new tab
+  };
+
+  const getButtonName = (atlas, num) => {
+    console.log(`Model: ${atlas.compatibleModels[num]}`)
+    // Logic to determine button name based on atlas data
+    return `${atlas.compatibleModels[num]}`;
+  };
+
   const handleMap = () => {
     history.push(`/genemapper/create?atlas=${selectedAtlas._id}&model=${selectedModel._id}`);
     setMapperVisible(false);
+  };
+
+  const [expandedAtlas, setExpandedAtlas] = useState(null); // Track which atlas is expanded
+
+  const handleAtlasClick2 = (atlas) => {
+    // Toggle the expanded state for the clicked atlas
+    setExpandedAtlas((prev) => (prev === atlas.name ? null : atlas.name));
   };
 
   useEffect(() => {
@@ -122,13 +185,110 @@ const References = () => {
           isSearchPage={true}
         />
       ) : null}
-      {value === 1 ? (
+      {value === 1 && (
+        <Box
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {scviHubAtlases.map((a) => (
+            <Box
+              key={a.name}
+              style={{
+                flex: '1 0 auto',
+                maxWidth: '33.33%',
+                minWidth: '33.33%',
+                padding: '8px',
+                textAlign: 'center',
+              }}
+            >
+              <TabCard
+                style={{
+                  color: 'black',
+                }}
+                height="50px"
+                data={{
+                  text: a.name[0].toUpperCase() + a.name.substring(1),
+                  isAtlas: true,
+                }}
+                isLoading={false}
+                handleOnClick={() => handleAtlasClick2(a)}
+              />
+
+              {expandedAtlas === a.name && (
+                <Box>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleAtlasClick(a, 0)}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      margin: '8px 0',
+                      position: 'relative',
+                      paddingRight: '30px', // Add space for the icon
+                    }}
+                  >
+                    {getButtonName(a, 0)}
+                    <OpenInNewIcon
+                      sx={{
+                        fontSize: 16,
+                        color: 'text.secondary',
+                        position: 'absolute',
+                        bottom: 4,
+                        right: 8,
+                      }}
+                    />
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleAtlasClick(a, 1)}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      margin: '8px 0',
+                      position: 'relative',
+                      paddingRight: '30px', // Add space for the icon
+                    }}
+                  >
+                    {getButtonName(a, 1)}
+                    <OpenInNewIcon
+                      sx={{
+                        fontSize: 16,
+                        color: 'text.secondary',
+                        position: 'absolute',
+                        bottom: 4,
+                        right: 8,
+                      }}
+                    />
+                  </Button>
+                  {/* <Button
+                    variant="outlined"
+                    // color="secondary"
+                    onClick={() => handleAtlasClick(a,1)}
+                    style={{ display: 'block', margin: '8px 0' }}
+                  >
+                     {getButtonName(a,1)}
+                  </Button> */}
+                </Box>
+              )}
+            </Box>
+          ))}
+        </Box>
+      )}
+
+      {value === 2 ? (
         <ModelsGrid
           models={applyModelFilters(models, searchedKeyword, searchParams, selectedAtlas)}
           path={path}
           handleModelSelection={handleModelSelection}
           selectedModel={selectedModel}
           compatibleModels={selectedAtlas && selectedAtlas.compatibleModels}
+          isSearchPage={true}
         />
       ) : null}
     </Box>

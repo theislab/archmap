@@ -49,7 +49,6 @@ function GeneMapperState({ path }) {
   const handleModelSelection = (newModel) => {
     setSelectedModel(newModel);
     let {batch_key, cell_type_key} = selectedAtlas
-    let var_names = selectedAtlas.vars
     let counts = selectedAtlas.counts
     newModel.requirements = [
       <Typography>Ensure your data is in <strong>h5ad</strong> format.</Typography>,
@@ -63,9 +62,7 @@ function GeneMapperState({ path }) {
       }} display="inline"> here </Typography></a> for more info.</Typography>,
       <Typography>Ensure {counts} are saved in .X of the query AnnData object.</Typography>,
       <Typography>Batch/Study information is mandatory and should be labeled as <strong>“batch”</strong>.</Typography>,
-      <Typography>If your query has existing cell type information, this should be labeled as <strong>“user_cell_type"</strong>.</Typography>,
-      <Typography>Ensure <strong>{var_names}</strong> are stored in the var_names AnnData object attribute of your query.</Typography>,
-
+      <Typography>If your query has existing cell type information, this should be labeled as <strong>“user_cell_type"</strong>.</Typography>
 
     ];
     // if (newModel.name === 'scVI') {

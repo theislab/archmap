@@ -108,7 +108,7 @@ export default function AtlasCardSelect({
             >
               {
             !inrevision && (
-              <OutlinedButtonSelect content="Select" onSelect={() => onSelect(atlasObject)} />
+              <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect={() => onSelect(atlasObject)} />
             )}
               <OutlinedButtonSelect content="Learn More" onSelect={() => setAtlasInfoOpen(true)} />
             </Box>

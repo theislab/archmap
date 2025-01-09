@@ -114,7 +114,7 @@ export default function AtlasCard({
                 {
                   !isSearchPage && !inrevision && (
                   <OutlinedButton
-                    content="Select"
+                    content={selected ? "Deselect" : "Select"}
                     onClick={onSelect}
                   />
                   )

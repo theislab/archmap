@@ -161,7 +161,7 @@ async function uploadChunksForAtlas(chunkCount, remaining, selectedFile, uploadI
 }
 
 
-export function finishAtlasUploads(chunkCount, promiseArray, latestUploadProgress, onProgressUpdate, uploadId, uploadFileType){
+export function finishAtlasUploads(chunkCount, promiseArray, latestUploadProgress, onProgressUpdate, uploadId, uploadFileType, keyPath){
 
   // check for the values if they are not null
   if (!chunkCount || !promiseArray || !latestUploadProgress || !onProgressUpdate || !uploadId || !uploadFileType) {
@@ -201,31 +201,15 @@ export function finishAtlasUploads(chunkCount, promiseArray, latestUploadProgres
           uploadFileType: uploadFileType
         }),
       })
-      // .then((response) => {
-      //   console.log('Response received from the backend for uploadId, uploadFileType :', response, uploadId, uploadFileType);
-      //   expectStatus(response, 'complete_upload', 200);
-      // })
+      .then((response) => {
+        console.log('Response received from the backend for uploadId, uploadFileType :', response, uploadId, uploadFileType);
+        expectStatus(response, 'complete_upload', 200);
+      })
       .then(async () => {
         console.log('Upload complete for uploadId, for uploadFileType:', uploadId, uploadFileType);
         onProgressUpdate(uploadId, { status: MULTIPART_UPLOAD_STATUS.COMPLETE });
 
-        // Trigger Cloud Run Job
-        await fetch(`${BACKEND_ADDRESS}/trigger_cloud_run_job`, {
-          method: 'POST',
-          headers: getAuthAndJsonHeader(),
-          body: JSON.stringify({
-            uploadId: uploadId, // Pass necessary data
-            keyPath: keyPath,
-            uploadFileType: uploadFileType,
-          }),
-        }).then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to trigger Cloud Run job');
-          }
-          return response.json();
-        }).then(jobResponse => {
-          console.log('Cloud Run job triggered successfully:', jobResponse);
-        });
+        
       })
     .catch((err) => {
       console.error('Error completing upload or triggering Cloud Run job:', err);
@@ -338,7 +322,7 @@ export async function uploadAtlasAndModelFiles(uploadId, selectedFile, keyPath, 
         }, promiseArray, uploadFileType);
         onProgressUpdate(uploadId, { status: Status.UPLOAD_FINISHING });
         console.log("latestUploadProgress before finishUploads for the upload id :", uploadId , latestUploadProgress, latestUploadProgress[uploadId]);
-        finishAtlasUploads(chunkCount, promiseArray, latestUploadProgress[uploadId], onProgressUpdate, uploadId, uploadFileType);
+        finishAtlasUploads(chunkCount, promiseArray, latestUploadProgress[uploadId], onProgressUpdate, uploadId, uploadFileType, keyPath);
 
     }else{
       console.error("Progress state found for uploadId:", uploadId, "but it is in error state");

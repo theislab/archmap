@@ -87,7 +87,7 @@ export const ModelCard = ({ width = "100%", height = "100%", title, description,
               gap: '5px',
             }}
           >
-            {!isSearchPage && <OutlinedButton content="Select" onClick={onSelect} />}
+            {!isSearchPage && <OutlinedButton content={selected ? "Deselect" : "Select"} onClick={onSelect} />}
             <OutlinedButton content="Learn More" link={learnMoreLink} onClick={(e) => e.stopPropagation()} />
             {
               disabled &&

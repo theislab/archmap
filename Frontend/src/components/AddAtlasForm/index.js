@@ -14,12 +14,14 @@ import { makeStyles } from "@mui/styles";
 import { Select, MenuItem } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import AtlasUploadService from "shared/services/AtlasUpload.service";
+// import TriggerJobService from 'shared/services/TriggerJob.service';
 import {
   initUploadProgress,
   useUploadProgress,
 } from "shared/context/UploadProgressContext";
 import { uploadAtlasAndModelFiles } from "shared/services/UploadLogic";
 import {
+  BACKEND_ADDRESS,
   MULTIPART_UPLOAD_STATUS,
   UPLOAD_FILE_TYPE,
 } from "shared/utils/common/constants";
@@ -53,6 +55,33 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
+function getAuthAndJsonHeader() {
+  return {
+    auth: localStorage.getItem('jwt'),
+    'content-type': 'application/json',
+  };
+}
+
+// const handleTriggerJob = async (modelPath, atlasPath) => {
+//   try {
+
+//     req.body.bucket = process.env.S3_BUCKET_NAME;
+//     req.body.modelpath = modelPath;
+//     req.body.atlaspath = atlasPath;
+
+//     const response = await TriggerJobService.TriggerJob(req.body);
+//     console.log("Job triggered successfully:", response.data);
+
+//     // Show a success message to the user
+//     alert("Job triggered successfully!");
+//   } catch (error) {
+//     console.error("Error triggering job:", error.message);
+//     alert("Failed to trigger the job. Please try again.");
+//   }
+// };
+
+
+
 const AddAtlasForm = (props) => {
   const {
     setIsAddModalOpen,
@@ -63,8 +92,10 @@ const AddAtlasForm = (props) => {
     classifiersList,
   } = props;
   const [atlasName, setAtlasName] = useState("");
-  // const [inrevision, setRevisionStatus] = useState(false);
-  const [previewPictureURL, setPreviewPictureURL] = useState("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
+  // const [batchKey, setBatchKey] = useState("");
+  // const [cellTypeKey, setCellTypeKey] = useState("");
+  const [inrevision, setRevisionStatus] = useState(false);
+  const [previewPictureURL, setPreviewPictureURL] = useState("");
   const [modalities, setModalities] = useState([]);
   const [compatibleModels, setCompatibleModels] = useState([]);
   const [numberOfCells, setNumberOfCells] = useState("");
@@ -105,6 +136,8 @@ const AddAtlasForm = (props) => {
       // Assuming AtlasUploadService.createAtlas is an async function
       const { atlas, models } = await AtlasUploadService.createAtlas(
         atlasName,
+        // batchKey,
+        // cellTypeKey,
         previewPictureURL,
         modalities,
         numberOfCells,
@@ -160,6 +193,45 @@ const AddAtlasForm = (props) => {
       });
 
       alert("File upload started successfully. Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
+
+      // // Wait until all uploads are complete before triggering Cloud Run job
+      // const uploadIds = [
+      //   atlas.atlasUploadId,
+      // ];
+
+      // const checkUploadsComplete = async () => {
+      //   console.log("atlas upload complete. Triggering job")
+      //   for (const model of models) {
+      //     await handleTriggerJob(model.modelUploadPath, atlas.atlasUploadPath);
+      //   }
+      // }
+
+      //  setTimeout(checkUploadsComplete, 1000); //5 min
+
+
+
+      // // Poll the upload progress to check when all uploads are complete
+      // const checkUploadsComplete = async () => {
+      //   const allUploadsComplete = uploadIds.every((uploadId) => {
+      //     return uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING;
+      //   });
+
+      //   if (allUploadsComplete) {
+      //     console.log("atlas upload complete. Triggering job")
+      //     // All uploads are complete, trigger the Cloud Run job
+      //     for (const model of models) {
+      //       await triggerCloudRunJob(model.modelUploadPath, atlas.atlasUploadPath);
+      //     }
+      //   } else {
+      //     console.log("atlas upload NOT complete. Delaying cloud run job")
+      //     // If any upload is not complete, check again after a short delay
+      //     setTimeout(checkUploadsComplete, 1000);
+      //   }
+      // };
+
+      // // Start checking the upload progress
+      // checkUploadsComplete();
+
     } catch (error) {
       console.error("Error during form submission:", error);
       axiosInstance
@@ -178,6 +250,8 @@ const AddAtlasForm = (props) => {
       // Reset the form and state
       setIsLoading(false);
       setAtlasName("");
+      // setBatchKey("");
+      // setCellTypeKey("");
       setRevisionStatus(true);
       setPreviewPictureURL("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
       setModalities([]);
@@ -338,7 +412,7 @@ const AddAtlasForm = (props) => {
                     fullWidth
                     margin="dense"
                     variant="outlined"
-                    label="Atlas Name to display"
+                    label="Atlas name to display"
                     id="name"
                     value={atlasName}
                     onChange={(e) => {
@@ -347,6 +421,34 @@ const AddAtlasForm = (props) => {
                     required
                   />
                 </Grid>
+                {/* <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Batch covariate key"
+                    id="batch"
+                    value={batchKey}
+                    onChange={(e) => {
+                      setBatchKey(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Cell type key"
+                    id="celltype"
+                    value={cellTypeKey}
+                    onChange={(e) => {
+                      setCellTypeKey(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid> */}
                 <Grid item xs={8}>
                   <TextField
                     fullWidth
@@ -574,10 +676,10 @@ const AddAtlasForm = (props) => {
                         <Button
                           type="submit"
                           className={classes.addAtlasButton} // Apply the custom style
-                          // value={inrevision}
-                          // onChange={(e) => {
-                          //   setRevisionStatus(e.target.value);
-                          // }}
+                          value={inrevision}
+                          onChange={(e) => {
+                            setRevisionStatus(e.target.value);
+                          }}
                         >
                           Add Atlas
                         </Button>

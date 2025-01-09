@@ -132,6 +132,31 @@ function UploadFilePage({
     fetchData();
   }, [selectedAtlas]);
 
+  const handleScviHubAtlas = (atlas) => {
+    console.log(`Model ID: ${atlas}`);
+    console.log(`Model: ${selectedModel}`);
+  
+    let modelNum = -1; // Initialize modelNum with a default invalid value
+    for (let j = 0; j < atlas.compatibleModels.length; j++) {
+      if (atlas.compatibleModels[j].toLowerCase() === selectedModel.name.toLowerCase()) {
+        modelNum = j; // Set modelNum to the index where the match occurs
+        break; // Exit loop once a match is found
+      }
+    }
+  
+    // If modelNum is still -1, meaning no match was found
+    if (modelNum === -1) {
+      console.log('No compatible model found.');
+      // Provide a default link or behavior
+      const defaultLink = 'https://example.com/default'; // Replace with your default link
+      window.open(defaultLink, '_blank');
+    } else {
+      const atlasLink = `https://huggingface.co/${atlas.modelIds[modelNum].scviHubId}`;
+      window.open(atlasLink, '_blank'); // Open the link in a new tab
+    }
+  };
+
+
   const createProject = useCallback(({projectName, atlasId, modelId, file, classifierId, classifierName, scviHubId = "", model_setup_anndata_args = null}) => {
     ProjectService.createProject({
       projectName: projectName,
@@ -241,45 +266,75 @@ function UploadFilePage({
           <Stack direction="column" >
             <Typography variant="h5" fontWeight="bold" pb="1em">Your Choice</Typography>
             <Stack direction="row" spacing={2} sx={{ paddingBottom: '1.5em' }}>
-              <Card
-                width="50%"
-                children={(
-                  <Stack direction="column" height={180} >
-                    <Typography variant="caption" fontWeight="bold">Atlas</Typography>
-                    <Typography gutterBottom variant="h6" fontWeight="bold">{selectedAtlas.name .includes("atlas") ? selectedAtlas.name.replace("atlas", "") : selectedAtlas.name}</Typography>
-                    <Typography
-                      gutterBottom
-                      variant="caption"
-                      sx={{
-                        overflow: '-moz-hidden-unscrollable', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '200px',
-                      }}
-                    >
-                      {`Modalities:  ${selectedAtlas.modalities}`}
-                    </Typography>
-                    <Typography  gutterBottom variant="caption">{`Cells in Reference:  ${selectedAtlas.numberOfCells}`}</Typography>
-                    <Typography gutterBottom variant="caption">{`Species: ${selectedAtlas.species}`}</Typography>
+            <Card width="50%">
+              <Stack direction="column" height={180}>
+                <Typography variant="caption" fontWeight="bold">Atlas</Typography>
+                <Typography gutterBottom variant="h6" fontWeight="bold">
+                  {selectedAtlas.name.includes("atlas") ? selectedAtlas.name.replace("atlas", "") : selectedAtlas.name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="caption"
+                  sx={{
+                    overflow: '-moz-hidden-unscrollable', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '200px',
+                  }}
+                >
+                  {selectedAtlas.scviAtlas ? (
+                    // If scviHub Atlas, run this function or show relevant content
                     <Button
                       size="small"
                       variant="outlined"
-                      onClick={() => setAtlasInfoOpen(true)}
+                      onClick={() => {
+                        // Your function to handle scviHub Atlas
+                        handleScviHubAtlas(selectedAtlas);
+                      }}
                       sx={{
                         borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
                       }}
                     >
-                      Learn more
+                      Learn More
                     </Button>
+                  ) : (// If it's not an scviHub Atlas, show the modalities and other information
+                  <>
+                    <Stack direction="column" spacing={1}>
+                      <Typography gutterBottom variant="caption">
+                        {`Modalities: ${selectedAtlas.modalities}`}
+                      </Typography>
+                      <Typography gutterBottom variant="caption">
+                        {`Cells in Reference: ${selectedAtlas.numberOfCells}`}
+                      </Typography>
+                      <Typography gutterBottom variant="caption">
+                        {`Species: ${selectedAtlas.species}`}
+                      </Typography>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => setAtlasInfoOpen(true)}
+                        sx={{
+                          borderRadius: 100, width: '55%', ml: '50%', mb: '-1em', mt: '0.5em', textTransform: 'none',
+                        }}
+                      >
+                        Learn more
+                      </Button>
+                    </Stack>
                     <Modal
                       isOpen={atlasInfoOpen}
                       setOpen={setAtlasInfoOpen}
                       children={(
                         <Container>
-                          <LearnMoreAtlasComponent id={selectedAtlas._id} onClick={() => history.push(`/references/atlases/${selectedAtlas._id}/visualization`)} />
+                          <LearnMoreAtlasComponent
+                            id={selectedAtlas._id}
+                            onClick={() => history.push(`/references/atlases/${selectedAtlas._id}/visualization`)}
+                          />
                         </Container>
                       )}
                     />
-                  </Stack>
-                )}
-              />
+                  </>
+                  )}
+                </Typography>
+              </Stack>
+            </Card>
+
               <Card
                 width="50%"
                 children={(
@@ -373,6 +428,7 @@ function UploadFilePage({
               <Typography style={{color: 'red'}} variant="h5" fontWeight="bold" pb="1em">Query Upload Requirements!!</Typography>
               <Card>
                 <Box sx={{ flexDirection: 'column', minHeight: '6em' }}>
+                  
                   {requirements
                     ? requirements.map((text, index) => (
                       <Box key={text} sx={{ display: 'flex' }}>
@@ -384,7 +440,7 @@ function UploadFilePage({
                     ))
                     : (
                       <Typography variant="body2" gutterBottom>
-                        There are no consequent requirements!
+                        There are no consequent requirements!!
                       </Typography>
                     )}
                 </Box>
@@ -516,6 +572,6 @@ function UploadFilePage({
       </Stack>
     </Box>
   );
-}
+};
 
 export default UploadFilePage;

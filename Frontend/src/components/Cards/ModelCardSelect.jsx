@@ -114,7 +114,7 @@ export const ModelCardSelect = ({
                 transform: "translate(-50%, -50%)"
               }}  
               >
-              {!disabled && <OutlinedButtonSelect content="Select" onSelect={() => onSelect(modelObject)}/>}
+              {!disabled && <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect={() => onSelect(modelObject)}/>}
               {hover && <OutlinedButtonSelect content="Learn More" onSelect={() => setModelInfoOpen(true)} disabled={disabled}/>}
             </Box>
           </Box>
