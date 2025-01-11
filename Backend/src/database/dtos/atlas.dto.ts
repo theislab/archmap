@@ -15,4 +15,5 @@ export interface AddAtlasDTO {
     vars?: string;
     counts?: string;
     inrevision?: boolean;
+    isPrivate?: boolean;
 }

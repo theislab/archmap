@@ -123,7 +123,22 @@ const get_allAtlases = (): Router => {
         return atlas; // Return the atlas object for existing atlases
       }));
       
-      const filteredAtlases = atlases_filtered.filter(atlas => atlas !== null);
+      const filteredAtlases1 = atlases_filtered.filter(atlas => atlas !== null);
+
+      // filter out private atlases
+      // Check for logged-in user
+      const loggedInUserId = req.user_id; // Assuming req.user.id contains the logged-in user's ID
+
+      // Filter atlases
+      const filteredAtlases = filteredAtlases1.filter(atlas => {
+          if (atlas.isPrivate) {
+              // Exclude if atlas is private and either no user is logged in or the IDs don't match
+              return loggedInUserId && atlas.uploadedBy === loggedInUserId;
+          }
+          // Include public atlases
+          return true;
+      });
+      // check user == atlas.uploadedBy 
       return res.status(200).json(filteredAtlases);
     } catch (err) {
       console.error("Error accessing the atlases!");
@@ -306,6 +321,7 @@ const upload_atlas = (): Router => {
         uploadedBy: req.body.userId,
         atlasUrl: req.body.atlasUrl,
         inrevision: req.body.inrevision,
+        isPrivate: req.body.isPrivate,
       }
 
       atlasDocument = await atlasModel.create(atlasData);

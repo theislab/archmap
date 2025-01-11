@@ -286,6 +286,9 @@
                 },
                 "inrevision": {
                   "type": "boolean"
+                },
+                "isPrivate": {
+                  "type": "boolean"
                 }
               },
               "required": [

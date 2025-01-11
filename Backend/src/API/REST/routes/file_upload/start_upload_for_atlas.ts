@@ -14,6 +14,7 @@ import { CompleteMultipartUploadRequest } from "aws-sdk/clients/s3";
 import axios from "axios";
 import { GoogleAuth } from "google-auth-library";
 import { CloudTasksClient } from "@google-cloud/tasks"
+import { getTypeParameterOwner } from "typescript";
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -39,7 +40,7 @@ export default function upload_start_upload_for_atlas_route() {
         check_auth(),
         async (req: ExtRequest, res) => {
 
-            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision } = req.body;
+            let { name, previewPictureURL, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision, isPrivate } = req.body;
 
 
             const compatibleModels = req.body.compatibleModels || [];
@@ -63,7 +64,9 @@ export default function upload_start_upload_for_atlas_route() {
                     compatibleModels: compatibleModels,
                     uploadedBy: uploadedBy,
                     atlasUrl: atlasUrl,
-                    inrevision: inrevision
+                    inrevision: inrevision,
+                    isPrivate: isPrivate,
+                    
                 };
 
                 const atlas = await AtlasService.createAtlas(atlasToAdd);
