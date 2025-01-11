@@ -53,3 +53,49 @@ export default function check_auth() {
 
   return router;
 }
+
+
+export function optional_auth() {
+  let router = express.Router();
+
+  router.use((req: ExtRequest, res, next) => {
+    req.is_authenticated = false;
+
+    const jwtToken =
+      req.header("auth") || req.header("Authorization")?.split(" ")[1] || "";
+
+    if (jwtToken) {
+      try {
+        jwt.verify(jwtToken, JWT_SECRET, async function (err, decoded) {
+          if (err || !decoded || !decoded.id) {
+            console.log("Invalid or expired JWT:", err?.name);
+            return next(); // Continue without authentication
+          }
+
+          try {
+            const user = await UserService.getUserById(decoded.id);
+            if (user) {
+              req.is_authenticated = true;
+              req.user_id = decoded.id;
+              req.email = user.email;
+              req.is_administrator = user.isAdministrator;
+              req.is_verified = user.isEmailVerified;
+            }
+          } catch (dbErr) {
+            console.error("Error fetching user from database:", dbErr);
+          }
+
+          next();
+        });
+      } catch (e) {
+        console.error("Error verifying JWT:", e);
+        next(); // Continue without authentication
+      }
+    } else {
+      next(); // No token provided, continue without authentication
+    }
+  });
+
+  return router;
+}
+
