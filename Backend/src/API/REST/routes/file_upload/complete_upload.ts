@@ -237,6 +237,7 @@ export default function upload_complete_upload_route() {
                 classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
+                output_cxg_path: result_cxg_path(project.id),
                 encoder_path: encoder_path,
                 model_path: model_path(modelAssociatedWithAtlas?._id),
                 model_id: `${modelAssociatedWithAtlas?._id}`,
@@ -269,6 +270,7 @@ export default function upload_complete_upload_route() {
                 classifier_path: classifier_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
+                output_cxg_path: result_cxg_path(project.id),
                 encoder_path: encoder_path,
                 model_id: `${modelAssociatedWithAtlas?._id}`,
 
@@ -302,6 +304,7 @@ export default function upload_complete_upload_route() {
                   classifier_path: classifier_path,
                   query_data: query_path(project.id),
                   output_path: result_path(project.id),
+                  output_cxg_path: result_cxg_path(project.id),
                   async: false,
                   webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                   webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
