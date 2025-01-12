@@ -13,7 +13,7 @@ import { AddProjectDTO, AddScviProjectDTO, UpdateProjectDTO } from "../../../../
 import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import { DeleteObjectRequest } from "aws-sdk/clients/s3";
 import { ProjectStatus } from "../../../../database/models/project";
-import { query_path, result_model_path, result_path } from "../file_upload/bucket_filepaths";
+import { query_path, result_model_path, result_path, result_cxg_path } from "../file_upload/bucket_filepaths";
 import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
 const get_projects = (): Router => {
@@ -251,7 +251,7 @@ const update_project_results = (): Router => {
       if (project.status === ProjectStatus.PROCESSING_PENDING) {
         let params: any = {
           Bucket: process.env.S3_BUCKET_NAME!,
-          Key: result_path(project._id),
+          Key: result_cxg_path(project._id),
           Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
         };
         let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
