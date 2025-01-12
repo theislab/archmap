@@ -30,6 +30,7 @@ import {
   query_path,
   result_model_path,
   result_path,
+  result_cxg_path,
 } from "./bucket_filepaths.js";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service.js";
 
@@ -209,6 +210,7 @@ export default function upload_complete_upload_route() {
                 encoder_path: encoder_path,
                 query_data: query_path(project.id),
                 output_path: result_path(project.id),
+                output_cxg_path: result_cxg_path(project.id),
                 model_path: model_path(modelAssociatedWithAtlas?._id),
                 model_id: `${modelAssociatedWithAtlas?._id}`,
                 reference_data: `atlas/${project.atlasId}/data.h5ad`,
