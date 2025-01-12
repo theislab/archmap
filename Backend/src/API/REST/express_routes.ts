@@ -31,7 +31,7 @@ import {
   delete_temp_users,
 } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
-import { get_atlas, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job } from "./routes/atlas/atlasRouter";
+import { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job } from "./routes/atlas/atlasRouter";
 import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -194,6 +194,7 @@ export function express_routes(): Router {
 
   // atlas routes
   router.use(get_atlas());
+  router.use(get_user_atlases());
   router.use(get_atlas_visualization());
   router.use(get_allAtlases());
   router.use(upload_atlas());
