@@ -39,11 +39,11 @@ export const LearnMoreModelComponent = ({ onClick, id, isMap = false, isSearchPa
       </Box>
 
       <Typography sx={{ width: '100%', maxWidth: '800px' }}>Description: {model?.description}</Typography>
-      {
+      {/* {
         // isSelect
         isMap && !isSearchPage &&
         <CustomButton sx={{ marginTop: "1em", padding: "0.5em 2em 0.5em 2em" }} type="primary" onClick={() => onClick(model)}>Select</CustomButton>
-      }
+      } */}
     </Box>
   );
 }

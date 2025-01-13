@@ -5,7 +5,7 @@ const { default: axiosInstance } = require("./axiosInstance");
 
 
 const AtlasUploadService = {
-    createAtlas: async (name, previewPictureURL, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId ) => {
+    createAtlas: async (name, previewPictureURL, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId, isPrivate ) => {
       // Prepare JSON object for request
       
       const atlasData = {
@@ -18,6 +18,7 @@ const AtlasUploadService = {
         selectedClassifier: selectedClassifier,
         atlasUrl: atlasUrl,
         uploadedBy: String(userId),
+        isPrivate: isPrivate,
         inrevision: true
         
       };

@@ -95,6 +95,7 @@ const AddAtlasForm = (props) => {
   // const [batchKey, setBatchKey] = useState("");
   // const [cellTypeKey, setCellTypeKey] = useState("");
   const [inrevision, setRevisionStatus] = useState(false);
+  const [isPrivate, setPrivacyStatus] = useState(true);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
   const [modalities, setModalities] = useState([]);
   const [compatibleModels, setCompatibleModels] = useState([]);
@@ -145,7 +146,8 @@ const AddAtlasForm = (props) => {
         compatibleModels.map((model) => model.name),
         selectedClassifier.name,
         url,
-        user._id
+        user._id,
+        isPrivate,
       );
 
       // Initialize atlas uploads
@@ -253,6 +255,7 @@ const AddAtlasForm = (props) => {
       // setBatchKey("");
       // setCellTypeKey("");
       setRevisionStatus(true);
+      setPrivacyStatus(true);
       setPreviewPictureURL("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
       setModalities([]);
       setCompatibleModels([]);
@@ -540,6 +543,20 @@ const AddAtlasForm = (props) => {
                     value={species}
                     onChange={(e) => {
                       setSpecies(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Set atlas to private (Set to 'true' to disable public access, else 'false')"
+                    id="private"
+                    value={isPrivate}
+                    onChange={(e) => {
+                      setPrivacyStatus(e.target.value);
                     }}
                     required
                   />

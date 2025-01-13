@@ -170,7 +170,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         </Typography>
       </Box>
       {/* Create an Edit and Delete Button */}
-      {user && user.isAdministrator && 
+      {user && user.isAdministrator && user._id === atlas?.uploadedBy &&
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary"  onClick={ () => setIsEditModalOpen(true) }>Edit</Button>
         <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary" onClick={ () => setIsDeleteModalOpen(true) } >Delete</Button>
@@ -182,7 +182,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
       </Box>
 
 
-      {
+      {/* {
         isMap
         &&
         !isSearchPage
@@ -190,35 +190,35 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         <>
           <CustomButton sx={{ marginTop: '1em', padding: "0.5em 2em 0.5em 2em" }} type="primary" onClick={() => onClick(atlas)}>Select</CustomButton>
         </>
-      }
+      } */}
     </Box>
     
-    <EditAtlasModal atlasDetailsForm= {atlas} setAtlasDetailsForm={setAtlas} isEditModalOpen={isEditModalOpen} setIsEditModalOpen={setIsEditModalOpen}></EditAtlasModal>
-    <Dialog
-      open={isDeleteModalOpen}
-      onClose={() => setIsDeleteModalOpen(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-        <DialogTitle id="alert-dialog-title">
-          {"Do you want to delete this atlas?"}
-        </DialogTitle>
-        <DialogContent>
-        {isLoading ? <CircularProgress /> : <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this atlas?
-          </DialogContentText>
-        }
-        </DialogContent>  
-        <DialogActions>
-          <Button onClick={() => setIsDeleteModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} autoFocus>
-            Yes, Delete it!
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+      <EditAtlasModal atlasDetailsForm= {atlas} setAtlasDetailsForm={setAtlas} isEditModalOpen={isEditModalOpen} setIsEditModalOpen={setIsEditModalOpen}></EditAtlasModal>
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+          <DialogTitle id="alert-dialog-title">
+            {"Do you want to delete this atlas?"}
+          </DialogTitle>
+          <DialogContent>
+          {isLoading ? <CircularProgress /> : <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this atlas?
+            </DialogContentText>
+          }
+          </DialogContent>  
+          <DialogActions>
+            <Button onClick={() => setIsDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} autoFocus>
+              Yes, Delete it!
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </> 
   );
 };
 

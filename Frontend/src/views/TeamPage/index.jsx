@@ -135,6 +135,17 @@ export default function TeamPage() {
           />
         </div>
       </section>
+      {/* <section>
+        <h2>Uploaded Atlases</h2>
+        <hr />
+        <TeamProjectList
+          team={team}
+          institution={institution}
+          user={user}
+          isAdmin={isAdmin}
+          updateTeam={() => updateTeam(true)}
+        />
+      </section> */}
       <section>
         <h2>Projects</h2>
         <hr />

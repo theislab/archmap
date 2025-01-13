@@ -88,6 +88,10 @@ const SearchPage = () => {
           searchResponse = await AtlasService.getAtlases();
           searchResponse = applyAtlasFilters(searchResponse, filterParams.keyword || '', urlParams);
           break;
+        // case 'youratlases':
+        //     searchResponse = await AtlasService.getAtlases();
+        //     searchResponse = applyAtlasFilters(searchResponse, filterParams.keyword || '', urlParams);
+        //     break;
         case 'scvi-hub atlases':
           searchResponse = await AtlasService.getAtlases();
           searchResponse = applyAtlasFilters(searchResponse, filterParams.keyword || '', urlParams);

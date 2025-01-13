@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useState, useRef, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button, Modal, Switch, FormControlLabel  } from '@mui/material';
 import { OutlinedButton } from './ModelCard';
 import { colors } from 'shared/theme/colors';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
@@ -18,12 +18,21 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
  * @param learnMoreLink onHover button Learn More url
  */
 export default function AtlasCard({
-  width = '100%', height = '100%', title, atlasId, inrevision, imgLink, modalities,
+  width = '100%', height = '100%', title, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, modalities,
   cellsInReference, species, learnMoreLink, onSelect, selected = false, disabled = false,
   isSearchPage = false
 }) {
   // check if the mouse is hovering above the card
   const [isHover, setHover] = useState(false);
+  // const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  // const [newPrivacyStatus, setNewPrivacyStatus] = useState(isPrivate); // Track privacy status
+  
+
+  // const handlePrivacyToggle = () => {
+  //   // Logic to save the updated privacy status can be added here (e.g., API call)
+  //   setPrivacyModalOpen(false);
+  //   console.log(`Atlas privacy updated to: ${newPrivacyStatus ? 'Private' : 'Public'}`);
+  // };
 
   // check if the card is flat(width > height)
   {/*const [isFlat, setFlat] = useState(false);*/}
@@ -126,6 +135,14 @@ export default function AtlasCard({
                     localStorage.setItem('atlasId', atlasId);
                   }}
                 />
+                {/* {uploadedBy === userId && (
+                <OutlinedButton
+                    content="Change Privacy Status"
+                    onClick={() => setPrivacyModalOpen(true)}
+                  >
+                    Change Privacy Status
+                </OutlinedButton>
+                )} */}
                 {
                 disabled
                 && (
@@ -260,6 +277,49 @@ export default function AtlasCard({
           )
         }
       </Box>
+      {/* Privacy Modal */}
+      {/* <Modal
+        open={privacyModalOpen}
+        onClose={() => setPrivacyModalOpen(false)}
+        aria-labelledby="privacy-modal-title"
+        aria-describedby="privacy-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id="privacy-modal-title" variant="h6" component="h2">
+            Toggle to set atlas to private. A private atlas will not be accessible to the public.
+          </Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={newPrivacyStatus}
+                onChange={(e) => setNewPrivacyStatus(e.target.checked)}
+              />
+            }
+            label={newPrivacyStatus ? 'Private' : 'Public'}
+            sx={{ mt: 2 }}
+          />
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Button variant="outlined" onClick={() => setPrivacyModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" onClick={handlePrivacyToggle}>
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Modal> */}
     </Box>
   );
 }

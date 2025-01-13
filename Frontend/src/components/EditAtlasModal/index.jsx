@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import axiosInstance from "shared/services/axiosInstance";
+import { Switch, FormControlLabel } from '@mui/material';
 
 const { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } = require("@mui/material")
 
@@ -122,6 +123,37 @@ const EditAtlasModal = (props) => {
                     fullWidth
                     margin="normal"
                   />
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={atlasInDialog?.isPrivate || false}  // Determines if the atlas is private (true) or public (false)
+                        onChange={(e) =>
+                          setAtlasInDialog((prevAtlasDetails) => ({
+                            ...prevAtlasDetails,
+                            isPrivate: e.target.checked, // Sets the privacy status to true or false based on the toggle
+                          }))
+                        }
+                        name="isPrivate"
+                        color="primary"
+                      />
+                    }
+                    label="Set atlas to private"
+                    labelPlacement="start"
+                  />
+
+                  {/* <TextField
+                    label="Set privacy status (set to 'true' to make atlas private, else 'false')"
+                    value={atlasInDialog?.isPrivate || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        isPrivate: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  /> */}
 
                   {/* Add more fields for other atlas details */}
                 </form>
