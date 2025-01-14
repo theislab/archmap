@@ -48,29 +48,32 @@ function GeneMapperState({ path }) {
   };
   const handleModelSelection = (newModel) => {
     setSelectedModel(newModel);
-    let {batch_key, cell_type_key} = selectedAtlas
-    let counts = selectedAtlas.counts
-    newModel.requirements = [
-      <Typography>Ensure your data is in <strong>h5ad</strong> format.</Typography>,
-      <Typography> The number of cells in you data <strong>should not exceed 50 000</strong>. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same query batch), submit separate mappings, and concatenate your downloaded results. See 
-      <a 
-      style={{
-        textDecoration: "none",
-      }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#my-query-data-has-more-than-the-limit-of-50-000-cells-what-can-i-do"><Typography sx={{
-        color: colors.primary[400],
-        ':hover': { color: colors.primary[500] }
-      }} display="inline"> here </Typography></a> for more info.</Typography>,
-      <Typography>Ensure {counts} are saved in .X of the query AnnData object.</Typography>,
-      <Typography>Batch/Study information is mandatory and should be labeled as <strong>“batch”</strong>.</Typography>,
-      <Typography>If your query has existing cell type information, this should be labeled as <strong>“user_cell_type"</strong>.</Typography>
 
-    ];
-    // if (newModel.name === 'scVI') {
-    //   newModel.requirements.push(`If your query has existing cell type information, this should be labeled as “user_cell_type`);
-    // }
-    // else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
-    //   newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
-    // }
+    if (typeof newModel !== "string") {
+      let {batch_key, cell_type_key} = selectedAtlas
+      let counts = selectedAtlas.counts
+      newModel.requirements = [
+        <Typography>Ensure your data is in <strong>h5ad</strong> format.</Typography>,
+        <Typography> The number of cells in you data <strong>should not exceed 50 000</strong>. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same query batch), submit separate mappings, and concatenate your downloaded results. See 
+        <a 
+        style={{
+          textDecoration: "none",
+        }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#my-query-data-has-more-than-the-limit-of-50-000-cells-what-can-i-do"><Typography sx={{
+          color: colors.primary[400],
+          ':hover': { color: colors.primary[500] }
+        }} display="inline"> here </Typography></a> for more info.</Typography>,
+        <Typography>Ensure {counts} are saved in .X of the query AnnData object.</Typography>,
+        <Typography>Batch/Study information is mandatory and should be labeled as <strong>“batch”</strong>.</Typography>,
+        <Typography>If your query has existing cell type information, this should be labeled as <strong>“user_cell_type"</strong>.</Typography>
+
+      ];
+      // if (newModel.name === 'scVI') {
+      //   newModel.requirements.push(`If your query has existing cell type information, this should be labeled as “user_cell_type`);
+      // }
+      // else if (newModel.name === 'scANVI' || newModel.name === 'scPoli') {
+      //   newModel.requirements.push(`Cell type information should be labeled as “${cell_type_key}”`);
+      // }
+    }
     setSelectedClassifier('')
   };
 

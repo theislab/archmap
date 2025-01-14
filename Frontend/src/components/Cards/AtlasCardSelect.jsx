@@ -26,7 +26,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
 export default function AtlasCardSelect({
   width = "100%", height = "100%", title, inrevision, imgLink, modalities,
   cellsInReference, species, mapLink, learnMoreLink, selected=false, 
-  onSelect, atlasObject={},isLoading=true
+  onSelect, selectedAtlas, atlasObject={},isLoading=true
 }) {
 
   //check if the mouse is hovering above the card
@@ -108,7 +108,7 @@ export default function AtlasCardSelect({
             >
               {
             !inrevision && (
-              <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect={() => onSelect(atlasObject)} />
+              <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect = {() => selectedAtlas?.name === atlasObject?.name ? onSelect('') : onSelect(atlasObject)} />
             )}
               <OutlinedButtonSelect content="Learn More" onSelect={() => setAtlasInfoOpen(true)} />
             </Box>

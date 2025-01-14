@@ -110,6 +110,7 @@ function AtlasModelChoice({
                 species={a.species}
                 imgLink={a.previewPictureURL}
                 selected={selectedAtlas.name === a.name}
+                selectedAtlas={selectedAtlas}
                 onSelect={setSelectedAtlas}
                 atlasObject={a}
                 isLoading={isLoading}
@@ -192,6 +193,7 @@ function AtlasModelChoice({
                     title={m.name}
                     description={m.description}
                     selected={selectedModel.name === m.name}
+                    selectedModel={selectedModel}
                     onSelect={setSelectedModel}
                     modelObject={m}
                     disabled={!compatibleModels

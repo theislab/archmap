@@ -46,7 +46,7 @@ export const OutlinedButtonSelect = ({ content, onSelect, disabled=false }) => {
  */
 export const ModelCardSelect = ({ 
   width = "100%", height = "100%", title, description, onSelect, 
-  selected, learnMoreLink, modelObject={}, disabled=false,isLoading=true
+  selected, selectedModel, modelObject={}, disabled=false,isLoading=true
 }) => {
 
   const [hover, setHover] = useState(false)
@@ -114,7 +114,7 @@ export const ModelCardSelect = ({
                 transform: "translate(-50%, -50%)"
               }}  
               >
-              {!disabled && <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect={() => onSelect(modelObject)}/>}
+              {!disabled && <OutlinedButtonSelect content={selected ? "Deselect" : "Select"} onSelect={() => selectedModel?.name === modelObject?.name ? onSelect('') : onSelect(modelObject)}/>}
               {hover && <OutlinedButtonSelect content="Learn More" onSelect={() => setModelInfoOpen(true)} disabled={disabled}/>}
             </Box>
           </Box>
