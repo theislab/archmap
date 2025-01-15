@@ -20,6 +20,7 @@ import { useAuth } from 'shared/context/authContext';
 import ProjectService from 'shared/services/Project.service';
 import AtlasService from 'shared/services/Atlas.service';
 import ModelService from 'shared/services/Model.service';
+import ScviAtlasService from 'shared/services/ScviAtlas.service';
 
 import { applyModelFilters, applyAtlasFilters } from 'shared/utils/filter';
 import HeaderView from 'components/general/HeaderView';
@@ -93,7 +94,7 @@ const SearchPage = () => {
         //     searchResponse = applyAtlasFilters(searchResponse, filterParams.keyword || '', urlParams);
         //     break;
         case 'scvi-hub atlases':
-          searchResponse = await AtlasService.getAtlases();
+          searchResponse = await ScviAtlasService.getAtlases();
           searchResponse = applyAtlasFilters(searchResponse, filterParams.keyword || '', urlParams);
           break;
         case 'models':

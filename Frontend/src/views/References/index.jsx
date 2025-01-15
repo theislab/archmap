@@ -107,27 +107,6 @@ const References = () => {
 
 
 
-  // const handleTriggerJob = async () => {
-  //   try {
-
-  //     req.body.modelname = modelname;
-  //     req.body.modelpath = "655b580a0c9e68011f3a9ea3";
-  //     req.body.atlaspath = "628668716f930d8b7f44d575";
-
-  //     const response = await TriggerJobService.TriggerJob(req.body);
-  //     console.log("Job triggered successfully:", response.data);
-
-  //     // Show a success message to the user
-  //     alert("Job triggered successfully!");
-  //   } catch (error) {
-  //     console.error("Error triggering job:", error.message);
-  //     alert("Failed to trigger the job. Please try again.");
-  //   }
-  // };
-
-  
-
-
 
   const onValueChange = (newValue) => {
     setValue(newValue);

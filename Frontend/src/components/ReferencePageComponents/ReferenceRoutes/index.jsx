@@ -8,7 +8,7 @@ import LearnMoreAtlas from 'views/References/LearnMoreAtlas';
 import LearnMoreModel from 'views/References/LearnMoreModel';
 
 const ReferenceRoutes = ({
-  path, atlases, models, handleSelectAtlases, handleSelectModels,
+  path, atlases, scvi_hub_atlases, models, handleSelectAtlases, handleSelectModels,
 }) => (
   <Switch>
     <Route
@@ -18,13 +18,18 @@ const ReferenceRoutes = ({
     />
     <Route
       exact
+      path={`${path}/scvi-hub atlases`}
+      render={() => scvi_hub_atlases}
+    />
+    <Route
+      exact
       path={`${path}/models`}
       render={() => models}
     />
     <Route exact path={`${path}/models/:id`} render={() => <LearnMoreModel handleSelect={handleSelectModels} />} />
     <Route exact path={`${path}/atlases/:id/visualization`} render={() => <AtlasResult />} />
     <Route exact path={`${path}/atlases/:id`} render={() => <LearnMoreAtlas handleSelect={handleSelectAtlases} />} />
-    <Redirect to={`${path}/atlases`} />
+     <Redirect to={`${path}/atlases`} />
   </Switch>
 );
 

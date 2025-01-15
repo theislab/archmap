@@ -5,7 +5,7 @@ import { setSeachCategoryInUrl } from 'shared/utils/common/utils';
 const SearchTabs = ({
   value, searchParams, path, onChange = () => {},
 }) => {
-  let categories = ['atlases', 'models', 'teams', 'institutions', 'users'];
+  let categories = ['atlases', 'scvi-hub atlases', 'models', 'teams', 'institutions', 'users'];
   const keyword = searchParams.get('keyword');
   const newParams = keyword ? `?keyword=${keyword}` : '';
   categories = categories.map((category) => ({

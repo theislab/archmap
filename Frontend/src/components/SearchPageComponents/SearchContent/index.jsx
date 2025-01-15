@@ -12,6 +12,7 @@ import { setSeachCategoryInUrl } from 'shared/utils/common/utils';
 import AtlasesGrid from 'components/Grids/AtlasesGrid';
 import ModelsGrid from 'components/Grids/ModelsGrid';
 import ReferenceRoutes from 'components/ReferencePageComponents/ReferenceRoutes';
+import AtlasesScviGrid from 'components/Grids/AtlasesScviGrid';
 
 // wrapper component to display the searched items
 function SearchContent({
@@ -30,6 +31,7 @@ function SearchContent({
 
   const atlases = <AtlasesGrid atlases={searchResult} searchedKeyword={searchedKeyword} path="/sequencer/search" isSearchPage/>;
   const models = <ModelsGrid models={searchResult} searchedKeyword={searchedKeyword} path="/sequencer/search" isSearchPage/>;
+  const scvi_hub_atlases = <AtlasesScviGrid atlases={searchResult} />;
   return (
     <>
       <ResultStatus
@@ -48,7 +50,7 @@ function SearchContent({
           {renderSearchResultsList(UserCard)}
         </Route>
         <Route>
-          <ReferenceRoutes atlases={atlases} models={models} path="/sequencer/search" />
+          <ReferenceRoutes atlases={atlases} scvi_hub_atlases={scvi_hub_atlases} models={models} path="/sequencer/search" />
         </Route>
       </Switch>
     </>
