@@ -221,6 +221,8 @@ export default function upload_complete_upload_route() {
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
+                batch_key: atlas.batch_key,
+                cell_type_key: atlas.cell_type_key
               };
             } else if (model && model.name == "scANVI") {
               const modelAssociatedWithAtlas =
@@ -250,6 +252,8 @@ export default function upload_complete_upload_route() {
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
+                batch_key: atlas.batch_key,
+                cell_type_key: atlas.cell_type_key
               };
             } else if (model && model.name == "scPoli") {
               const modelAssociatedWithAtlas =
@@ -287,6 +291,8 @@ export default function upload_complete_upload_route() {
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
+                batch_key: atlas.batch_key,
+                cell_type_key: atlas.cell_type_key
               };
             
             } else {
