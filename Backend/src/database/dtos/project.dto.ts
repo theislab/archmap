@@ -10,9 +10,9 @@ export interface UpdateProjectDTO {
   errorMessage?: string;
   outputFileWithCounts?: string;
   ratio?: string;
-  clust_pres_score?: number;
-  query_with_anchor?: number;
-  percentage_unknown?: number;
+  clust_pres_score?: string;
+  query_with_anchor?: string;
+  percentage_unknown?: string;
   result?: string;
 }
 

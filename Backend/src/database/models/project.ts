@@ -42,9 +42,9 @@ export interface IProject extends Document {
   resultName: string;
   resultSize: number;
   ratio: String;
-  clust_pres_score: number;
-  query_with_anchor: number;
-  percentage_unknown: number | string;
+  clust_pres_score: String;
+  query_with_anchor: String;
+  percentage_unknown: String;
 
   //error Message
   errorMessage: string;
@@ -115,9 +115,9 @@ const projectSchema = new Schema<IProject>({
   ratio: {type: String, require: false},
 
   //metrics
-  clust_pres_score: { type: Schema.Types.Number, require: false},
-  query_with_anchor: { type: Schema.Types.Number, require: false},
-  percentage_unknown: { type: Schema.Types.Number, require: false},
+  clust_pres_score: { type: String, require: false},
+  query_with_anchor: { type: String, require: false},
+  percentage_unknown: { type: String, require: false},
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },
