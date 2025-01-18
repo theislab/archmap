@@ -27,6 +27,12 @@
                   "name": {
                     "type": "string"
                   },
+                  "batch_key": {
+                      "type": "string"
+                    },
+                    "cell_type_key": {
+                      "type": "string"
+                    },
                   "previewPictureURL": {
                     "type": "string"
                   },
@@ -119,6 +125,12 @@
                     "name": {
                       "type": "string"
                     },
+                    "batch_key": {
+                      "type": "string"
+                    },
+                    "cell_type_key": {
+                      "type": "string"
+                    },
                     "previewPictureURL": {
                       "type": "string"
                     },
@@ -175,6 +187,12 @@
                       "type": "string"
                     },
                     "name": {
+                      "type": "string"
+                    },
+                    "batch_key": {
+                      "type": "string"
+                    },
+                    "cell_type_key": {
                       "type": "string"
                     },
                     "previewPictureURL": {

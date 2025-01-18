@@ -254,6 +254,12 @@
                 "name": {
                   "type": "string"
                 },
+                "batch_key": {
+                  "type": "string"
+                },
+                "cell_type_key": {
+                  "type": "string"
+                },
                 "previewPictureURL": {
                   "type": "string"
                 },
