@@ -14,7 +14,7 @@ import { makeStyles } from "@mui/styles";
 import { Select, MenuItem } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import AtlasUploadService from "shared/services/AtlasUpload.service";
-// import TriggerJobService from 'shared/services/TriggerJob.service';
+import TriggerJobService from 'shared/services/TriggerJob.service';
 import {
   initUploadProgress,
   useUploadProgress,
@@ -62,24 +62,26 @@ function getAuthAndJsonHeader() {
   };
 }
 
-// const handleTriggerJob = async (modelPath, atlasPath) => {
-//   try {
+const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName) => {
+  try {
 
-//     req.body.bucket = process.env.S3_BUCKET_NAME;
-//     req.body.modelpath = modelPath;
-//     req.body.atlaspath = atlasPath;
+    req.body.modelpath = modelPath;
+    req.body.atlaspath = atlasPath;
+    req.body.modelname = modelName;
+    req.body.batchkey = batchKey;
+    req.body.celltypekey = cellTypeKey;
+    req.body.atlasname = atlasName;
 
-//     const response = await TriggerJobService.TriggerJob(req.body);
-//     console.log("Job triggered successfully:", response.data);
+    const response = await TriggerJobService.TriggerJob(req.body);
+    console.log("Job triggered successfully:", response.data);
 
-//     // Show a success message to the user
-//     alert("Job triggered successfully!");
-//   } catch (error) {
-//     console.error("Error triggering job:", error.message);
-//     alert("Failed to trigger the job. Please try again.");
-//   }
-// };
-
+    // Show a success message to the user
+    alert("Job triggered successfully!");
+  } catch (error) {
+    console.error("Error triggering job:", error.message);
+    alert("Failed to trigger the job. Please try again.");
+  }
+};
 
 
 const AddAtlasForm = (props) => {
@@ -92,8 +94,8 @@ const AddAtlasForm = (props) => {
     classifiersList,
   } = props;
   const [atlasName, setAtlasName] = useState("");
-  // const [batchKey, setBatchKey] = useState("");
-  // const [cellTypeKey, setCellTypeKey] = useState("");
+  const [batchKey, setBatchKey] = useState("");
+  const [cellTypeKey, setCellTypeKey] = useState("");
   const [inrevision, setRevisionStatus] = useState(false);
   const [isPrivate, setPrivacyStatus] = useState(true);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
@@ -137,8 +139,8 @@ const AddAtlasForm = (props) => {
       // Assuming AtlasUploadService.createAtlas is an async function
       const { atlas, models } = await AtlasUploadService.createAtlas(
         atlasName,
-        // batchKey,
-        // cellTypeKey,
+        batchKey,
+        cellTypeKey,
         previewPictureURL,
         modalities,
         numberOfCells,
@@ -212,27 +214,27 @@ const AddAtlasForm = (props) => {
 
 
 
-      // // Poll the upload progress to check when all uploads are complete
-      // const checkUploadsComplete = async () => {
-      //   const allUploadsComplete = uploadIds.every((uploadId) => {
-      //     return uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING;
-      //   });
+      // Poll the upload progress to check when all uploads are complete
+      const checkUploadsComplete = async () => {
+        const allUploadsComplete = uploadIds.every((uploadId) => {
+          return uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING;
+        });
 
-      //   if (allUploadsComplete) {
-      //     console.log("atlas upload complete. Triggering job")
-      //     // All uploads are complete, trigger the Cloud Run job
-      //     for (const model of models) {
-      //       await triggerCloudRunJob(model.modelUploadPath, atlas.atlasUploadPath);
-      //     }
-      //   } else {
-      //     console.log("atlas upload NOT complete. Delaying cloud run job")
-      //     // If any upload is not complete, check again after a short delay
-      //     setTimeout(checkUploadsComplete, 1000);
-      //   }
-      // };
+        if (allUploadsComplete) {
+          console.log("atlas upload complete. Triggering job")
+          // All uploads are complete, trigger the Cloud Run job
+          for (const model of models) {
+            await triggerCloudRunJob(model.modelUploadPath, atlas.atlasUploadPath, model.name, batchKey, cellTypeKey, atlasName );
+          }
+        } else {
+          console.log("atlas upload NOT complete. Delaying cloud run job")
+          // If any upload is not complete, check again after a short delay
+          setTimeout(checkUploadsComplete, 1000);
+        }
+      };
 
-      // // Start checking the upload progress
-      // checkUploadsComplete();
+      // Start checking the upload progress
+      checkUploadsComplete();
 
     } catch (error) {
       console.error("Error during form submission:", error);

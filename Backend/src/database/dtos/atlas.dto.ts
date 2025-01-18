@@ -3,6 +3,8 @@
 
 export interface AddAtlasDTO {
     name: string;
+    batch_key: string;
+    cell_type_key: string;
     previewPictureURL: string;
     modalities: Array<string>;
     numberOfCells: number;

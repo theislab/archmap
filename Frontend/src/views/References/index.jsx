@@ -27,7 +27,6 @@ import { useAuth } from 'shared/context/authContext';
 import { LoginContext } from 'shared/context/loginContext';
 import PasswordForgetForm from 'components/PasswordForgetForm';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-// import TriggerJobService from 'shared/services/TriggerJob.service';
 
 const tmpObj = [
   {
