@@ -4,7 +4,7 @@ import AtlasModelAssociationService from '../../../../database/services/atlas_mo
 
 const getAllAssociations = (): Router => {
   const router = express.Router();
-  router.post("/get-all-associations", async (req, res) => {
+  router.get("/get-all-associations", async (req, res) => {
     try {
       
       const models = await AtlasModelAssociationService.getAllAssociations();
