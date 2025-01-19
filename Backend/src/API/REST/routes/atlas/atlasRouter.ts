@@ -253,7 +253,8 @@ const trigger_cloud_run_job = (): Router => {
       console.log("endpoint", endpoint)
 
       
-
+      console.log("req:", req)
+      console.log("req:", req.body)
       
       const { modelPath } = req.body.modelPath;
       const { atlasPath } = req.body.atlasPath;
@@ -263,7 +264,7 @@ const trigger_cloud_run_job = (): Router => {
       const { atlasName } = req.body.atlasName;
 
       console.log(atlasPath)
-      
+
       const postData = {
         modelpath: modelPath,
         atlaspath: atlasPath,
