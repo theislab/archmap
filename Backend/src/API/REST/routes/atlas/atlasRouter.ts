@@ -252,6 +252,28 @@ const trigger_cloud_run_job = (): Router => {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
       console.log("endpoint", endpoint)
 
+      console.log(req)
+      
+      const { modelPath } = req.body.modelPath;
+      const { atlasPath } = req.body.atlasPath;
+      const { modelName } = req.body.modelName;
+      const { batchKey } = req.body.batchKey;
+      const { cellTypeKey } = req.body.cellTypeKey;
+      const { atlasName } = req.body.atlasName;
+
+      console.log(modelPath)
+
+      const postData = {
+        modelpath: modelPath,
+        atlaspath: atlasPath,
+        modelname: modelName,
+        batchkey: batchKey,
+        celltypekey: cellTypeKey,
+        atlasname: atlasName
+      }
+
+      console.log(postData)
+
       // Prepare the request headers
       // const headers = {
       //   "Content-Type": "application/json",
@@ -259,7 +281,7 @@ const trigger_cloud_run_job = (): Router => {
       // };
 
       // Send the POST request
-      const response = await axios.post(endpoint, {});
+      const response = await axios.post(endpoint, postData);
 
       // Respond to the client with the result
       res.status(200).json({
