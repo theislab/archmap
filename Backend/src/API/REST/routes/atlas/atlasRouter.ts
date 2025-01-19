@@ -247,12 +247,13 @@ const get_scvi_atlases = (): Router => {
 const trigger_cloud_run_job = (): Router => {
   let router = express.Router();
 
-  router.post("/trigger-job", async (req, res) => {
+  router.post("/trigger-job", async(req: any, res)=> {
     try {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
       console.log("endpoint", endpoint)
 
-      console.log(req)
+      
+
       
       const { modelPath } = req.body.modelPath;
       const { atlasPath } = req.body.atlasPath;
@@ -261,8 +262,8 @@ const trigger_cloud_run_job = (): Router => {
       const { cellTypeKey } = req.body.cellTypeKey;
       const { atlasName } = req.body.atlasName;
 
-      console.log(modelPath)
-
+      console.log(atlasPath)
+      
       const postData = {
         modelpath: modelPath,
         atlaspath: atlasPath,
@@ -270,9 +271,8 @@ const trigger_cloud_run_job = (): Router => {
         batchkey: batchKey,
         celltypekey: cellTypeKey,
         atlasname: atlasName
-      }
+      };
 
-      console.log(postData)
 
       // Prepare the request headers
       // const headers = {
