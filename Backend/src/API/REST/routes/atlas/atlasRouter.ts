@@ -256,23 +256,23 @@ const trigger_cloud_run_job = (): Router => {
       console.log("req:", req)
       console.log("req:", req.body) 
       
-      const { modelPath } = req.body.modelPath;
-      const { atlasPath } = req.body.atlasPath;
-      const { modelName } = req.body.modelName;
-      const { batchKey } = req.body.batchKey;
-      const { cellTypeKey } = req.body.cellTypeKey;
-      const { atlasName } = req.body.atlasName;
+      // const { modelPath } = req.body.modelPath;
+      // const { atlasPath } = req.body.atlasPath;
+      // const { modelName } = req.body.modelName;
+      // const { batchKey } = req.body.batchKey;
+      // const { cellTypeKey } = req.body.cellTypeKey;
+      // const { atlasName } = req.body.atlasName;
 
-      console.log(atlasPath)
+      // console.log(atlasPath)
 
-      const postData = {
-        modelpath: modelPath,
-        atlaspath: atlasPath,
-        modelname: modelName,
-        batchkey: batchKey,
-        celltypekey: cellTypeKey,
-        atlasname: atlasName
-      };
+      // const postData = {
+      //   modelpath: modelPath,
+      //   atlaspath: atlasPath,
+      //   modelname: modelName,
+      //   batchkey: batchKey,
+      //   celltypekey: cellTypeKey,
+      //   atlasname: atlasName
+      // };
 
 
       // Prepare the request headers
@@ -282,7 +282,7 @@ const trigger_cloud_run_job = (): Router => {
       // };
 
       // Send the POST request
-      const response = await axios.post(endpoint, postData);
+      const response = await axios.post(endpoint, req.body);
 
       // Respond to the client with the result
       res.status(200).json({
