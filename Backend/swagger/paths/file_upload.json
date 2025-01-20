@@ -295,6 +295,9 @@
                 },
                 "isPrivate": {
                   "type": "boolean"
+                },
+                "benchmarked": {
+                  "type": "boolean"
                 }
               },
               "required": [

@@ -1,6 +1,7 @@
 import { AddAtlasDTO } from "../dtos/atlas.dto";
 import { IAtlas, atlasModel } from "../models/atlas";
 import { ObjectId } from "mongoose";
+import { UpdateAtlasDTO } from "../dtos/atlas.dto";
 
 export default class AtlasService {
   /**
@@ -62,6 +63,16 @@ export default class AtlasService {
   ) {
     await atlasModel.updateOne({ _id: atlasID }, { atlasUploadId: atlasUploadId }).exec();
   }
+
+   /**
+     *  Updates the atlas with id with update_object.
+     *
+     *  @param uploadId
+     *  @param update_object - includes fields to be updated
+     */
+    static async updateAtlasById(id: ObjectId | string, update_object: UpdateAtlasDTO) {
+      await atlasModel.findByIdAndUpdate(id, update_object);
+    }
 
 
 

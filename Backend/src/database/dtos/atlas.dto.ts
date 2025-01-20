@@ -18,4 +18,11 @@ export interface AddAtlasDTO {
     counts?: string;
     inrevision?: boolean;
     isPrivate?: boolean;
+    benchmarked?: false;
 }
+
+export interface UpdateAtlasDTO {
+    benchmark_location?: string;
+    benchmarked?: boolean;
+
+  }

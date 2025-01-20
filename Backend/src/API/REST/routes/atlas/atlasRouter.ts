@@ -17,8 +17,9 @@ import { upload_permission_auth } from "../../middleware/check_institution_auth"
 import { AtlasModelAssociation } from "../../../../database/models/atlas_model_association";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service";
 import ModelService from "../../../../database/services/model.service";
-
-
+import AtlasUpdateTokenService from "../../../../database/services/atlas_update_token.service.js";
+import { UpdateAtlasDTO } from "../../../../database/dtos/atlas.dto";
+import { result_benchmark_path } from "../file_upload/bucket_filepaths";
 
 const uploadDirectory = "/tmp/"; // for gcp 
 const bucketName = process.env.S3_BUCKET_NAME; // for gcp
@@ -252,9 +253,17 @@ const trigger_cloud_run_job = (): Router => {
       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
       console.log("endpoint", endpoint)
 
-      
-      console.log("req:", req)
+      console.log(req.body.atlasId)
+
+      //Create a token, which can be used later to update the projects status
+      let { token: updateToken } = await AtlasUpdateTokenService.addToken({
+        _atlasId: req.body.atlasId,
+      });
+
+      req.body.webhook = `${process.env.API_URL}/atlasbenchmark/updatestatus/${updateToken}`,
+
       console.log("req:", req.body) 
+      console.log("req:", req.webhook) 
       
       // const { modelPath } = req.body.modelPath;
       // const { atlasPath } = req.body.atlasPath;
@@ -304,42 +313,84 @@ const trigger_cloud_run_job = (): Router => {
   return router;
 }
 
-// const trigger_job_query_mapping = (): Router => {
-//   let router = express.Router();
 
-//   router.post("/trigger-query-mapping", async (req, res) => {
-//     try {
-//       const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-job";
-//       console.log("endpoint", endpoint)
+const update_atlas_benchmark_status = (): Router => {
+  const router = express.Router();
 
-//       // Prepare the request headers
-//       // const headers = {
-//       //   "Content-Type": "application/json",
-//       //   Authorization: `Bearer ${process.env.ACCESS_TOKEN}`, // Ensure valid authentication if required
-//       // };
+  router.post(
+    "/atlasbenchmark/updatestatus/:token",
+    validationMdw,
+    async (req: any, res) => {
+      try {
+        const updateToken = req.params.token;
 
-//       // Send the POST request
-//       const response = await axios.post(endpoint, {});
+        // Validate the update token
+        const tokenObject = await AtlasUpdateTokenService.getTokenByToken(updateToken);
+        if (!tokenObject) {
+          return res.status(404).send("Invalid token");
+        }
 
-//       // Respond to the client with the result
-//       res.status(200).json({
-//         message: "Job triggered successfully",
-//         data: response.data,
-//       });
-//     } catch (error) {
-//       // Handle errors gracefully
-//       console.error("Error triggering job:", error.message);
+        // Fetch the atlas
+        const atlas = await AtlasService.getAtlasById(tokenObject._atlasId);
+        if (!atlas) {
+          return res.status(404).send("Atlas not found");
+        }
 
-//       res.status(error.response?.status || 500).json({
-//         message: "Failed to trigger the job",
-//         error: error.response?.data || error.message,
-//       });
-//     }
-//   })
+        // Fetch the model
+        const modelName = atlas.compatibleModels?.[0];
+        if (!modelName) {
+          return res.status(400).send("No compatible models found for the atlas");
+        }
 
-//   // Return the router
-//   return router;
-// }
+        const model = await ModelService.getModelByName(modelName);
+        if (!model) {
+          return res.status(404).send("Model not found");
+        }
+
+        // Fetch the association
+        const association = await AtlasModelAssociationService.getOneByAtlasAndModelId(
+          atlas._id,
+          model._id
+        );
+        if (!association) {
+          return res.status(404).send("Association not found");
+        }
+
+        // Update atlas benchmark status
+        const updateStatus: UpdateAtlasDTO = { benchmarked: true };
+        await AtlasService.updateAtlasById(atlas._id, updateStatus);
+
+        // Generate and save benchmark results URL
+        if (atlas.benchmarked) {
+          const bucketName = process.env.S3_BUCKET_NAME;
+          if (!bucketName) {
+            return res.status(500).send("S3_BUCKET_NAME environment variable is missing");
+          }
+
+          let params: any = {
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: result_benchmark_path(association._id),
+            Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
+          };
+          let benchmarkResultsUrl = await s3.getSignedUrlPromise("getObject", params);
+          const updateLocation: UpdateAtlasDTO = {
+            benchmark_location: benchmarkResultsUrl,
+          };
+          await AtlasService.updateAtlasById(atlas._id, updateLocation);
+  
+        }
+
+        return res.status(200).send("OK");
+      } catch (error) {
+        console.error("Error updating atlas benchmark status:", error);
+        return res.status(500).send("Internal server error");
+      }
+    }
+  );
+
+  return router;
+};
+
 
 
 const post_anndata_args = (): Router => {
@@ -779,4 +830,4 @@ const delete_atlas = (): Router => {
 };
 
 
-export { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job };
+export { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job, update_atlas_benchmark_status };

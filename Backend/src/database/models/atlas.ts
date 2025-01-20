@@ -29,6 +29,7 @@ export interface IAtlas extends Document {
   counts: string;
   inrevision: boolean;
   isPrivate: boolean;
+  benchmarked: boolean;
   
 }
 
@@ -58,6 +59,11 @@ const atlasSchema = new Schema<IAtlas>(
     },
 
     inrevision: {
+      type: Boolean,
+      required: false,
+    },
+
+    benchmarked: {
       type: Boolean,
       required: false,
     },
