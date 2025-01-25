@@ -373,7 +373,7 @@ const update_atlas_benchmark_status = (): Router => {
         //   Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
         // };
         // let benchmarkResultsUrl = await s3.getSignedUrlPromise("getObject", params);
-        
+
         let benchmarkResultsUrl = result_benchmark_path(association._id)
         const updateLocation: UpdateAtlasDTO = {
           benchmark_location: benchmarkResultsUrl,
@@ -489,6 +489,9 @@ const upload_atlas = (): Router => {
         atlasUrl: req.body.atlasUrl,
         inrevision: req.body.inrevision,
         isPrivate: req.body.isPrivate,
+        batch_key: req.body.batchKey,
+        cell_type_key: req.body.cellTypeKey,
+        benchmarked: req.body.benchmarked
       }
 
       atlasDocument = await atlasModel.create(atlasData);
