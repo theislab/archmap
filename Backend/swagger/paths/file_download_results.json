@@ -35,5 +35,35 @@
         }
       }
     }
+  },
+  "/file_download/benchmark_results": {
+    "post": {
+      "summary": "Download benchmark results",
+      "tags": ["Atlas"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "benchmarkResultsFile": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "OK"
+        },
+        "400": {
+          "description": "Failed. Bad post data."
+        }
+      }
+    }
   }
 }
