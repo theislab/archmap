@@ -367,12 +367,14 @@ const update_atlas_benchmark_status = (): Router => {
           return res.status(500).send("S3_BUCKET_NAME environment variable is missing");
         }
 
-        let params: any = {
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: result_benchmark_path(association._id),
-          Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
-        };
-        let benchmarkResultsUrl = await s3.getSignedUrlPromise("getObject", params);
+        // let params: any = {
+        //   Bucket: process.env.S3_BUCKET_NAME!,
+        //   Key: result_benchmark_path(association._id),
+        //   Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
+        // };
+        // let benchmarkResultsUrl = await s3.getSignedUrlPromise("getObject", params);
+        
+        let benchmarkResultsUrl = result_benchmark_path(association._id)
         const updateLocation: UpdateAtlasDTO = {
           benchmark_location: benchmarkResultsUrl,
         };
