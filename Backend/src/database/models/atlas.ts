@@ -31,8 +31,8 @@ export interface IAtlas extends Document {
   isPrivate: boolean;
   benchmarked: boolean;
   benchmark_location: string;
-  batch_key: string;
-  cell_type_key: string;
+  batchKey: string;
+  cellTypeKey: string;
   
 }
 
@@ -74,11 +74,11 @@ const atlasSchema = new Schema<IAtlas>(
       type: String,
       required: false,
     },
-    batch_key: {
+    batchKey: {
       type: String,
       required: false,
     },
-    cell_type_key: {
+    cellTypeKey: {
       type: String,
       required: false,
     },

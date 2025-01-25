@@ -57,8 +57,8 @@ export default function upload_start_upload_for_atlas_route() {
             try {
                 atlasToAdd = {
                     name: name,
-                    batch_key: batchKey,
-                    cell_type_key: cellTypeKey,
+                    batchKey: batchKey,
+                    cellTypeKey: cellTypeKey,
                     previewPictureURL: previewPictureURL,
                     modalities: modalities,
                     numberOfCells: numberOfCells,

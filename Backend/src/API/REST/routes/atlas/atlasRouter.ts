@@ -489,8 +489,8 @@ const upload_atlas = (): Router => {
         atlasUrl: req.body.atlasUrl,
         inrevision: req.body.inrevision,
         isPrivate: req.body.isPrivate,
-        batch_key: req.body.batchKey,
-        cell_type_key: req.body.cellTypeKey,
+        batchKey: req.body.batchKey,
+        cellTypeKey: req.body.cellTypeKey,
         benchmarked: req.body.benchmarked
       }
 
