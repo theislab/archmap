@@ -260,35 +260,10 @@ const trigger_cloud_run_job = (): Router => {
         _atlasId: req.body.atlasId,
       });
 
-      req.body.webhook = `${process.env.API_URL}/atlasbenchmark/updatestatus/${updateToken}`,
+      req.body.webhook = `${process.env.API_URL}/atlasbenchmark/updatestatus/${updateToken}`
 
       console.log("req:", req.body) 
-      console.log("req:", req.webhook) 
-      
-      // const { modelPath } = req.body.modelPath;
-      // const { atlasPath } = req.body.atlasPath;
-      // const { modelName } = req.body.modelName;
-      // const { batchKey } = req.body.batchKey;
-      // const { cellTypeKey } = req.body.cellTypeKey;
-      // const { atlasName } = req.body.atlasName;
-
-      // console.log(atlasPath)
-
-      // const postData = {
-      //   modelpath: modelPath,
-      //   atlaspath: atlasPath,
-      //   modelname: modelName,
-      //   batchkey: batchKey,
-      //   celltypekey: cellTypeKey,
-      //   atlasname: atlasName
-      // };
-
-
-      // Prepare the request headers
-      // const headers = {
-      //   "Content-Type": "application/json",
-      //   Authorization: `Bearer ${process.env.ACCESS_TOKEN}`, // Ensure valid authentication if required
-      // };
+    
 
       // Send the POST request
       const response = await axios.post(endpoint, req.body);
