@@ -14,6 +14,7 @@ export interface UpdateProjectDTO {
   query_with_anchor?: string;
   percentage_unknown?: string;
   result?: string;
+  ml_pipeline_progress?: string;
 }
 
 /**

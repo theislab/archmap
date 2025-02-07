@@ -45,6 +45,7 @@ export interface IProject extends Document {
   clust_pres_score: String;
   query_with_anchor: String;
   percentage_unknown: String;
+  ml_pipeline_progress: String;
 
   //error Message
   errorMessage: string;
@@ -118,6 +119,7 @@ const projectSchema = new Schema<IProject>({
   clust_pres_score: { type: String, require: false},
   query_with_anchor: { type: String, require: false},
   percentage_unknown: { type: String, require: false},
+  ml_pipeline_progress: { type: String, require: false},
 
   resultName: { type: String, require: false },
   resultSize: { type: Schema.Types.Number, require: false, default: -1 },

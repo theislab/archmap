@@ -4,6 +4,10 @@ import { Box, Typography, Button, Modal, Switch, FormControlLabel  } from '@mui/
 import { OutlinedButton } from './ModelCard';
 import { colors } from 'shared/theme/colors';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import ModelService from 'shared/services/Model.service';
+import AtlasModelsAssociationsService from 'shared/services/AtlasModels.service';
+import TriggerJobService from 'shared/services/TriggerJob.service';
+import axiosInstance from 'shared/services/axiosInstance';
 
 /**
  * Atlas Card
@@ -16,17 +20,32 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
  * @param species
  * @param mapLink onHover button Map url
  * @param learnMoreLink onHover button Learn More url
+ * 
  */
 export default function AtlasCard({
-  width = '100%', height = '100%', title, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, modalities,
+  width = '100%', height = '100%', title, atlas, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, modalities,
   cellsInReference, species, learnMoreLink, onSelect, selected = false, disabled = false,
   isSearchPage = false
 }) {
   // check if the mouse is hovering above the card
   const [isHover, setHover] = useState(false);
-  // const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-  // const [newPrivacyStatus, setNewPrivacyStatus] = useState(isPrivate); // Track privacy status
-  
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [models, setModels] = useState([]);
+  const [associations, setAssociations] = useState([]);
+  const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [fetchUrlError, setFetchUrlError] = useState(null);
+
+  useEffect(() => {
+    // Fetch models only once when the component mounts
+    ModelService.getModels().then((data) => {
+      setModels(data);
+    });
+
+    AtlasModelsAssociationsService.getAtlasesModels().then((data) => {
+      setAssociations(data);
+    });
+  }, []); // Empty dependency array ensures this runs only once
+
 
   // const handlePrivacyToggle = () => {
   //   // Logic to save the updated privacy status can be added here (e.g., API call)
@@ -37,6 +56,102 @@ export default function AtlasCard({
   // check if the card is flat(width > height)
   {/*const [isFlat, setFlat] = useState(false);*/}
 
+  const downloadBenchmarkClick = async (atlas) => {
+    setFetchingUrl(true);
+    setFetchUrlError(null);
+
+    const outputFile = atlas.benchmark_location
+
+    try {
+
+      const response = await axiosInstance.post('/file_download/benchmark_results', {
+        benchmarkResultsFile: outputFile,
+
+      }); 
+
+      const data = await response.data;
+      const presignedUrl = data.presignedUrl;
+      // Create a temporary anchor tag and programmatically click it to download the file
+      const link = document.createElement('a');
+      link.href = presignedUrl;
+      link.download = `${atlas.name}_benchmark.tar.gz`; // Set the download filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (err) {
+      console.error('Error fetching presigned URL:', err);
+      setFetchUrlError('Failed to download file.');
+    } finally {
+      setFetchingUrl(false);
+    }
+
+  };
+
+  const handleBenchmarkClick = () => {
+
+    let association = null; // Declare association in the outer scope
+    let found = false; // Flag to track if the association is found
+
+    for (let j = 0; j < atlas.compatibleModels.length; j++) {
+      for (let i = 0; i < associations.length; i++) {
+        if (associations[i].atlas && atlas._id === associations[i].atlas._id) {
+          association = associations[i]; // Assign the value
+          console.log(association);
+          found = true; // Set the flag
+          break; // Exit the inner loop
+        }
+      }
+      if (found) break; // Exit the outer loop
+    }
+
+    if (association) {
+      console.log(association.modelUploadPath); // Safely access the property
+    } else {
+      console.log('No matching association found.');
+    }
+
+    console.log(association.modelUploadPath)
+    console.log(atlas.atlasUploadPath)
+    console.log(atlas.compatibleModels[0])
+    console.log(atlas.batchKey)
+    console.log(atlas.cellTypeKey)
+    console.log(atlas.name)
+
+    handleTriggerJob(
+      association.modelUploadPath,
+      atlas.atlasUploadPath,
+      atlas.compatibleModels[0],
+      atlas.batchKey,
+      atlas.cellTypeKey,
+      atlas.name, 
+      atlas._id
+    );
+  };
+
+  const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId) => {
+    try {
+
+      // req.body.modelpath = modelPath;
+      // req.body.atlaspath = atlasPath;
+      // req.body.modelname = modelName;
+      // req.body.batchkey = batchKey;
+      // req.body.celltypekey = cellTypeKey;
+      // req.body.atlasname = atlasName
+
+      
+  
+      const response = await TriggerJobService.TriggerJob(modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId);
+      console.log("Job triggered successfully:", response.data);
+  
+      // Show a success message to the user
+      alert("Job triggered successfully!");
+    } catch (error) {
+      console.error("Error triggering job:", error.message);
+      alert("Failed to trigger the job. Please try again.");
+    }
+  };
+  
   // ref to get the out most Box
   const boxRef = useRef();
   const history = useHistory();
@@ -135,14 +250,12 @@ export default function AtlasCard({
                     localStorage.setItem('atlasId', atlasId);
                   }}
                 />
-                {/* {uploadedBy === userId && (
-                <OutlinedButton
-                    content="Change Privacy Status"
-                    onClick={() => setPrivacyModalOpen(true)}
-                  >
-                    Change Privacy Status
-                </OutlinedButton>
-                )} */}
+                {uploadedBy && uploadedBy === userId && (
+                  <OutlinedButton
+                   content="Atlas Benchmark"
+                   onClick={() => setPrivacyModalOpen(true)}                
+                  />
+                )}
                 {
                 disabled
                 && (
@@ -278,7 +391,7 @@ export default function AtlasCard({
         }
       </Box>
       {/* Privacy Modal */}
-      {/* <Modal
+      <Modal
         open={privacyModalOpen}
         onClose={() => setPrivacyModalOpen(false)}
         aria-labelledby="privacy-modal-title"
@@ -297,29 +410,62 @@ export default function AtlasCard({
             p: 4,
           }}
         >
+          {uploadedBy === userId && !atlas.benchmarked && (
           <Typography id="privacy-modal-title" variant="h6" component="h2">
-            Toggle to set atlas to private. A private atlas will not be accessible to the public.
-          </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={newPrivacyStatus}
-                onChange={(e) => setNewPrivacyStatus(e.target.checked)}
-              />
-            }
-            label={newPrivacyStatus ? 'Private' : 'Public'}
-            sx={{ mt: 2 }}
-          />
+            Now that your atlas is uploaded, you can start an atlas benchmark. 
+            
+            For more info on how the benchmark is done see the
+            <a
+              style={{
+                textDecoration: "none",
+              }} href="https://archmap-docu.readthedocs.io/en/latest/visualization/index.html#mapping-evaluation"><Typography sx={{
+                color: colors.primary[400],
+                ':hover': { color: colors.primary[500] }
+              }} display="inline"> docs </Typography></a>
+          </Typography>)
+          }
+          {uploadedBy === userId && atlas.benchmarked && (
+          <Typography id="privacy-modal-title" variant="h6" component="h2">
+            Your atlas benchmark has completed successfully and you can now download your results. 
+            For more info on how the benchmark is done see the 
+            <a
+              style={{
+                textDecoration: "none",
+              }} href="https://archmap-docu.readthedocs.io/en/latest/visualization/index.html#mapping-evaluation"><Typography sx={{
+                color: colors.primary[400],
+                ':hover': { color: colors.primary[500] }
+              }} display="inline"> docs </Typography></a>
+          </Typography>)
+          }
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
             <Button variant="outlined" onClick={() => setPrivacyModalOpen(false)}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={handlePrivacyToggle}>
-              Save
-            </Button>
+            
+            {uploadedBy === userId && (
+              <>
+                {!atlas.benchmarked ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleBenchmarkClick(atlas)}
+                  >
+                    Start Benchmark
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => downloadBenchmarkClick(atlas)}
+                  >
+                    Download Benchmark Results
+                  </Button>
+                )}
+              </>
+            )}
           </Box>
         </Box>
-      </Modal> */}
+      </Modal> 
     </Box>
   );
 }

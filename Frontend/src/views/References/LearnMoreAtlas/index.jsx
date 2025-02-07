@@ -149,14 +149,14 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {atlas?.url ? <Link href={atlas.url} sx={{ textDecoration: 'none' }} target="_blank" rel="noopener">{atlas.url}</Link> : "Not available"}
         </Typography>
       </Box>
-      {/* Atlas cell_type_key */}
+      {/* Atlas cellTypeKey */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
           Atlas cell type key:
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.cell_type_key ? atlas?.cell_type_key : "Not available"}
+          {atlas?.cellTypeKey ? atlas?.cellTypeKey : "Not available"}
         </Typography>
       </Box>
       {/* Atlas batch_key */}
@@ -166,7 +166,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           &nbsp;
         </Typography>
         <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {atlas?.batch_key ? atlas?.batch_key : "Not available"}
+          {atlas?.batchKey ? atlas?.batchKey : "Not available"}
         </Typography>
       </Box>
       {/* Create an Edit and Delete Button */}

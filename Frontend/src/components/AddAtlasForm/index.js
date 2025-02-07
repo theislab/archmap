@@ -62,26 +62,7 @@ function getAuthAndJsonHeader() {
   };
 }
 
-const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName) => {
-  try {
 
-    req.body.modelpath = modelPath;
-    req.body.atlaspath = atlasPath;
-    req.body.modelname = modelName;
-    req.body.batchkey = batchKey;
-    req.body.celltypekey = cellTypeKey;
-    req.body.atlasname = atlasName;
-
-    const response = await TriggerJobService.TriggerJob(req.body);
-    console.log("Job triggered successfully:", response.data);
-
-    // Show a success message to the user
-    alert("Job triggered successfully!");
-  } catch (error) {
-    console.error("Error triggering job:", error.message);
-    alert("Failed to trigger the job. Please try again.");
-  }
-};
 
 
 const AddAtlasForm = (props) => {
@@ -97,6 +78,7 @@ const AddAtlasForm = (props) => {
   const [batchKey, setBatchKey] = useState("");
   const [cellTypeKey, setCellTypeKey] = useState("");
   const [inrevision, setRevisionStatus] = useState(false);
+  const [benchmarked, setBenchmarkedStatus] = useState(false);
   const [isPrivate, setPrivacyStatus] = useState(true);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
   const [modalities, setModalities] = useState([]);
@@ -118,6 +100,24 @@ const AddAtlasForm = (props) => {
   const [uploadProgress, setUploadProgress] = useUploadProgress();
 
   const classes = useStyles();
+
+  const handleAtlasStatus =  () => {
+    setBenchmarkedStatus(false)
+    setRevisionStatus(true)
+ 
+  };
+
+  const PreviewPictureDefault = (value) => {
+    if (!value) {
+        setPreviewPictureURL("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png")
+        return
+    }
+    if (value) {
+      setPreviewPictureURL(value)
+    }
+    
+
+  }
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -149,7 +149,9 @@ const AddAtlasForm = (props) => {
         selectedClassifier.name,
         url,
         user._id,
+        inrevision,
         isPrivate,
+        benchmarked
       );
 
       // Initialize atlas uploads
@@ -198,44 +200,63 @@ const AddAtlasForm = (props) => {
 
       alert("File upload started successfully. Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
 
-      // // Wait until all uploads are complete before triggering Cloud Run job
-      // const uploadIds = [
-      //   atlas.atlasUploadId,
-      // ];
 
+      // // Define the function to check uploads
       // const checkUploadsComplete = async () => {
-      //   console.log("atlas upload complete. Triggering job")
-      //   for (const model of models) {
-      //     await handleTriggerJob(model.modelUploadPath, atlas.atlasUploadPath);
+      //   const uploadIds = [atlas.atlasUploadId];
+
+      //   const allUploadsComplete = uploadIds.every((uploadId) => {
+      //     return (
+      //       uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING
+      //     );
+      //   });
+
+      //   if (allUploadsComplete) {
+      //     console.log("atlas upload complete. Triggering job");
+      //     // All uploads are complete, trigger the Cloud Run job
+      //     for (const model of models) {
+      //       await triggerCloudRunJob(
+      //         model.modelUploadPath,
+      //         atlas.atlasUploadPath,
+      //         model.name,
+      //         batchKey,
+      //         cellTypeKey,
+      //         atlasName
+      //       );
+      //     }
+      //   } else {
+      //     console.log("atlas upload NOT complete. Delaying cloud run job");
+      //     // If any upload is not complete, check again after a short delay
+      //     setTimeout(checkUploadsComplete, 60 * 1000); // Check again after 1 second
       //   }
-      // }
+      // };
 
-      //  setTimeout(checkUploadsComplete, 1000); //5 min
+      // Start checking uploads only after initializing everything
+      
+      // const checkUploadsComplete = async () => {
+
+      //     // Wait for the timeout before triggering the Cloud Run job
+      //     await new Promise((resolve) => setTimeout(resolve, 10 * 60 * 1000)); // Wait for 60 seconds
+    
+      //     // Trigger Cloud Run job for all models
+      //     for (const model of models) {
+      //       await handleTriggerJob(
+      //         model.modelUploadPath,
+      //         atlas.atlasUploadPath,
+      //         model.name,
+      //         batchKey,
+      //         cellTypeKey,
+      //         atlasName
+      //       );
+      //     }
+
+      // };
+    
+      // // Start checking uploads only after initializing everything
+      // checkUploadsComplete();
 
 
-
-      // Poll the upload progress to check when all uploads are complete
-      const checkUploadsComplete = async () => {
-        const allUploadsComplete = uploadIds.every((uploadId) => {
-          return uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING;
-        });
-
-        if (allUploadsComplete) {
-          console.log("atlas upload complete. Triggering job")
-          // All uploads are complete, trigger the Cloud Run job
-          for (const model of models) {
-            await triggerCloudRunJob(model.modelUploadPath, atlas.atlasUploadPath, model.name, batchKey, cellTypeKey, atlasName );
-          }
-        } else {
-          console.log("atlas upload NOT complete. Delaying cloud run job")
-          // If any upload is not complete, check again after a short delay
-          setTimeout(checkUploadsComplete, 1000);
-        }
-      };
-
-      // Start checking the upload progress
-      checkUploadsComplete();
-
+    
     } catch (error) {
       console.error("Error during form submission:", error);
       axiosInstance
@@ -254,11 +275,12 @@ const AddAtlasForm = (props) => {
       // Reset the form and state
       setIsLoading(false);
       setAtlasName("");
-      // setBatchKey("");
-      // setCellTypeKey("");
+      setBatchKey("");
+      setCellTypeKey("");
+      setBenchmarkedStatus(false);
       setRevisionStatus(true);
       setPrivacyStatus(true);
-      setPreviewPictureURL("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
+      setPreviewPictureURL("");
       setModalities([]);
       setCompatibleModels([]);
       setNumberOfCells("");
@@ -426,7 +448,7 @@ const AddAtlasForm = (props) => {
                     required
                   />
                 </Grid>
-                {/* <Grid item xs={8}>
+                <Grid item xs={8}>
                   <TextField
                     fullWidth
                     margin="dense"
@@ -453,7 +475,7 @@ const AddAtlasForm = (props) => {
                     }}
                     required
                   />
-                </Grid> */}
+                </Grid> 
                 <Grid item xs={8}>
                   <TextField
                     fullWidth
@@ -463,7 +485,7 @@ const AddAtlasForm = (props) => {
                     id="previewPictureURL"
                     value={previewPictureURL}
                     onChange={(e) => {
-                      setPreviewPictureURL(e.target.value);
+                      PreviewPictureDefault(e.target.value);
                     }}
                     // required
                   />
@@ -693,15 +715,15 @@ const AddAtlasForm = (props) => {
                     <Grid item xs={4}>
                       {user.hasPermission ? (
                         <Button
-                          type="submit"
-                          className={classes.addAtlasButton} // Apply the custom style
-                          value={inrevision}
-                          onChange={(e) => {
-                            setRevisionStatus(e.target.value);
-                          }}
-                        >
-                          Add Atlas
-                        </Button>
+                        type="submit"
+                        className={classes.addAtlasButton} // Apply the custom style
+                        onClick={() => {
+                          handleAtlasStatus(); // Update revision status when the button is clicked
+                        }}
+                      >
+                        Add Atlas
+                      </Button>
+                      
                       ) : (
                         <Button
                           type="submit"

@@ -29,7 +29,7 @@ function SearchContent({
     />
   );
 
-  const atlases = <AtlasesGrid atlases={searchResult} searchedKeyword={searchedKeyword} path="/sequencer/search" isSearchPage/>;
+  const atlases = <AtlasesGrid atlases={searchResult} searchedKeyword={searchedKeyword} path="/sequencer/search" userId={user._id} isSearchPage/>;
   const models = <ModelsGrid models={searchResult} searchedKeyword={searchedKeyword} path="/sequencer/search" isSearchPage/>;
   const scvi_hub_atlases = <AtlasesScviGrid atlases={searchResult} />;
   return (

@@ -10,8 +10,8 @@ const AtlasUploadService = {
       
       const atlasData = {
         name: name,
-        batch_key: batchKey,
-        cell_type_key: cellTypeKey,
+        batchKey: batchKey,
+        cellTypeKey: cellTypeKey,
         previewPictureURL: previewPictureURL,
         modalities: modalities, // Assuming modalities is an array
         numberOfCells: Number(numberOfCells),
@@ -21,7 +21,8 @@ const AtlasUploadService = {
         atlasUrl: atlasUrl,
         uploadedBy: String(userId),
         isPrivate: isPrivate,
-        inrevision: true
+        inrevision: true,
+        benchmarked: false
         
       };
       console.log("atlas data to be sent to backend", atlasData)

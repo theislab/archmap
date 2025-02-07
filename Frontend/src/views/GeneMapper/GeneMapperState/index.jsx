@@ -50,7 +50,6 @@ function GeneMapperState({ path }) {
     setSelectedModel(newModel);
 
     if (typeof newModel !== "string") {
-      let {batch_key, cell_type_key} = selectedAtlas
       let counts = selectedAtlas.counts
       newModel.requirements = [
         <Typography>Ensure your data is in <strong>h5ad</strong> format.</Typography>,

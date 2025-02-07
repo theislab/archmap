@@ -42,6 +42,42 @@ function ProcessingStatus() {
   );
 }
 
+// import React, { useState, useEffect } from "react";
+// import { Box, Typography, LinearProgress } from "@mui/material";
+
+// function ProcessingStatus({ logEndpoint }) {
+//   const [logMessage, setLogMessage] = useState("Processing by scArches...");
+
+//   useEffect(() => {
+//     const fetchLogs = async () => {
+//       try {
+//         const response = await fetch(logEndpoint);
+//         const data = await response.json();
+//         if (data && data.message) {
+//           setLogMessage(data.message); // Update the message from the response
+//         }
+//       } catch (error) {
+//         console.error("Error fetching logs:", error);
+//         setLogMessage("Error fetching logs.");
+//       }
+//     };
+
+//     fetchLogs();
+//   }, [logEndpoint]);
+
+//   return (
+//     <>
+//       <Box sx={{ pr: 2, flexGrow: 1 }}>
+//         <LinearProgress />
+//       </Box>
+//       <Typography variant="caption" noWrap sx={{ pr: 2 }}>
+//         {logMessage}
+//       </Typography>
+//     </>
+//   );
+// }
+
+
 function CanceldOrFailedStatus() {
   return (
     <Typography variant="caption">

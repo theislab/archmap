@@ -220,6 +220,32 @@ const update_metrics = (): Router => {
   return router;
 };
 
+const update_project_logs = (): Router => {
+  let router = express.Router();
+  router.post("/projects/updatelogs/:token", validationMdw, async (req, res) => {
+    try {
+      const updateToken = req.params.token;
+      // get body from request
+      let ml_pipeline_progress = req.body.ml_pipeline_progress;
+
+      let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
+      let project = await ProjectService.getProjectById(tokenObject._projectId);
+      const updateProgress: UpdateProjectDTO = {
+        ml_pipeline_progress: ml_pipeline_progress
+
+        
+      };
+      await ProjectService.updateProjectById(project._id, updateProgress);
+      return res.status(200).send("OK");
+  
+    } catch (e) {
+      console.error(e);
+      return res.status(500).send("Internal server error");
+    }
+  });
+  return router;
+};
+
 const update_project_results = (): Router => {
   let router = express.Router();
   router.post("/projects/updateresults/:token", validationMdw, async (req, res) => {

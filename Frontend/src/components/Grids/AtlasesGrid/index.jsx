@@ -5,7 +5,7 @@ import AtlasCard from 'components/Cards/AtlasCard';
 import styles from './atlasesGrid.module.css';
 
 const AtlasesGrid = ({
-  atlases, path, selectedAtlas = null,
+  atlases, path, userId, selectedAtlas = null,
   handleAtlasSelection = null, selectedModel = null, isSearchPage = false,
 }) => (
   <Box
@@ -20,8 +20,11 @@ const AtlasesGrid = ({
       {atlases ? atlases.map((atlas) => (
         <Grid key={atlas._id} item xs={12} sm={6} md={4} lg={3}>
           <AtlasCard
+            atlas={atlas}
             atlasId={atlas._id}
             inrevision={atlas.inrevision}
+            uploadedBy={atlas.uploadedBy}
+            userId={userId}
             imgLink={atlas.previewPictureURL}
             species={atlas.species}
             modalities={atlas.modalities}
