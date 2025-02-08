@@ -31,27 +31,34 @@ import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/su
 import axiosInstance from 'shared/services/axiosInstance';
 import InfoIcon from '@mui/icons-material/Info';
 
-function ProcessingStatus() {
+function ProcessingStatus({ project }) {
   return (
     <>
       <Box sx={{ pr: 2, flexGrow: 1 }}>
         <LinearProgress />
       </Box>
-      <Typography variant="caption" noWrap sx={{ pr: 2 }}>Processing by scArches...</Typography>
+      {project.ml_pipeline_progress ? (
+        <Typography variant="caption" noWrap sx={{ pr: 2 }}>
+          {project.ml_pipeline_progress}
+        </Typography>
+      ) : (
+        <Typography variant="caption" noWrap sx={{ pr: 2 }}>
+          Processing by scArches...
+        </Typography>
+      )}
     </>
   );
 }
 
-// import React, { useState, useEffect } from "react";
-// import { Box, Typography, LinearProgress } from "@mui/material";
 
-// function ProcessingStatus({ logEndpoint }) {
+
+// function ProcessingStatus() {
 //   const [logMessage, setLogMessage] = useState("Processing by scArches...");
 
 //   useEffect(() => {
 //     const fetchLogs = async () => {
 //       try {
-//         const response = await fetch(logEndpoint);
+//         const response = await fetch(project.ml_pipeline_progress);
 //         const data = await response.json();
 //         if (data && data.message) {
 //           setLogMessage(data.message); // Update the message from the response
@@ -370,7 +377,7 @@ export default function ProjectBarCard({
                       && project.status !== PROJECT_STATUS.DOWNLOAD_READY
                       && project.status !== PROJECT_STATUS.ABORTED
                       && project.status !== PROJECT_STATUS.PROCESSING_FAILED
-                      && <ProcessingStatus />}
+                      && <ProcessingStatus project={project} />}
                     {(project.status === PROJECT_STATUS.ABORTED
                       || project.status === PROJECT_STATUS.PROCESSING_FAILED)
                       && <>
@@ -395,7 +402,7 @@ export default function ProjectBarCard({
                       {project.status === PROJECT_STATUS.UPLOAD_PENDING
                         && <CanceldOrFailedStatus />}
                       {project.status === PROJECT_STATUS.PROCESSING_PENDING 
-                        && <ProcessingStatus />}
+                        && <ProcessingStatus project={project} />}
                       {(project.status === PROJECT_STATUS.ABORTED
                         || project.status === PROJECT_STATUS.PROCESSING_FAILED)
                 && <>
