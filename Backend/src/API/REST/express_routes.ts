@@ -84,6 +84,7 @@ import {
   update_ratio,
   update_metrics,
   update_project_results,
+  update_project_logs,
   delete_project,
   get_deleted_projects,
   restore_deleted_project,
@@ -183,6 +184,7 @@ export function express_routes(): Router {
   router.use(restore_deleted_project());
   router.use(cleanup_old_projects());
   router.use(update_project_results());
+  router.use(update_project_logs());
   router.use(update_ratio());
   router.use(update_metrics());
 

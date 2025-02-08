@@ -433,6 +433,7 @@ export {
   get_users_projects,
   update_ratio,
   update_project_results,
+  update_project_logs,
   delete_project,
   get_deleted_projects,
   restore_deleted_project,
