@@ -89,45 +89,40 @@ export default function AtlasCard({
   };
 
   const handleBenchmarkClick = () => {
-
-    let association = null; // Declare association in the outer scope
-    let found = false; // Flag to track if the association is found
-
-    for (let j = 0; j < atlas.compatibleModels.length; j++) {
-      for (let i = 0; i < associations.length; i++) {
-        if (associations[i].atlas && atlas._id === associations[i].atlas._id) {
-          association = associations[i]; // Assign the value
-          console.log(association);
-          found = true; // Set the flag
-          break; // Exit the inner loop
-        }
+    let association = null; // Store found association
+  
+    // Find the first matching association
+    for (let i = 0; i < associations.length; i++) {
+      if (associations[i].atlas && atlas._id === associations[i].atlas._id) {
+        association = associations[i]; // Store the found association
+        console.log(association);
+        break; // Exit the loop early since we found an association
       }
-      if (found) break; // Exit the outer loop
     }
-
+  
+    // If an association is found, proceed with triggering the job
     if (association) {
-      console.log(association.modelUploadPath); // Safely access the property
+      console.log(association.modelUploadPath);
+      console.log(atlas.atlasUploadPath);
+      console.log(atlas.compatibleModels[0]);
+      console.log(atlas.batchKey);
+      console.log(atlas.cellTypeKey);
+      console.log(atlas.name);
+  
+      handleTriggerJob(
+        association.modelUploadPath,
+        atlas.atlasUploadPath,
+        atlas.compatibleModels[0],
+        atlas.batchKey,
+        atlas.cellTypeKey,
+        atlas.name,
+        atlas._id
+      );
     } else {
-      console.log('No matching association found.');
+      console.log("No matching association found.");
     }
-
-    console.log(association.modelUploadPath)
-    console.log(atlas.atlasUploadPath)
-    console.log(atlas.compatibleModels[0])
-    console.log(atlas.batchKey)
-    console.log(atlas.cellTypeKey)
-    console.log(atlas.name)
-
-    handleTriggerJob(
-      association.modelUploadPath,
-      atlas.atlasUploadPath,
-      atlas.compatibleModels[0],
-      atlas.batchKey,
-      atlas.cellTypeKey,
-      atlas.name, 
-      atlas._id
-    );
   };
+  
 
   const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId) => {
     try {
