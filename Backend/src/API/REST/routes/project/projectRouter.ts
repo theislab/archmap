@@ -226,7 +226,8 @@ const update_project_logs = (): Router => {
     try {
       const updateToken = req.params.token;
       // get body from request
-      let ml_pipeline_progress = req.body.ml_pipeline_progress;
+      let ml_pipeline_progress = req.body.logs;
+      console.log(ml_pipeline_progress)
 
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
