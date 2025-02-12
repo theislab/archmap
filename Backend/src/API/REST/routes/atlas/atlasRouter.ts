@@ -150,7 +150,7 @@ const get_atlas_visualization = (): Router => {
 const get_allAtlases = (): Router => {
   let router = express.Router();
 
-  router.get("/atlases", validationMdw, optional_auth(), async (req: any, res) => {
+  router.get("/atlases", validationMdw, async (req: any, res) => {
     try {
       const atlases = await AtlasService.getAllAtlases();
       // check if the atlases are present in the GCP bucket
@@ -456,6 +456,7 @@ const upload_atlas = (): Router => {
       const atlasData = {
         name: req.body.name,
         previewPictureURL: req.body.previewPictureURL,
+        classifierLabels: req.body.classifierLabels,
         modalities: req.body.modalities,
         numberOfCells: req.body.numberOfCells,
         species: req.body.species,
