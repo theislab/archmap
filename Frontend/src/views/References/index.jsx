@@ -157,7 +157,7 @@ const References = () => {
         <AtlasesGrid
           atlases={applyAtlasFilters(atlases, searchedKeyword, searchParams, selectedModel)}
           path={path}
-          userId={user._id}
+          // userId={user._id}
           handleAtlasSelection={handleAtlasSelection}
           selectedAtlas={selectedAtlas}
           selectedModel={selectedModel}

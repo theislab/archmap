@@ -37,6 +37,11 @@ const WindowiOS = ({ onGuideClick, backgroundImageLoaded }) => {
             type="primary2">
             <Typography>Quick Guide</Typography>
           </CustomButton>
+          <CustomButton sx={{ margin: '10px'}} onClick={() => window.open("https://www.biorxiv.org/content/10.1101/2024.09.19.613883v1", "_blank")} type="primary">
+            <Typography fontSize="17px" fontWeight="400" >
+              Preprint
+            </Typography>
+          </CustomButton>
         </Box>
 
         {/* commented out part below is about the partners */}
