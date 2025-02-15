@@ -55,6 +55,7 @@ export default function check_auth() {
 }
 
 
+
 export function optional_auth() {
   let router = express.Router();
 
@@ -77,9 +78,10 @@ export function optional_auth() {
 
       try {
         const user = await UserService.getUserById(decoded.id);
+
         if (user) {
           req.is_authenticated = true;
-          req.user_id = decoded.id;
+          req.user_id = user._id;
           req.email = user.email;
           req.is_administrator = user.isAdministrator;
           req.is_verified = user.isEmailVerified;
@@ -96,3 +98,5 @@ export function optional_auth() {
 
   return router;
 }
+
+
