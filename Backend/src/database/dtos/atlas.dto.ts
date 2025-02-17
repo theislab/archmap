@@ -6,6 +6,7 @@ export interface AddAtlasDTO {
     batchKey: string;
     cellTypeKey: string;
     previewPictureURL: string;
+    classifierLabels: Array<string>;
     modalities: Array<string>;
     numberOfCells: number;
     species: Array<string>;

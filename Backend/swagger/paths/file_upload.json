@@ -263,6 +263,12 @@
                 "previewPictureURL": {
                   "type": "string"
                 },
+                "classifierLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "modalities": {
                   "type": "array",
                   "items": {
