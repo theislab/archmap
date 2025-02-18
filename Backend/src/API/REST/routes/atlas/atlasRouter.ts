@@ -456,7 +456,7 @@ const upload_atlas = (): Router => {
       const atlasData = {
         name: req.body.name,
         previewPictureURL: req.body.previewPictureURL,
-        classifierLabels: req.body.classifierLabels,
+        // classifierLabels: req.body.classifierLabels,
         modalities: req.body.modalities,
         numberOfCells: req.body.numberOfCells,
         species: req.body.species,
