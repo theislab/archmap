@@ -119,6 +119,16 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
           {atlas?.numberOfCells ? atlas.numberOfCells : "Not available"}
         </Typography>
       </Box>
+      {/* classifierLabels */}
+      {/* <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
+          Classifier labels:
+          &nbsp;
+        </Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {atlas?.classifierLabels ? atlas.classifierLabels : "Not available"}
+        </Typography>
+      </Box> */}
       {/* Modalities */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>

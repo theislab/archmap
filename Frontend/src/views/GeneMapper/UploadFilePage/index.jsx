@@ -297,7 +297,10 @@ function UploadFilePage({
                   ) : (// If it's not an scviHub Atlas, show the modalities and other information
                   <>
                     <Stack direction="column" spacing={1}>
-                      <Typography gutterBottom variant="caption">
+                    <Typography gutterBottom variant="caption">
+                        {/* {`Classifier labels: ${selectedAtlas.classifierLabels}`}
+                      </Typography>
+                      <Typography gutterBottom variant="caption"> */}
                         {`Modalities: ${selectedAtlas.modalities}`}
                       </Typography>
                       <Typography gutterBottom variant="caption">

@@ -105,6 +105,7 @@ function AtlasModelChoice({
                 height="97%"
                 title={a.name.includes("atlas") ? a.name.replace("atlas", "") : a.name} 
                 inrevision={a.inrevision}
+                // classifierLabels={a.classifierLabels}
                 modalities={a.modalities}
                 cellsInReference={a.numberOfCells}
                 species={a.species}

@@ -17,6 +17,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
  * @param height default value is 100% of parent
  * @param title title of AtlasCard
  * @param imgLink thumbnail photo url
+ * @param classifierLabels
  * @param modalities 
  * @param cellsInReference
  * @param species
@@ -24,7 +25,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
  * @param learnMoreLink onHover button Learn More url
  */
 export default function AtlasCardSelect({
-  width = "100%", height = "100%", title, inrevision, imgLink, modalities,
+  width = "100%", height = "100%", title, inrevision, imgLink, classifierLabels, modalities,
   cellsInReference, species, mapLink, learnMoreLink, selected=false, 
   onSelect, selectedAtlas, atlasObject={},isLoading=true
 }) {
@@ -146,6 +147,24 @@ export default function AtlasCardSelect({
               objectFit: "cover"
             }}
           />
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "1rem",
+                fontWeight: "bold"
+              }}
+            >
+              Classifier labels:
+            </Typography>
+            &nbsp;
+            <Typography noWrap>{classifierLabels}</Typography>
+          </Box>
 
           <Box
             sx={{

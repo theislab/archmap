@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 const PATH = "trigger-job";
 
 const TriggerJobService = {
-  TriggerJob: async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId) => {
+  TriggerJob: async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId, classifierLabels) => {
     const postData = {
       modelPath: modelPath,
       atlasPath: atlasPath,
@@ -11,7 +11,8 @@ const TriggerJobService = {
       batchKey: batchKey,
       cellTypeKey: cellTypeKey,
       atlasName: atlasName,
-      atlasId: atlasId
+      atlasId: atlasId,
+      classifierLabels: classifierLabels
     }
 
     console.log(postData)

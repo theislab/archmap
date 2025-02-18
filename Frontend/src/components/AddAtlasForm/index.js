@@ -81,7 +81,8 @@ const AddAtlasForm = (props) => {
   const [benchmarked, setBenchmarkedStatus] = useState(false);
   const [isPrivate, setPrivacyStatus] = useState(true);
   const [previewPictureURL, setPreviewPictureURL] = useState("");
-  const [modalities, setModalities] = useState([]);
+  const [classifierLabels, setClassifierLabels] = useState([]);
+  const [modalities, setModalities] = useState(["rna"]);
   const [compatibleModels, setCompatibleModels] = useState([]);
   const [numberOfCells, setNumberOfCells] = useState("");
   const [species, setSpecies] = useState("");
@@ -136,12 +137,14 @@ const AddAtlasForm = (props) => {
     }
 
     try {
+
       // Assuming AtlasUploadService.createAtlas is an async function
       const { atlas, models } = await AtlasUploadService.createAtlas(
         atlasName,
         batchKey,
         cellTypeKey,
         previewPictureURL,
+        classifierLabels,
         modalities,
         numberOfCells,
         species,
@@ -201,60 +204,6 @@ const AddAtlasForm = (props) => {
       alert("File upload started successfully. Once your files are uploaded, a quality check will be conducted by the ArchMap team to make sure the atlas meets all ArchMap quidelines.");
 
 
-      // // Define the function to check uploads
-      // const checkUploadsComplete = async () => {
-      //   const uploadIds = [atlas.atlasUploadId];
-
-      //   const allUploadsComplete = uploadIds.every((uploadId) => {
-      //     return (
-      //       uploadProgress[uploadId]?.status === MULTIPART_UPLOAD_STATUS.UPLOAD_FINISHING
-      //     );
-      //   });
-
-      //   if (allUploadsComplete) {
-      //     console.log("atlas upload complete. Triggering job");
-      //     // All uploads are complete, trigger the Cloud Run job
-      //     for (const model of models) {
-      //       await triggerCloudRunJob(
-      //         model.modelUploadPath,
-      //         atlas.atlasUploadPath,
-      //         model.name,
-      //         batchKey,
-      //         cellTypeKey,
-      //         atlasName
-      //       );
-      //     }
-      //   } else {
-      //     console.log("atlas upload NOT complete. Delaying cloud run job");
-      //     // If any upload is not complete, check again after a short delay
-      //     setTimeout(checkUploadsComplete, 60 * 1000); // Check again after 1 second
-      //   }
-      // };
-
-      // Start checking uploads only after initializing everything
-      
-      // const checkUploadsComplete = async () => {
-
-      //     // Wait for the timeout before triggering the Cloud Run job
-      //     await new Promise((resolve) => setTimeout(resolve, 10 * 60 * 1000)); // Wait for 60 seconds
-    
-      //     // Trigger Cloud Run job for all models
-      //     for (const model of models) {
-      //       await handleTriggerJob(
-      //         model.modelUploadPath,
-      //         atlas.atlasUploadPath,
-      //         model.name,
-      //         batchKey,
-      //         cellTypeKey,
-      //         atlasName
-      //       );
-      //     }
-
-      // };
-    
-      // // Start checking uploads only after initializing everything
-      // checkUploadsComplete();
-
 
     
     } catch (error) {
@@ -281,6 +230,7 @@ const AddAtlasForm = (props) => {
       setRevisionStatus(true);
       setPrivacyStatus(true);
       setPreviewPictureURL("");
+      setClassifierLabels([]);
       setModalities([]);
       setCompatibleModels([]);
       setNumberOfCells("");
@@ -481,6 +431,20 @@ const AddAtlasForm = (props) => {
                     fullWidth
                     margin="dense"
                     variant="outlined"
+                    label="Cell type keys for label transfer (Please seprate each cell type key by a comma)"
+                    id="classifierlabels"
+                    value={classifierLabels}
+                    onChange={(e) => {
+                      setClassifierLabels(e.target.value.split(","));
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
                     label="Preview Picture URL"
                     id="previewPictureURL"
                     value={previewPictureURL}
@@ -495,13 +459,12 @@ const AddAtlasForm = (props) => {
                     fullWidth
                     margin="dense"
                     variant="outlined"
-                    label="Modalities (Provide comma separated values)"
+                    label="Modalities"
                     id="modalities"
                     value={modalities}
                     onChange={(e) => {
                       setModalities(e.target.value.split(","));
                     }}
-                    required
                   />
                 </Grid>
                 <Grid item xs={8}>
@@ -586,7 +549,7 @@ const AddAtlasForm = (props) => {
                   />
                 </Grid>
 
-                <Grid item xs={8}>
+                {/* <Grid item xs={8}>
                   <Select
                     fullWidth
                     value={selectedClassifier}
@@ -609,9 +572,9 @@ const AddAtlasForm = (props) => {
                       </MenuItem>
                     ))}
                   </Select>
-                </Grid>
+                </Grid>  */}
 
-                {selectedClassifier && (
+                {/* {selectedClassifier && (
                   <>
                     <Grid item xs={8}>
                       <Button variant="contained" component="label">
@@ -627,7 +590,7 @@ const AddAtlasForm = (props) => {
                           Selected file is: {encoderFileName}
                         </span>
                       )}
-                    </Grid>
+                    </Grid> 
                     <Grid item xs={8}>
                       <Button variant="contained" component="label">
                         Select Classifier File
@@ -643,8 +606,8 @@ const AddAtlasForm = (props) => {
                         </span>
                       )}
                     </Grid>
-                  </>
-                )}
+                    </>
+                )}      */}
 
                 <Grid item xs={8}>
                   {atlasFile && (

@@ -5,24 +5,27 @@ const { default: axiosInstance } = require("./axiosInstance");
 
 
 const AtlasUploadService = {
-    createAtlas: async (name, batchKey, cellTypeKey, previewPictureURL, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId, isPrivate ) => {
+    createAtlas: async (name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, compatibleModels, selectedClassifier, atlasUrl, userId, isPrivate ) => {
       // Prepare JSON object for request
-      
+
+      // Trim leading and trailing whitespace from each string in classifierLabels
+      const trimmedClassifierLabels = classifierLabels.map(label => label.trim());
+
       const atlasData = {
         name: name,
         batchKey: batchKey,
         cellTypeKey: cellTypeKey,
         previewPictureURL: previewPictureURL,
+        classifierLabels: trimmedClassifierLabels,
         modalities: modalities, // Assuming modalities is an array
         numberOfCells: Number(numberOfCells),
         species: species,
-        compatibleModels: compatibleModels, // Assuming compatibleModels is an array of model names
-        selectedClassifier: selectedClassifier,
-        atlasUrl: atlasUrl,
         uploadedBy: String(userId),
-        isPrivate: isPrivate,
+        atlasUrl: atlasUrl,
         inrevision: true,
-        benchmarked: false
+        isPrivate: isPrivate,
+        benchmarked: false,
+        compatibleModels: compatibleModels // Assuming compatibleModels is an array of model names
         
       };
       console.log("atlas data to be sent to backend", atlasData)

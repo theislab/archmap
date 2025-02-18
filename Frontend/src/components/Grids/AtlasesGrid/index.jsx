@@ -26,6 +26,7 @@ const AtlasesGrid = ({
             uploadedBy={atlas.uploadedBy}
             userId={userId}
             imgLink={atlas.previewPictureURL}
+            // classifierLabels={atlas.classifierLabels}
             species={atlas.species}
             modalities={atlas.modalities}
             title={atlas.name}

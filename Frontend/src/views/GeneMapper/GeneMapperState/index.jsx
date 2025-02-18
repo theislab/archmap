@@ -49,6 +49,16 @@ function GeneMapperState({ path }) {
   const handleModelSelection = (newModel) => {
     setSelectedModel(newModel);
 
+    // Check if native classifier should be excluded based on chosen atlas
+    for (const RemoveClassifierAtlas of newModel.RemoveNativeClassifierAtlases) {
+      if (selectedAtlas.name === RemoveClassifierAtlas) {
+        newModel.compatibleClassifiers = newModel.compatibleClassifiers.filter(item => item !== newModel.name);
+      }
+    }
+
+
+    console.log(newModel.compatibleClassifiers)
+
     if (typeof newModel !== "string") {
       let counts = selectedAtlas.counts
       newModel.requirements = [
@@ -142,6 +152,17 @@ function GeneMapperState({ path }) {
             a.modalities = `${a.modalities[0]}, ...`;
           }
         }
+        // adjust labels
+        // if (!(typeof a.classifierLabels === 'string')) {
+        //   // classifierLabels is array of strings
+        //   if (a.classifierLabels.length == 0) {
+        //     a.classifierLabels = 'None';
+        //   } else if (a.classifierLabels.length == 1) {
+        //     a.classifierLabels = a.classifierLabels[0];
+        //   } else {
+        //     a.classifierLabels = `${a.classifierLabels[0]}, ...`;
+        //   }
+        // }
         if (a._id === atlasId) {
           setSelectedAtlas(a);
         }

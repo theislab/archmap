@@ -15,6 +15,7 @@ import axiosInstance from 'shared/services/axiosInstance';
  * @param height default value is 100% of parent
  * @param title title of AtlasCard
  * @param imgLink thumbnail photo url
+ * @param classifierLabels
  * @param modalities
  * @param cellsInReference
  * @param species
@@ -23,7 +24,7 @@ import axiosInstance from 'shared/services/axiosInstance';
  * 
  */
 export default function AtlasCard({
-  width = '100%', height = '100%', title, atlas, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, modalities,
+  width = '100%', height = '100%', title, atlas, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, classifierLabels, modalities,
   cellsInReference, species, learnMoreLink, onSelect, selected = false, disabled = false,
   isSearchPage = false
 }) {
@@ -107,6 +108,7 @@ export default function AtlasCard({
       console.log(atlas.compatibleModels[0]);
       console.log(atlas.batchKey);
       console.log(atlas.cellTypeKey);
+      console.log(atlas.classifierLabels);
       console.log(atlas.name);
   
       handleTriggerJob(
@@ -116,15 +118,17 @@ export default function AtlasCard({
         atlas.batchKey,
         atlas.cellTypeKey,
         atlas.name,
-        atlas._id
+        atlas._id,
+        classifierLabels
       );
     } else {
       console.log("No matching association found.");
+      alert("Failed to trigger the benchmarking job. Please try again.");
     }
   };
   
 
-  const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId) => {
+  const handleTriggerJob = async (modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId, classifierLabels) => {
     try {
 
       // req.body.modelpath = modelPath;
@@ -136,11 +140,11 @@ export default function AtlasCard({
 
       
   
-      const response = await TriggerJobService.TriggerJob(modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId);
+      const response = await TriggerJobService.TriggerJob(modelPath, atlasPath, modelName, batchKey, cellTypeKey, atlasName, atlasId, classifierLabels);
       console.log("Job triggered successfully:", response.data);
   
       // Show a success message to the user
-      alert("Job triggered successfully!");
+      alert("Benchmarking job triggered successfully!");
     } catch (error) {
       console.error("Error triggering job:", error.message);
       alert("Failed to trigger the job. Please try again.");
@@ -160,6 +164,12 @@ export default function AtlasCard({
     // TODO fix this
     if (modalities[0].length < 10) return modalities;
     return `${modalities[0].split(',')[0]}`;
+  };
+
+  const showLabels = () => {
+    // TODO fix this
+    if (classifierLabels[0].length < 10) return classifierLabels;
+    return `${classifierLabels[0].split(',')[0]}`;
   };
 
   const AtlasInfo = (title, data) => (
@@ -348,6 +358,7 @@ export default function AtlasCard({
             >
               {AtlasInfo('Modalities', showModalities())}
               {AtlasInfo('Species', species)}
+              {/* {AtlasInfo('Classifier labels', showLabels())} */}
             </Box>
           </Box>
           )}
@@ -380,6 +391,8 @@ export default function AtlasCard({
             >
               {AtlasInfo('Modalities', showModalities())}
               {AtlasInfo('Species', species)}
+              {/* {AtlasInfo('Classifier labels', showLabels())} */}
+              
             </Box>
           </Box>
           )
