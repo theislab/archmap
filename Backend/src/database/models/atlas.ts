@@ -6,7 +6,7 @@ import { Document, model, Schema } from "mongoose";
 export interface IAtlas extends Document {
   name: string;
   previewPictureURL: string;
-  // classifierLabels: Array<string>;
+  classifierLabels: Array<string>;
   modalities: Array<string>;
   numberOfCells: number;
   species: Array<string>;
@@ -50,12 +50,12 @@ const atlasSchema = new Schema<IAtlas>(
       default: "https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png"
     },
 
-    // classifierLabels: [
-    //   {
-    //     type: String,
-    //     required: true,
-    //   },
-    // ],
+    classifierLabels: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
 
     modalities: [
       {
