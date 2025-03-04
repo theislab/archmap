@@ -186,12 +186,14 @@ function UploadFilePage({
   }, [submissionProgress]);
 
   // the function to create a demo dataset project
-  const createDemoProject = ({projectName, atlasId, modelId, demoDataset}) => {
+  const createDemoProject = ({projectName, atlasId, modelId, demoDataset, scviHubId=null, model_setup_anndata_args = null}) => {
     ProjectService.createProject({
       projectName: projectName,
       atlasId: atlasId,
       modelId: modelId,
       fileName: demoDataset.name,
+      scviHubId: scviHubId,
+      model_setup_anndata_args: model_setup_anndata_args
   });
     history.push(path); // go back to GeneMapper home
   };
@@ -202,12 +204,24 @@ function UploadFilePage({
     setOpen(false); // opens modal to input mapping name
     // choose what type of project to create.
     if (datasetIsSelected) { // Demo project
+      if(selectedAtlas.scviAtlas){
+        createDemoProject({
+          projectName: mappingName,
+          atlasId: scviHubModel.scviHubId, 
+          modelId: scviHubModel.model, 
+          demoDataset: selectedDataset,
+          scviHubId: scviHubModel.scviHubId,
+          model_setup_anndata_args: model_setup_anndata_args
+        });
+      }
+      else {
       createDemoProject({
-        projectName:mappingName, 
+        projectName: mappingName,
         atlasId: selectedAtlas._id, 
-        modelId: selectedModel._id,
+        modelId: selectedModel._id, 
         demoDataset: selectedDataset
       });
+      }
     } else {
       if(selectedAtlas.scviAtlas){
         createProject({

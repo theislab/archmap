@@ -119,7 +119,7 @@ export default function AtlasCard({
         atlas.cellTypeKey,
         atlas.name,
         atlas._id,
-        classifierLabels
+        atlas.classifierLabels
       );
     } else {
       console.log("No matching association found.");

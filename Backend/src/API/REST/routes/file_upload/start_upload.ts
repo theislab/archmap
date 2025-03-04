@@ -66,7 +66,6 @@ export default function upload_start_upload_route() {
             status: ProjectStatus.UPLOAD_PENDING,
           };
         }
-
         const project = await ProjectService.addProject(projectToAdd);
         let params: S3.CreateMultipartUploadRequest = {
           Bucket: process.env.S3_BUCKET_NAME,

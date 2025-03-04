@@ -517,6 +517,8 @@ export default function ProjectBarCard({
                             <Box>
                               <Typography sx={{ width: '100%', maxWidth: '800px' }}>
                               This score quantifies the percentage of query cells that have at least one mutual nearest neighbor among the cells of the reference dataset. These mutual nearest neighbours are termed anchors.
+                              We note that the percentage of anchor cells is affected by the number of cells in the query and reference data. Thus this metric should not be used to compare mapping quality across query or reference datasets.
+                              The purpose of this metric is not to be used for comparison of mappings across different references and queries, but rather to convey the success of the mapping and the suitability of the chosen atlas as a reference for the specific query data.
 
                               </Typography>
                             </Box>

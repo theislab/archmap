@@ -63,11 +63,11 @@ function GeneMapperState({ path }) {
       let counts = selectedAtlas.counts
       newModel.requirements = [
         <Typography>Ensure your data is in <strong>h5ad</strong> format.</Typography>,
-        <Typography> The number of cells in you data <strong>should not exceed 50 000</strong>. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same query batch), submit separate mappings, and concatenate your downloaded results. See 
+        <Typography> The number of cells in you data <strong>should not exceed 200 000</strong>. If your query is larger than this, we recommend you batch your query (make sure all cells with the same batch/study label are in the same query batch), submit separate mappings, and concatenate your downloaded results. See 
         <a 
         style={{
           textDecoration: "none",
-        }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#my-query-data-has-more-than-the-limit-of-50-000-cells-what-can-i-do"><Typography sx={{
+        }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#my-query-data-has-more-than-the-limit-of-200-000-cells-what-can-i-do"><Typography sx={{
           color: colors.primary[400],
           ':hover': { color: colors.primary[500] }
         }} display="inline"> here </Typography></a> for more info.</Typography>,
