@@ -696,6 +696,8 @@ const edit_atlas = (): Router => {
 
       const updatedAtlasData = req.body; //req.body is the data sent by the client
 
+      console.log(updatedAtlasData)
+
       // Check if the atlas exists in MongoDB
       const atlasDocument = await atlasModel.findById(atlasId);
       if (!atlasDocument) {
@@ -705,6 +707,7 @@ const edit_atlas = (): Router => {
       // Update the atlas in MongoDB
       await atlasModel.findByIdAndUpdate(atlasId, updatedAtlasData);
       res.sendStatus(204);
+      console.log("added data")
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
