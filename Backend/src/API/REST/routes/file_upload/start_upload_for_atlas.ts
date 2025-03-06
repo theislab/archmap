@@ -40,7 +40,8 @@ export default function upload_start_upload_for_atlas_route() {
         check_auth(),
         async (req: ExtRequest, res) => {
 
-            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked } = req.body;
+
+            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked, doi, samples, individuals, datasets } = req.body;
 
             const compatibleModels = req.body.compatibleModels || [];
 
@@ -68,7 +69,12 @@ export default function upload_start_upload_for_atlas_route() {
                     atlasUrl: atlasUrl,
                     inrevision: inrevision,
                     isPrivate: isPrivate,
-                    benchmarked: benchmarked
+                    benchmarked: benchmarked,
+                    doi: doi,
+                    samples: samples,
+                    individuals: individuals,
+                    datasets: datasets
+            
                     
                 };
 

@@ -278,6 +278,18 @@
                 "numberOfCells": {
                   "type": "number"
                 },
+                "doi": {
+                    "type": "string"
+                  },
+                  "samples": {
+                    "type": "number"
+                  },
+                  "individuals": {
+                    "type": "number"
+                  },
+                  "datasets": {
+                    "type": "number"
+                  },
                 "species": {
                   "type": "string"
                 },

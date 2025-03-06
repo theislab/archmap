@@ -52,6 +52,18 @@
                   "numberOfCells": {
                     "type": "number"
                   },
+                  "doi": {
+                    "type": "string"
+                  },
+                  "samples": {
+                    "type": "number"
+                  },
+                  "individuals": {
+                    "type": "number"
+                  },
+                  "datasets": {
+                    "type": "number"
+                  },
                   "species": {
                     "type": "array",
                     "items": {
@@ -156,6 +168,18 @@
                     "numberOfCells": {
                       "type": "number"
                     },
+                    "doi": {
+                      "type": "string"
+                    },
+                    "samples": {
+                      "type": "number"
+                    },
+                    "individuals": {
+                      "type": "number"
+                    },
+                    "datasets": {
+                      "type": "number"
+                    },
                     "species": {
                       "type": "array",
                       "items": {
@@ -224,6 +248,18 @@
                       }
                     },
                     "numberOfCells": {
+                      "type": "number"
+                    },
+                    "doi": {
+                      "type": "string"
+                    },
+                    "samples": {
+                      "type": "number"
+                    },
+                    "individuals": {
+                      "type": "number"
+                    },
+                    "datasets": {
                       "type": "number"
                     },
                     "species": {
