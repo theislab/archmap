@@ -467,7 +467,12 @@ const upload_atlas = (): Router => {
         isPrivate: req.body.isPrivate,
         batchKey: req.body.batchKey,
         cellTypeKey: req.body.cellTypeKey,
-        benchmarked: req.body.benchmarked
+        benchmarked: req.body.benchmarked,
+        doi: req.body.doi,
+        samples: req.body.samples,
+        individuals: req.body.individuals,
+        datasets: req.body.datasets,
+
       }
 
       atlasDocument = await atlasModel.create(atlasData);
