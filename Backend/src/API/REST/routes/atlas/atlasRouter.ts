@@ -743,9 +743,8 @@ export const deleteAtlasById = async (atlasId) => {
     
   }
   // check for the model files and delete them as well
-  const modelAssociation = await AtlasModelAssociation.findOne({atlasId: atlasId});
+  const modelAssociation = await AtlasModelAssociation.findOne({atlas: atlasId});
   if(modelAssociation){
-    const model = await ModelService.getModelById(modelAssociation._id);
     const modelFileName = `models/${modelAssociation._id}/model.pt`;
     const modelFile = storage.bucket(bucketName).file(modelFileName);
     const [exists] = await modelFile.exists();
