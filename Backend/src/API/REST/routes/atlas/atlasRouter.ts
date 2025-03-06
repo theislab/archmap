@@ -764,6 +764,62 @@ export const deleteAtlasById = async (atlasId) => {
 };
 
 
+export const downloadAtlasById = async (atlasId) => {
+
+  // Download the atlas from GCP
+  const storage = new Storage({
+    projectId: process.env.GCP_PROJECT_ID,
+    credentials: {
+      client_email: process.env.GCP_CLIENT_EMAIL,
+      private_key: process.env.GCP_PRIVATE_KEY,
+      client_id: process.env.GCP_CLIENT_ID,
+    },
+
+  });
+
+  let allFiles = [];
+  const bucketName = process.env.S3_BUCKET_NAME;
+
+  // add atlas to list of files to download
+  const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
+  const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
+
+  const [exists_atlas] = await file_atlas.exists();
+  if (exists_atlas) {
+    allFiles = allFiles.concat(file_atlas);
+    
+  }
+
+  //add count data to list of files to download
+  const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
+  const file_counts = storage.bucket(bucketName).file(fileName_counts);
+
+  const [exists_counts] = await file_counts.exists();
+  if (exists_counts) {
+    allFiles = allFiles.concat(file_counts);
+    
+  }
+
+  // check for the model files and add them to the list as well
+  const modelAssociation = await AtlasModelAssociation.findOne({atlas: atlasId});
+  if (modelAssociation) {
+    const modelFolderPath = `models/${modelAssociation._id}/`; // Define folder path
+    const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
+  
+    if (files.length > 0) {
+      await Promise.all(files.map(file => allFiles.concat(file))); // Add all files asynchronously
+    } else {
+      console.log(`No files found in folder ${modelFolderPath}`);
+    }
+  }
+
+  console.log(`All files: ${allFiles}`)
+
+
+  return true;
+};
+
+
 const delete_atlas = (): Router => {
   let router = express.Router();
   
@@ -793,5 +849,34 @@ const delete_atlas = (): Router => {
   return router;
 };
 
+const download_atlas = (): Router => {
+  let router = express.Router();
 
-export { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job, update_atlas_benchmark_status };
+  router.get("/api/download_atlas/:id", validationMdw, upload_permission_auth(), async (req: any, res) => {
+    
+    try {
+      const atlasId = req.params.id;
+  
+      // Check if the atlas exists in MongoDB
+      const atlasDocument = await atlasModel.findById(atlasId);
+      if (!atlasDocument) {
+        return res.status(404).send("Atlas not found");
+      }
+  
+      const resp = await downloadAtlasById(atlasId);
+      if (!resp) {
+        return res.status(404).send("Atlas not found");
+      } else {
+        console.log("Atlas downloaded from GCP");
+        res.sendStatus(204);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  return router;
+};
+
+
+export { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, download_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job, update_atlas_benchmark_status };
