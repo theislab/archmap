@@ -744,40 +744,16 @@ export const deleteAtlasById = async (atlasId) => {
   }
   // check for the model files and delete them as well
   const modelAssociation = await AtlasModelAssociation.findOne({atlas: atlasId});
-  if(modelAssociation){
-    const modelFileName = `models/${modelAssociation._id}/model.pt`;
-    const modelFile = storage.bucket(bucketName).file(modelFileName);
-    const [exists] = await modelFile.exists();
-    if (exists) {
-
-      await modelFile.delete();
-      console.log("Model file deleted from GCP", modelFileName);
+  if (modelAssociation) {
+    const modelFolderPath = `models/${modelAssociation._id}/`; // Define folder path
+    const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
+  
+    if (files.length > 0) {
+      await Promise.all(files.map(file => file.delete())); // Delete all files asynchronously
+      console.log(`All files in folder ${modelFolderPath} deleted from GCP`);
+    } else {
+      console.log(`No files found in folder ${modelFolderPath}`);
     }
-  }
-
-  // check if the classifier files and encoder files are present as well
-  const classifierFileNameKNN = `classifiers/${atlasId}/classifier_knn.pickle`;
-  const classifierFileKNN = storage.bucket(bucketName).file(classifierFileNameKNN);
-  const [existsKNN] = await classifierFileKNN.exists();
-  if (existsKNN) {
-    await classifierFileKNN.delete(); 
-    console.log("KNN classifier file deleted from GCP", classifierFileNameKNN);
-  }
-
-  const classifierFileNameXGB = `classifiers/${atlasId}/classifier_xgb.ubj`;
-  const classifierFileXGB = storage.bucket(bucketName).file(classifierFileNameXGB);
-  const [existsXGB] = await classifierFileXGB.exists();
-  if (existsXGB) {
-    await classifierFileXGB.delete(); 
-    console.log("XGB classifier file deleted from GCP", classifierFileNameXGB);
-  }
-
-  const encoderFileName = `classifiers/${atlasId}/classifier_encoding.pickle`;
-  const encoderFile = storage.bucket(bucketName).file(encoderFileName);
-  const [existsEncoder] = await encoderFile.exists();
-  if (existsEncoder) {
-    await encoderFile.delete(); 
-    console.log("Encoder file deleted from GCP", encoderFileName);
   }
   return true;
 };
