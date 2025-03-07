@@ -10,7 +10,7 @@ import optional_auth from "../../middleware/check_auth";
 import tar from 'tar-stream';
 import zlib from 'zlib';
 import { pipeline } from 'stream';
-
+import { ExtRequest } from "../../../../definitions/ext_request";
 
 import fs from "fs";
 import { atlasModel } from "../../../../database/models/atlas";
@@ -769,114 +769,144 @@ export const deleteAtlasById = async (atlasId) => {
   return true;
 };
 
+export default function download_atlas() {
+  let router = express.Router();
+  router.post("/file_download/atlas_files", validationMdw, async (req: ExtRequest, res) => {
+    console.log("POST /file_download/atlas_files");
 
+    let {atlasId} = req.body;
 
-export const downloadAtlasById = async (atlasId, res) => {
-  try {
-    const storage = new Storage({
-      projectId: process.env.GCP_PROJECT_ID,
-      credentials: {
-        client_email: process.env.GCP_CLIENT_EMAIL,
-        private_key: process.env.GCP_PRIVATE_KEY,
-        client_id: process.env.GCP_CLIENT_ID,
-      },
-    });
-
-    let allFiles = [];
-    const bucketName = process.env.S3_BUCKET_NAME;
-
-    const atlas = await AtlasService.getAtlasById(atlasId);
-
-    // Add atlas file
-    const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
-    const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
-    const [exists_atlas] = await file_atlas.exists();
-    if (exists_atlas) allFiles.push(file_atlas);
-
-    // Add count data file
-    const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
-    const file_counts = storage.bucket(bucketName).file(fileName_counts);
-    const [exists_counts] = await file_counts.exists();
-    if (exists_counts) allFiles.push(file_counts);
-
-    // Add model files
-    const modelAssociation = await AtlasModelAssociation.findOne({ atlas: atlasId });
-    if (modelAssociation) {
-      const modelFolderPath = `models/${modelAssociation._id}/`;
-      const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
-      if (files.length > 0) {
-        allFiles = allFiles.concat(files);
-      } else {
-        console.log(`No files found in folder ${modelFolderPath}`);
+    try {
+      if (!process.env.S3_BUCKET_NAME) {
+        return res.status(500).send("S3-BucketName is not set");
       }
+
+      const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
+      const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
+
+
+      let params: any = {
+        Bucket: process.env.S3_BUCKET_NAME!,
+        Key: fileName_atlas,
+        Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
+      };
+      let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
+      return res.status(200).send({ presignedUrl });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send(err);
     }
+  })
+  return router;
+}
 
-    console.log(`All files to be downloaded:`, allFiles.map(f => f.name));
 
-    // Set response headers for tar.gz
-    res.setHeader("Content-Disposition", `attachment; filename="atlas_${atlas.name}.tar.gz"`);
-    res.setHeader("Content-Type", "application/gzip");
+// export const downloadAtlasById = async (atlasId, res) => {
+//   try {
+//     const storage = new Storage({
+//       projectId: process.env.GCP_PROJECT_ID,
+//       credentials: {
+//         client_email: process.env.GCP_CLIENT_EMAIL,
+//         private_key: process.env.GCP_PRIVATE_KEY,
+//         client_id: process.env.GCP_CLIENT_ID,
+//       },
+//     });
 
-    // Create tar and gzip streams
-    const tarStream = tar.pack();
-    const gzip = zlib.createGzip();
+//     let allFiles = [];
+//     const bucketName = process.env.S3_BUCKET_NAME;
 
-    // Pipe tar -> gzip -> response
-    pipeline(tarStream, gzip, res, (err) => {
-      if (err) {
-        console.error("Error streaming tar.gz file:", err);
-        res.status(500).send("Error generating download.");
-      } else {
-        console.log("Tar.gz file sent successfully.");
-      }
-    });
+//     const atlas = await AtlasService.getAtlasById(atlasId);
 
-    // Process files concurrently
-    await Promise.all(allFiles.map(async (file) => {
-      try {
-        // Check if metadata exists before streaming
-        const [metadata] = await file.getMetadata().catch(err => {
-          console.error(`Error getting metadata for file ${file.name}:`, err);
-          return [null]; // Return null to indicate failure
-        });
+//     // Add atlas file
+//     const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
+//     const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
+//     const [exists_atlas] = await file_atlas.exists();
+//     if (exists_atlas) allFiles.push(file_atlas);
 
-        if (!metadata) {
-          console.error(`Skipping file ${file.name} due to missing metadata.`);
-          return;
-        }
+//     // Add count data file
+//     const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
+//     const file_counts = storage.bucket(bucketName).file(fileName_counts);
+//     const [exists_counts] = await file_counts.exists();
+//     if (exists_counts) allFiles.push(file_counts);
 
-        const fileStream = file.createReadStream();
+//     // Add model files
+//     const modelAssociation = await AtlasModelAssociation.findOne({ atlas: atlasId });
+//     if (modelAssociation) {
+//       const modelFolderPath = `models/${modelAssociation._id}/`;
+//       const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
+//       if (files.length > 0) {
+//         allFiles = allFiles.concat(files);
+//       } else {
+//         console.log(`No files found in folder ${modelFolderPath}`);
+//       }
+//     }
 
-        fileStream.on("error", (err) => {
-          console.error(`Error reading file ${file.name}:`, err);
-        });
+//     console.log(`All files to be downloaded:`, allFiles.map(f => f.name));
 
-        const entry = tarStream.entry({ name: file.name }, (err, entryStream) => {
-          if (err) {
-            console.error("Error adding file to tar:", file.name, err);
-          } else {
-            fileStream.pipe(entryStream);
-          }
-        });
+//     // Set response headers for tar.gz
+//     res.setHeader("Content-Disposition", `attachment; filename="atlas_${atlas.name}.tar.gz"`);
+//     res.setHeader("Content-Type", "application/gzip");
 
-        if (!entry) {
-          console.error(`Failed to create tar entry for ${file.name}`);
-          return;
-        }
+//     // Create tar and gzip streams
+//     const tarStream = tar.pack();
+//     const gzip = zlib.createGzip();
 
-      } catch (error) {
-        console.error(`Error processing file ${file.name}:`, error);
-      }
-    }));
+//     // Pipe tar -> gzip -> response
+//     pipeline(tarStream, gzip, res, (err) => {
+//       if (err) {
+//         console.error("Error streaming tar.gz file:", err);
+//         res.status(500).send("Error generating download.");
+//       } else {
+//         console.log("Tar.gz file sent successfully.");
+//       }
+//     });
 
-    // Finalize tar stream
-    tarStream.finalize();
+//     // Process files concurrently
+//     await Promise.all(allFiles.map(async (file) => {
+//       try {
+//         // Check if metadata exists before streaming
+//         const [metadata] = await file.getMetadata().catch(err => {
+//           console.error(`Error getting metadata for file ${file.name}:`, err);
+//           return [null]; // Return null to indicate failure
+//         });
 
-  } catch (err) {
-    console.error("Error processing download:", err);
-    res.status(500).send("Error processing request.");
-  }
-};
+//         if (!metadata) {
+//           console.error(`Skipping file ${file.name} due to missing metadata.`);
+//           return;
+//         }
+
+//         const fileStream = file.createReadStream();
+
+//         fileStream.on("error", (err) => {
+//           console.error(`Error reading file ${file.name}:`, err);
+//         });
+
+//         const entry = tarStream.entry({ name: file.name }, (err, entryStream) => {
+//           if (err) {
+//             console.error("Error adding file to tar:", file.name, err);
+//           } else {
+//             fileStream.pipe(entryStream);
+//           }
+//         });
+
+//         if (!entry) {
+//           console.error(`Failed to create tar entry for ${file.name}`);
+//           return;
+//         }
+
+//       } catch (error) {
+//         console.error(`Error processing file ${file.name}:`, error);
+//       }
+//     }));
+
+//     // Finalize tar stream
+//     tarStream.finalize();
+
+//   } catch (err) {
+//     console.error("Error processing download:", err);
+//     res.status(500).send("Error processing request.");
+//   }
+// };
 
 
 
@@ -909,33 +939,33 @@ const delete_atlas = (): Router => {
   return router;
 };
 
-const download_atlas = (): Router => {
-  let router = express.Router();
+// const download_atlas = (): Router => {
+//   let router = express.Router();
 
-  router.get("/api/download_atlas/:id", validationMdw, upload_permission_auth(), async (req: any, res) => {
-    try {
-      const atlasId = req.params.id;
+//   router.get("/api/download_atlas/:id", validationMdw, upload_permission_auth(), async (req: any, res) => {
+//     try {
+//       const atlasId = req.params.id;
 
-      // Check if the atlas exists in MongoDB
-      const atlasDocument = await atlasModel.findById(atlasId);
-      if (!atlasDocument) {
-        return res.status(404).send("Atlas not found");
-      }
+//       // Check if the atlas exists in MongoDB
+//       const atlasDocument = await atlasModel.findById(atlasId);
+//       if (!atlasDocument) {
+//         return res.status(404).send("Atlas not found");
+//       }
 
-      // Directly call the function to stream the file
-      await downloadAtlasById(atlasId, res);
+//       // Directly call the function to stream the file
+//       await downloadAtlasById(atlasId, res);
 
-      console.log("Atlas download initiated.");
+//       console.log("Atlas download initiated.");
       
-      // Do not send any additional response after streaming
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    }
-  });
+//       // Do not send any additional response after streaming
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).send("Internal Server Error");
+//     }
+//   });
 
-  return router;
-};
+//   return router;
+// };
 
 
 export { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, download_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job, update_atlas_benchmark_status };
