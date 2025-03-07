@@ -769,7 +769,7 @@ export const deleteAtlasById = async (atlasId) => {
   return true;
 };
 
-export default function download_atlas() {
+const download_atlas = (): Router => {
   let router = express.Router();
   router.post("/file_download/atlas_files", validationMdw, async (req: ExtRequest, res) => {
     console.log("POST /file_download/atlas_files");

@@ -19,7 +19,7 @@ export default function download_benchmark_results_route() {
         console.log("benchmarkResultsFile: ", benchmarkResultsFile)
   
         if(!benchmarkResultsFile) {
-          return res.status(400).send("Atlas has no output benhcmark results.");
+          return res.status(400).send("Atlas has no output benchmark results.");
         }
         let params: any = {
           Bucket: process.env.S3_BUCKET_NAME!,
