@@ -7,7 +7,9 @@ import { Storage } from "@google-cloud/storage";
 
 import multer from "multer";
 import optional_auth from "../../middleware/check_auth";
-
+import tar from 'tar-stream';
+import zlib from 'zlib';
+import { pipeline } from 'stream';
 
 
 import fs from "fs";
@@ -20,6 +22,10 @@ import ModelService from "../../../../database/services/model.service";
 import AtlasUpdateTokenService from "../../../../database/services/atlas_update_token.service.js";
 import { UpdateAtlasDTO } from "../../../../database/dtos/atlas.dto";
 import { result_benchmark_path } from "../file_upload/bucket_filepaths";
+
+
+import util from "util";
+
 
 const uploadDirectory = "/tmp/"; // for gcp 
 const bucketName = process.env.S3_BUCKET_NAME; // for gcp
@@ -764,59 +770,86 @@ export const deleteAtlasById = async (atlasId) => {
 };
 
 
-export const downloadAtlasById = async (atlasId) => {
 
-  // Download the atlas from GCP
-  const storage = new Storage({
-    projectId: process.env.GCP_PROJECT_ID,
-    credentials: {
-      client_email: process.env.GCP_CLIENT_EMAIL,
-      private_key: process.env.GCP_PRIVATE_KEY,
-      client_id: process.env.GCP_CLIENT_ID,
-    },
+const streamPipeline = util.promisify(pipeline);
 
-  });
+export const downloadAtlasById = async (atlasId, res) => {
+  try {
+    const storage = new Storage({
+      projectId: process.env.GCP_PROJECT_ID,
+      credentials: {
+        client_email: process.env.GCP_CLIENT_EMAIL,
+        private_key: process.env.GCP_PRIVATE_KEY,
+        client_id: process.env.GCP_CLIENT_ID,
+      },
+    });
 
-  let allFiles = [];
-  const bucketName = process.env.S3_BUCKET_NAME;
+    let allFiles = [];
+    const bucketName = process.env.S3_BUCKET_NAME;
 
-  // add atlas to list of files to download
-  const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
-  const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
+    const atlas = await AtlasService.getAtlasById(atlasId);
 
-  const [exists_atlas] = await file_atlas.exists();
-  if (exists_atlas) {
-    allFiles = allFiles.concat(file_atlas);
-    
-  }
+    // Add atlas file
+    const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
+    const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
+    const [exists_atlas] = await file_atlas.exists();
+    if (exists_atlas) allFiles.push(file_atlas);
 
-  //add count data to list of files to download
-  const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
-  const file_counts = storage.bucket(bucketName).file(fileName_counts);
+    // Add count data file
+    const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
+    const file_counts = storage.bucket(bucketName).file(fileName_counts);
+    const [exists_counts] = await file_counts.exists();
+    if (exists_counts) allFiles.push(file_counts);
 
-  const [exists_counts] = await file_counts.exists();
-  if (exists_counts) {
-    allFiles = allFiles.concat(file_counts);
-    
-  }
-
-  // check for the model files and add them to the list as well
-  const modelAssociation = await AtlasModelAssociation.findOne({atlas: atlasId});
-  if (modelAssociation) {
-    const modelFolderPath = `models/${modelAssociation._id}/`; // Define folder path
-    const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
-  
-    if (files.length > 0) {
-      await Promise.all(files.map(file => allFiles.concat(file))); // Add all files asynchronously
-    } else {
-      console.log(`No files found in folder ${modelFolderPath}`);
+    // Add model files
+    const modelAssociation = await AtlasModelAssociation.findOne({ atlas: atlasId });
+    if (modelAssociation) {
+      const modelFolderPath = `models/${modelAssociation._id}/`;
+      const [files] = await storage.bucket(bucketName).getFiles({ prefix: modelFolderPath });
+      if (files.length > 0) {
+        allFiles = allFiles.concat(files);
+      } else {
+        console.log(`No files found in folder ${modelFolderPath}`);
+      }
     }
+
+    console.log(`All files to be downloaded:`, allFiles.map(f => f.name));
+
+    // Set response headers for tar.gz
+    res.setHeader("Content-Disposition", `attachment; filename="atlas_${atlas.name}.tar.gz"`);
+    res.setHeader("Content-Type", "application/gzip");
+
+    // Create tar and gzip streams
+    const tarStream = tar.pack();
+    const gzip = zlib.createGzip();
+
+    // Pipe tar -> gzip -> response
+    pipeline(tarStream, gzip, res, (err) => {
+      if (err) {
+        console.error("Error streaming tar.gz file:", err);
+        res.status(500).send("Error generating download.");
+      } else {
+        console.log("Tar.gz file sent successfully.");
+      }
+    });
+
+    // Add all files to tar
+    for (const file of allFiles) {
+      const fileStream = file.createReadStream();
+      const entry = tarStream.entry({ name: file.name }, (err) => {
+        if (err) console.error("Error adding file to tar:", file.name, err);
+      });
+
+      await streamPipeline(fileStream, entry);
+    }
+
+    // Finalize tar stream
+    tarStream.finalize();
+
+  } catch (err) {
+    console.error("Error processing download:", err);
+    res.status(500).send("Error processing request.");
   }
-
-  console.log(`All files: ${allFiles}`)
-
-
-  return true;
 };
 
 
@@ -853,28 +886,27 @@ const download_atlas = (): Router => {
   let router = express.Router();
 
   router.get("/api/download_atlas/:id", validationMdw, upload_permission_auth(), async (req: any, res) => {
-    
     try {
       const atlasId = req.params.id;
-  
+
       // Check if the atlas exists in MongoDB
       const atlasDocument = await atlasModel.findById(atlasId);
       if (!atlasDocument) {
         return res.status(404).send("Atlas not found");
       }
-  
-      const resp = await downloadAtlasById(atlasId);
-      if (!resp) {
-        return res.status(404).send("Atlas not found");
-      } else {
-        console.log("Atlas downloaded from GCP");
-        res.sendStatus(204);
-      }
+
+      // Directly call the function to stream the file
+      await downloadAtlasById(atlasId, res);
+
+      console.log("Atlas download initiated.");
+      
+      // Do not send any additional response after streaming
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
     }
   });
+
   return router;
 };
 

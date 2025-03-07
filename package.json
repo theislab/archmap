@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "nodemailer-mailgun-transport": "^2.1.5"
+    "nodemailer-mailgun-transport": "^2.1.5",
+    "tar-stream": "^3.1.7",
+    "zlib": "^1.0.5"
   }
 }
