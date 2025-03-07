@@ -771,8 +771,6 @@ export const deleteAtlasById = async (atlasId) => {
 
 
 
-const streamPipeline = util.promisify(pipeline);
-
 export const downloadAtlasById = async (atlasId, res) => {
   try {
     const storage = new Storage({
@@ -833,15 +831,43 @@ export const downloadAtlasById = async (atlasId, res) => {
       }
     });
 
-    // Add all files to tar
-    for (const file of allFiles) {
-      const fileStream = file.createReadStream();
-      const entry = tarStream.entry({ name: file.name }, (err) => {
-        if (err) console.error("Error adding file to tar:", file.name, err);
-      });
+    // Process files concurrently
+    await Promise.all(allFiles.map(async (file) => {
+      try {
+        // Check if metadata exists before streaming
+        const [metadata] = await file.getMetadata().catch(err => {
+          console.error(`Error getting metadata for file ${file.name}:`, err);
+          return [null]; // Return null to indicate failure
+        });
 
-      await streamPipeline(fileStream, entry);
-    }
+        if (!metadata) {
+          console.error(`Skipping file ${file.name} due to missing metadata.`);
+          return;
+        }
+
+        const fileStream = file.createReadStream();
+
+        fileStream.on("error", (err) => {
+          console.error(`Error reading file ${file.name}:`, err);
+        });
+
+        const entry = tarStream.entry({ name: file.name }, (err, entryStream) => {
+          if (err) {
+            console.error("Error adding file to tar:", file.name, err);
+          } else {
+            fileStream.pipe(entryStream);
+          }
+        });
+
+        if (!entry) {
+          console.error(`Failed to create tar entry for ${file.name}`);
+          return;
+        }
+
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error);
+      }
+    }));
 
     // Finalize tar stream
     tarStream.finalize();
@@ -851,6 +877,7 @@ export const downloadAtlasById = async (atlasId, res) => {
     res.status(500).send("Error processing request.");
   }
 };
+
 
 
 const delete_atlas = (): Router => {
