@@ -782,16 +782,24 @@ const download_atlas = (): Router => {
       }
 
       const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
-      const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
-
-
       let params: any = {
         Bucket: process.env.S3_BUCKET_NAME!,
         Key: fileName_atlas,
         Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
       };
       let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
-      return res.status(200).send({ presignedUrl });
+
+      const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
+      let params1: any = {
+        Bucket: process.env.S3_BUCKET_NAME!,
+        Key: fileName_counts,
+        Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
+      };
+      let presignedUrl1 = await s3.getSignedUrlPromise("getObject", params1);
+
+
+
+      return res.status(200).send({ presignedUrl: presignedUrl, presignedUrl1: presignedUrl1 });
     } catch (err) {
       console.log(err);
       return res.status(500).send(err);
