@@ -810,7 +810,7 @@ const download_atlas = (): Router => {
         },
     
       });
-      
+
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
@@ -856,9 +856,11 @@ const download_atlas = (): Router => {
         allFiles.push(fileName_counts);
       }
 
+      console.log(allFiles)
+
       const urls = await generatePresignedUrls(allFiles, bucketName);
 
-
+      console.log(urls)
 
       return res.status(200).send(urls);
     } catch (err) {
