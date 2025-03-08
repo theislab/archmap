@@ -826,7 +826,7 @@ const download_atlas = (): Router => {
 
       const modelAssociation = await AtlasModelAssociation.findOne({ atlas: atlasId });
       if (modelAssociation) {
-        const modelFolderPath = `models/${modelAssociation._id}/`;
+        const modelFolderPath = `models/${modelAssociation._id}`;
 
         const fileNames_models = [
           `${modelFolderPath}/model.pt`,
@@ -856,11 +856,11 @@ const download_atlas = (): Router => {
         allFiles.push(fileName_counts);
       }
 
-      console.log(allFiles)
+      console.log(allFiles);
 
       const urls = await generatePresignedUrls(allFiles, bucketName);
 
-      console.log(urls)
+      console.log(urls);
 
       return res.status(200).send(urls);
     } catch (err) {
