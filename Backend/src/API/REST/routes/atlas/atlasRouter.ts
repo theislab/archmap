@@ -477,7 +477,7 @@ const upload_atlas = (): Router => {
         doi: req.body.doi,
         samples: req.body.samples,
         individuals: req.body.individuals,
-        datasets: req.body.datasets,
+        datasets: req.body.datasets
 
       }
 
@@ -769,6 +769,29 @@ export const deleteAtlasById = async (atlasId) => {
   return true;
 };
 
+const generatePresignedUrls = async (fileNames: string[], bucketName: string) => {
+  try {
+    const presignedUrls = await Promise.all(
+      fileNames.map(async (fileName) => {
+        const params: any = {
+          Bucket: bucketName,
+          Key: fileName,
+          Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
+        };
+        return {
+          fileName: fileName,
+          presignedUrl: await s3.getSignedUrlPromise("getObject", params),
+        };
+      })
+    );
+
+    return presignedUrls;
+  } catch (error) {
+    console.error("Error generating presigned URLs:", error);
+    throw new Error("Failed to generate presigned URLs");
+  }
+};
+
 const download_atlas = (): Router => {
   let router = express.Router();
   router.post("/file_download/atlas_files", validationMdw, async (req: ExtRequest, res) => {
@@ -781,25 +804,52 @@ const download_atlas = (): Router => {
         return res.status(500).send("S3-BucketName is not set");
       }
 
+      const bucketName = process.env.S3_BUCKET_NAME!
+
+      let allFiles = [];
+
       const fileName_atlas = `atlas/${atlasId}/data.h5ad`;
-      let params: any = {
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: fileName_atlas,
-        Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
-      };
-      let presignedUrl = await s3.getSignedUrlPromise("getObject", params);
+      const file_atlas = storage.bucket(bucketName).file(fileName_atlas);
+      const [exists_atlas] = await file_atlas.exists();
+      if (exists_atlas) allFiles.push(fileName_atlas);
 
+      const modelAssociation = await AtlasModelAssociation.findOne({ atlas: atlasId });
+      if (modelAssociation) {
+        const modelFolderPath = `models/${modelAssociation._id}/`;
+
+        const fileNames_models = [
+          `${modelFolderPath}/model.pt`,
+          `${modelFolderPath}/model_params.pt`,
+          `${modelFolderPath}/attr.pkl`,
+          `${modelFolderPath}/var_names.csv`
+        ];
+        
+        for (const fileName of fileNames_models) {
+          const file = storage.bucket(bucketName).file(fileName);
+          const [exists] = await file.exists();
+          
+          if (exists) {
+            allFiles.push(fileName);
+          }
+        }
+      }
+        
+    
       const fileName_counts = `atlas/${atlasId}/data_only_count.h5ad`;
-      let params1: any = {
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: fileName_counts,
-        Expires: 60 * 60 * 24 * 7 - 1, // one week minus one second
-      };
-      let presignedUrl1 = await s3.getSignedUrlPromise("getObject", params1);
+      const fileExists = await s3
+        .headObject({ Bucket: bucketName, Key: fileName_counts })
+        .promise()
+        .then(() => true)
+        .catch(() => false); // Returns false if the file does not exist
+      if (fileExists) {
+        allFiles.push(fileName_counts);
+      }
+
+      const urls = await generatePresignedUrls(allFiles, bucketName);
 
 
 
-      return res.status(200).send({ presignedUrl: presignedUrl, presignedUrl1: presignedUrl1 });
+      return res.status(200).send(urls);
     } catch (err) {
       console.log(err);
       return res.status(500).send(err);
