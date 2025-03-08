@@ -800,6 +800,17 @@ const download_atlas = (): Router => {
     let {atlasId} = req.body;
 
     try {
+
+      const storage = new Storage({
+        projectId: process.env.GCP_PROJECT_ID,
+        credentials: {
+          client_email: process.env.GCP_CLIENT_EMAIL,
+          private_key: process.env.GCP_PRIVATE_KEY,
+          client_id: process.env.GCP_CLIENT_ID,
+        },
+    
+      });
+      
       if (!process.env.S3_BUCKET_NAME) {
         return res.status(500).send("S3-BucketName is not set");
       }
