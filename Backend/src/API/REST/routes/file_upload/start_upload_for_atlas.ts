@@ -41,9 +41,8 @@ export default function upload_start_upload_for_atlas_route() {
         async (req: ExtRequest, res) => {
 
 
-            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked, doi, samples, individuals, datasets } = req.body;
+            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, compatibleModels, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked, doi, samples, individuals, datasets } = req.body;
 
-            const compatibleModels = req.body.compatibleModels || [];
 
             if (compatibleModels.length === 0) {
                 return res.status(400).send("No compatible models specified");
@@ -77,7 +76,7 @@ export default function upload_start_upload_for_atlas_route() {
             
                     
                 };
-
+                
                 const atlas = await AtlasService.createAtlas(atlasToAdd);
                 AtlasService.updateAtlasByStatus(atlas._id, AtlasUploadStatus.UPLOAD_PENDING);
                 console.log("atlas status updated: ", atlas);
