@@ -20,7 +20,7 @@ export interface AddAtlasDTO {
     inrevision?: boolean;
     isPrivate?: boolean;
     benchmarked?: false;
-    doi?: string;
+    doi?: number;
     samples?: number;
     individuals?: number;
     datasets?: number;
