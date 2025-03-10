@@ -97,6 +97,90 @@ const EditAtlasModal = (props) => {
                     fullWidth
                     margin="normal"
                   />
+                  <TextField
+                    label="Atlas URL (URL to download atlas)"
+                    value={atlasInDialog?.atlasUrl || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        atlasUrl: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Batch covariate key"
+                    value={atlasInDialog?.batchKey || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        batchKey: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Cell type key"
+                    value={atlasInDialog?.cellTypeKey || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        cellTypeKey: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="DOI of publication"
+                    value={atlasInDialog?.doi || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        doi: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Number of datasets"
+                    value={atlasInDialog?.datasets || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        datasets: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Number of individuals"
+                    value={atlasInDialog?.individuals || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        individuals: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Number of samples"
+                    value={atlasInDialog?.samples || ""}
+                    onChange={(e) =>
+                        setAtlasInDialog((prevAtlasDetails) => ({
+                        ...prevAtlasDetails,
+                        samples: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
 
                   <TextField
                     label="Species"

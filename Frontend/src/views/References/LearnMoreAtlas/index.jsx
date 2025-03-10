@@ -18,6 +18,48 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const path = useLocation().pathname;
   const [user, setUser] = useAuth();
+  const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [fetchUrlError, setFetchUrlError] = useState(null);
+
+
+  const handleDownload = async () => {
+    setFetchingUrl(true);
+    setFetchUrlError(null);
+  
+    try {
+      const response = await axiosInstance.post(`/file_download/atlas_files`, {
+        atlasId: id,
+      });
+  
+      const data = response.data; // Expecting an array of presigned URLs
+  
+      if (!data || data.length === 0) {
+        throw new Error("No files available for download.");
+      }
+
+      console.log(data)
+  
+      for (const { fileName, presignedUrl } of data) {
+        await new Promise((resolve) => {
+          const link = document.createElement("a");
+          link.href = presignedUrl;
+          link.download = fileName.split("/").pop() || "downloaded_file";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(resolve, 1000); // Wait 1 second before next download
+        });
+      }
+      
+  
+    } catch (err) {
+      console.error("Error fetching presigned URLs:", err);
+      setFetchUrlError("Failed to download files.");
+    } finally {
+      setFetchingUrl(false);
+    }
+  };
+  
 
 
   const handleDelete = () => {
@@ -28,7 +70,7 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         setIsDeleteModalOpen(false);
         setIsLoading(false);
         history.goBack();
-        alert("Atlas  deleted successfully");
+        alert("Atlas deleted successfully");
       })
       .catch((error) => {
         console.error(error);
@@ -180,17 +222,26 @@ export const LearnMoreAtlasComponent = ({ onClick, id, isMap = false, isSearchPa
         </Typography>
       </Box>
       {/* Create an Edit and Delete Button */}
-      {user && user.isAdministrator && user._id === atlas?.uploadedBy &&
-      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-        <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary"  onClick={ () => setIsEditModalOpen(true) }>Edit</Button>
-        <Button sx={{ margin: '1em', padding: "1em 2em 0.5em 2em" }} type="primary" onClick={ () => setIsDeleteModalOpen(true) } >Delete</Button>
-      </Box> }
-      
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em', alignItems: 'center' }}>
+      {(atlas?.isPrivate === false || !atlas?.isPrivate || (user && user.isAdministrator && user._id === atlas?.uploadedBy)) && (
+          <>
 
-      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-        
+          <Button sx={{ padding: "1em 2em 0.5em 2em" }} type="primary" onClick={handleDownload} >
+            Download
+          </Button>
+          </>
+        )}
+        {user && user.isAdministrator && user._id === atlas?.uploadedBy && (
+          <>
+            <Button sx={{ padding: "1em 2em 0.5em 2em" }} type="primary" onClick={() => setIsEditModalOpen(true)}>
+              Edit
+            </Button>
+            <Button sx={{ padding: "1em 2em 0.5em 2em" }} type="primary" onClick={() => setIsDeleteModalOpen(true)}>
+              Delete
+            </Button>
+          </>
+        )}
       </Box>
-
 
       {/* {
         isMap

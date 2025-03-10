@@ -34,7 +34,7 @@ export interface IAtlas extends Document {
   benchmark_location: string;
   batchKey: string;
   cellTypeKey: string;
-  doi: number;
+  doi: string;
   samples: number;
   individuals: number;
   datasets: number;
@@ -93,7 +93,7 @@ const atlasSchema = new Schema<IAtlas>(
       required: false,
     },
     doi: {
-      type: Number,
+      type: String,
       required: false,
     },
     samples: {

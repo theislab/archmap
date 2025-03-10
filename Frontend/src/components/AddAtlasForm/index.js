@@ -80,11 +80,15 @@ const AddAtlasForm = (props) => {
   const [inrevision, setRevisionStatus] = useState(false);
   const [benchmarked, setBenchmarkedStatus] = useState(false);
   const [isPrivate, setPrivacyStatus] = useState(true);
-  const [previewPictureURL, setPreviewPictureURL] = useState("");
+  const [previewPictureURL, setPreviewPictureURL] = useState("https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png");
   const [classifierLabels, setClassifierLabels] = useState([]);
   const [modalities, setModalities] = useState(["rna"]);
   const [compatibleModels, setCompatibleModels] = useState([]);
   const [numberOfCells, setNumberOfCells] = useState("");
+  const [doi, setDoi] = useState("");
+  const [samples, setSamples] = useState("");
+  const [individuals, setIndividuals] = useState("");
+  const [datasets, setDatasets] = useState("");
   const [species, setSpecies] = useState("");
   const [atlasFile, setAtlasFile] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -148,15 +152,18 @@ const AddAtlasForm = (props) => {
         modalities,
         numberOfCells,
         species,
-        compatibleModels.map((model) => model.name),
-        selectedClassifier.name,
-        url,
         user._id,
+        url,
         inrevision,
         isPrivate,
-        benchmarked
+        benchmarked,
+        doi,
+        samples,
+        individuals,
+        datasets,
+        compatibleModels.map((model) => model.name),
       );
-
+      
       // Initialize atlas uploads
       if (atlasFile) {
         console.log("atlas upload path", atlas.atlasUploadPath);
@@ -234,6 +241,10 @@ const AddAtlasForm = (props) => {
       setModalities([]);
       setCompatibleModels([]);
       setNumberOfCells("");
+      setDoi("");
+      setSamples("");
+      setIndividuals("");
+      setDatasets("");
       setSpecies("");
       setAtlasFile(null);
       setFileName("");
@@ -530,6 +541,62 @@ const AddAtlasForm = (props) => {
                     value={species}
                     onChange={(e) => {
                       setSpecies(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="DOI"
+                    id="doi"
+                    value={doi}
+                    onChange={(e) => {
+                      setDoi(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Number of samples"
+                    id="samples"
+                    value={samples}
+                    onChange={(e) => {
+                      setSamples(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Number of individuals"
+                    id="individuals"
+                    value={individuals}
+                    onChange={(e) => {
+                      setIndividuals(e.target.value);
+                    }}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    label="Number of datasets"
+                    id="datasets"
+                    value={datasets}
+                    onChange={(e) => {
+                      setDatasets(e.target.value);
                     }}
                     required
                   />

@@ -53,7 +53,7 @@
                     "type": "number"
                   },
                   "doi": {
-                    "type": "number"
+                    "type": "string"
                   },
                   "samples": {
                     "type": "number"
@@ -169,7 +169,7 @@
                       "type": "number"
                     },
                     "doi": {
-                      "type": "number"
+                      "type": "string"
                     },
                     "samples": {
                       "type": "number"
@@ -251,7 +251,7 @@
                       "type": "number"
                     },
                     "doi": {
-                      "type": "number"
+                      "type": "string"
                     },
                     "samples": {
                       "type": "number"
