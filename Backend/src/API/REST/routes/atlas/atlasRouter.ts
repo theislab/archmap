@@ -461,23 +461,23 @@ const upload_atlas = (): Router => {
       
       const atlasData = {
         name: req.body.name,
+        batchKey: req.body.batchKey,
+        cellTypeKey: req.body.cellTypeKey,
         previewPictureURL: req.body.previewPictureURL,
         classifierLabels: req.body.classifierLabels,
         modalities: req.body.modalities,
         numberOfCells: req.body.numberOfCells,
         species: req.body.species,
-        compatibleModels: req.body.compatibleModels,
         uploadedBy: req.body.userId,
         atlasUrl: req.body.atlasUrl,
         inrevision: req.body.inrevision,
         isPrivate: req.body.isPrivate,
-        batchKey: req.body.batchKey,
-        cellTypeKey: req.body.cellTypeKey,
         benchmarked: req.body.benchmarked,
         doi: req.body.doi,
         samples: req.body.samples,
         individuals: req.body.individuals,
-        datasets: req.body.datasets
+        datasets: req.body.datasets,
+        compatibleModels: req.body.compatibleModels,
 
       }
 

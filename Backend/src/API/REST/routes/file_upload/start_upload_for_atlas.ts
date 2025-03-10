@@ -41,7 +41,9 @@ export default function upload_start_upload_for_atlas_route() {
         async (req: ExtRequest, res) => {
 
 
-            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, compatibleModels, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked, doi, samples, individuals, datasets } = req.body;
+            let { name, batchKey, cellTypeKey, previewPictureURL, classifierLabels, modalities, numberOfCells, species, uploadedBy, atlasUrl, inrevision, isPrivate, benchmarked, doi, samples, individuals, datasets } = req.body;
+
+            const compatibleModels = req.body.compatibleModels || [];
 
 
             if (compatibleModels.length === 0) {
@@ -63,7 +65,6 @@ export default function upload_start_upload_for_atlas_route() {
                     modalities: modalities,
                     numberOfCells: numberOfCells,
                     species: species,
-                    compatibleModels: compatibleModels,
                     uploadedBy: uploadedBy,
                     atlasUrl: atlasUrl,
                     inrevision: inrevision,
@@ -72,9 +73,10 @@ export default function upload_start_upload_for_atlas_route() {
                     doi: doi,
                     samples: samples,
                     individuals: individuals,
-                    datasets: datasets
-            
-                    
+                    datasets: datasets,
+                    compatibleModels: compatibleModels,
+
+ 
                 };
                 
                 const atlas = await AtlasService.createAtlas(atlasToAdd);
