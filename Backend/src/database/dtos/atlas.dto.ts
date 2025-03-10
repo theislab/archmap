@@ -21,9 +21,9 @@ export interface AddAtlasDTO {
     isPrivate?: boolean;
     benchmarked?: false;
     doi?: string;
-    samples: number;
-    individuals: number;
-    datasets: number;
+    samples?: number;
+    individuals?: number;
+    datasets?: number;
 }
 
 export interface UpdateAtlasDTO {
