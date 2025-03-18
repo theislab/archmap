@@ -34,7 +34,7 @@ import {
 } from "./bucket_filepaths.js";
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service.js";
 
-const MAX_EPOCH_QUERY = 50;
+const MAX_EPOCH_QUERY = 100;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
