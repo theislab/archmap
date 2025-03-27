@@ -35,6 +35,7 @@ import {
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service.js";
 
 const MAX_EPOCH_QUERY = 100;
+const MAX_EPOCH_QUERY_SCPOLI = 100;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
@@ -289,7 +290,7 @@ export default function upload_complete_upload_route() {
                 // ref_path: "model.pt",
                 //ref_path: `models/${project.modelId}/model.pt`,
                 async: false,
-                scpoli_max_epochs: MAX_EPOCH_QUERY, // TODO: make this a standard parameter
+                scpoli_max_epochs: MAX_EPOCH_QUERY_SCPOLI, // TODO: make this a standard parameter
                 webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
