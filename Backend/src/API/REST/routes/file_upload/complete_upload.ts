@@ -353,7 +353,7 @@ export default function upload_complete_upload_route() {
             // trigger cloud run function
             const payload = queryInfo;
 
-            const endpoint = "https://trigger-mapping-dev-844128965207.europe-west3.run.app";
+            const endpoint = "https://trigger-mapping-dev-844128965207.us-central1.run.app";
             console.log("endpoint", endpoint)
 
             // Send the POST request
