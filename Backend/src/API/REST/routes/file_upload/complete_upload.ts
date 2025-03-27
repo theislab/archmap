@@ -348,62 +348,12 @@ export default function upload_complete_upload_route() {
               result = null;
             }
 
-            // // Creating a queue task
-            // const project_id_gcp = process.env.GCP_PROJECT_ID;
-            // const queue = process.env.TASK_QUEUE_NAME;
-            // const location = "europe-west3";
-            // const serviceAccountEmail = process.env.TASK_QUEUE_EMAIL_ID;
 
-            // const tasks = new CloudTasksClient({
-            //   projectId: project_id_gcp,
-            //   credentials: {
-            //     client_email: process.env.TASK_QUEUE_EMAIL_ID,
-            //     private_key: process.env.TASK_QUEUE_PRIVATE_KEY,
-            //   },
-            //   fallback: true,
-            // });
-
-            // const payload = queryInfo;
-            // // Construct the fully qualified queue name.
-            // const parent = tasks.queuePath(project_id_gcp, location, queue);
-
-            // const task = {
-            //   httpRequest: {
-            //     headers: {
-            //       "Content-Type": "application/json",
-            //     },
-            //     httpMethod: "POST" as const,
-            //     url,
-            //     body: "", // or null
-            //     oidcToken: {
-            //       serviceAccountEmail,
-            //     },
-            //   },
-            //   dispatchDeadline: {
-            //     // Timeout
-            //     seconds: 30 * 60,
-            //   },
-            // };
-
-            // if (payload) {
-            //   task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
-            // }
-            // const call_options = {
-            //   // 60 minutes in millis
-            //   timeout: 60 * 60 * 1000,
-            // };
-            // console.log("Sending task:");
-            // console.log(task);
-            // const request = { parent: parent, task: task };
-
-            // const [response] = await tasks.createTask(request, call_options);
-            // console.log(`Created task ${response.name}`);
-            // console.log("The task details are: ", JSON.stringify(response, null, 2));
 
             // trigger cloud run function
             const payload = queryInfo;
 
-            const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/trigger-mapping";
+            const endpoint = "https://trigger-mapping-dev-844128965207.europe-west3.run.app";
             console.log("endpoint", endpoint)
 
             // Send the POST request
