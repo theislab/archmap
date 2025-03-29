@@ -35,7 +35,7 @@ import {
 import AtlasModelAssociationService from "../../../../database/services/atlas_model_association.service.js";
 
 const MAX_EPOCH_QUERY = 100;
-const MAX_EPOCH_QUERY_SCPOLI = 100;
+const MAX_EPOCH_QUERY_SCPOLI = 50;
 
 export default function upload_complete_upload_route() {
   let router = express.Router();
