@@ -123,7 +123,7 @@ export default function AtlasCard({
       );
     } else {
       console.log("No matching association found.");
-      alert("Failed to trigger the benchmarking job. Please try again.");
+      alert("Failed to trigger the benchmarking job. Please wait 5 seconds and try again.");
     }
   };
   

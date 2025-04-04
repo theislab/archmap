@@ -30,6 +30,8 @@ import ProjectInfo from '../ProjectInfo';
 import { initSubmissionProgress, useSubmissionProgress } from 'shared/context/submissionProgressContext';
 import axiosInstance from 'shared/services/axiosInstance';
 import InfoIcon from '@mui/icons-material/Info';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+
 
 function ProcessingStatus({ project }) {
   return (
@@ -431,7 +433,7 @@ export default function ProjectBarCard({
                 <Modal
                   isOpen={isModalOpen}
                   setOpen={setIsModalOpen}
-                  sx={{ position: 'fixed', top: '20%' }}
+                  sx={{ position: 'fixed', top: '10%', maxHeight: '80vh', overflowY: 'auto'}}
                   >
                     <h1>Evaluation metrics</h1>
                       {<Typography> 
@@ -569,6 +571,16 @@ export default function ProjectBarCard({
                             <InfoOutlinedIcon fontSize="small" />
                           </IconButton>}
                         </Typography>
+
+                        {project.gene_conversion && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                            <ReportProblemOutlinedIcon sx={{ color: 'green', mr: 1 }} />
+                            <Typography sx={{ color: 'green' }}>
+                              {project.gene_conversion}
+                            </Typography>
+                          </Box>
+                        )}
+
                         <Modal
                           isOpen={Metric4InfoOpen}
                           setOpen={setMetric4InfoOpen}
@@ -597,11 +609,24 @@ export default function ProjectBarCard({
                               During mapping, query genes are subsetted to match the genes of the atlas and for any missing genes, expression values are padded with zeros. A larger number of missing genes in the query data may lead to inaccuracy in results.
                               A value less than 85% may contribute to poor mapping quality.
                               </Typography>
+
                             </Box>
                           </Box>
 
-                        </Modal>      
-                        <h3>Visualizing downloaded results</h3>
+                        </Modal>  
+                           
+                        <h3>Access to reference count data </h3>
+                          {<Typography> 
+                            Due to resource constraints and to aid faster mappings, we have not included the reference count data in the mapping for reference atlases with a number of genes larger than 10 000. If the user would like access to the reference counts, they can download them using the atlas download feature on ArchMap. For more information see the <a
+                          style={{
+                            textDecoration: "none",
+                          }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#how-can-i-visualize-my-downloaded-results-myself-in-cellxgene"><Typography sx={{
+                            color: colors.primary[400],
+                            ':hover': { color: colors.primary[500] }
+                          }} display="inline">FAQs</Typography></a> in the docs. 
+                              </Typography>}
+
+                              <h3>Visualizing downloaded results</h3>
                           {<Typography> 
                               ArchMap's built-in visualization functionality includes only a subset of the original reference to aid faster computation. Therefore, the neighbourhood graph of the downloaded file containing the full mapping must be recomputed if visualization is desired downstream. For more info on how to recompute the neighbourhood graph see the <a
                           style={{
@@ -609,7 +634,7 @@ export default function ProjectBarCard({
                           }} href="https://archmap-docu.readthedocs.io/en/latest/faqs/index.html#how-can-i-visualize-my-downloaded-results-myself-in-cellxgene"><Typography sx={{
                             color: colors.primary[400],
                             ':hover': { color: colors.primary[500] }
-                          }} display="inline">FAQs</Typography></a> in the docs.
+                          }} display="inline">FAQs</Typography></a> in the docs. 
                               </Typography>}
                       
                 </Modal>
