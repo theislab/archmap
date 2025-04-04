@@ -13,6 +13,7 @@ export interface UpdateProjectDTO {
   clust_pres_score?: string;
   query_with_anchor?: string;
   percentage_unknown?: string;
+  gene_conversion?: string;
   result?: string;
   ml_pipeline_progress?: string;
 }

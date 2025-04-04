@@ -200,13 +200,15 @@ const update_metrics = (): Router => {
       let clust_pres_score = req.body.clust_pres_score;
       let query_with_anchor = req.body.query_with_anchor;
       let percentage_unknown = req.body.percentage_unknown;
+      let gene_conversion = req.body.gene_conversion;
 
       let tokenObject = await ProjectUpdateTokenService.getTokenByToken(updateToken);
       let project = await ProjectService.getProjectById(tokenObject._projectId);
       const updateMetrics: UpdateProjectDTO = {
         clust_pres_score: clust_pres_score,
         query_with_anchor: query_with_anchor,
-        percentage_unknown: percentage_unknown
+        percentage_unknown: percentage_unknown,
+        gene_conversion: gene_conversion
         
       };
       await ProjectService.updateProjectById(project._id, updateMetrics);
