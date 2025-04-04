@@ -223,6 +223,7 @@ export default function upload_complete_upload_route() {
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
                 webhook_progress: `${process.env.API_URL}/projects/updatelogs/${updateToken}`,
+                webhook_gene_conversion: `${process.env.API_URL}/projects/gene_conversion/${updateToken}`,
                 batch_key: atlas.batchKey,
                 cell_type_key: atlas.cellTypeKey
               };
@@ -255,6 +256,7 @@ export default function upload_complete_upload_route() {
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
                 webhook_progress: `${process.env.API_URL}/projects/updatelogs/${updateToken}`,
+                webhook_gene_conversion: `${process.env.API_URL}/projects/gene_conversion/${updateToken}`,
                 batch_key: atlas.batchKey,
                 cell_type_key: atlas.cellTypeKey
               };
@@ -295,6 +297,7 @@ export default function upload_complete_upload_route() {
                 webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                 webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
                 webhook_progress: `${process.env.API_URL}/projects/updatelogs/${updateToken}`,
+                webhook_gene_conversion: `${process.env.API_URL}/projects/gene_conversion/${updateToken}`,
                 batch_key: atlas.batchKey,
                 cell_type_key: atlas.cellTypeKey
               };
@@ -319,7 +322,8 @@ export default function upload_complete_upload_route() {
                   webhook: `${process.env.API_URL}/projects/updateresults/${updateToken}`,
                   webhook_ratio: `${process.env.API_URL}/projects/ratio/${updateToken}`,
                   webhook_metrics: `${process.env.API_URL}/projects/metrics/${updateToken}`,
-                  webhook_progress: `${process.env.API_URL}/projects/updatelogs/${updateToken}`
+                  webhook_progress: `${process.env.API_URL}/projects/updatelogs/${updateToken}`,
+                  webhook_gene_conversion: `${process.env.API_URL}/projects/gene_conversion/${updateToken}`,
                 };
               }
             }

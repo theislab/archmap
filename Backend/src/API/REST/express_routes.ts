@@ -83,6 +83,7 @@ import {
   get_users_projects,
   update_ratio,
   update_metrics,
+  gene_conversion,
   update_project_results,
   update_project_logs,
   delete_project,
@@ -187,6 +188,8 @@ export function express_routes(): Router {
   router.use(update_project_logs());
   router.use(update_ratio());
   router.use(update_metrics());
+  router.use(gene_conversion());
+  
 
   // classifiers routes
   router.use(get_classifier());
