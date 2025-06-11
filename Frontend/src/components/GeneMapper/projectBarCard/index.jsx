@@ -297,8 +297,8 @@ export default function ProjectBarCard({
     cachedProjects[project._id]["cellxgene"] = res;
     localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
 
-    // Delete old services
-    let deletedServices = await CellxgeneDeleteService.getDeleteServices();
+    // // Delete old services
+    // let deletedServices = await CellxgeneDeleteService.getDeleteServices();
 
 
   }

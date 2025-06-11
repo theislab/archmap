@@ -29,6 +29,7 @@ const get_cellxgene_instance = (): Router => {
       try{
         const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/delete-old-cxg-services";
         const deletedServices = (await axios.get(endpoint)).data;
+        console.log(deletedServices)
   
   
         return res.status(200).json(deletedServices);
