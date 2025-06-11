@@ -21,6 +21,7 @@ import { Modal, ModalTitle } from 'components/Modal';
 import TeamService from 'shared/services/Team.service';
 import ProjectService from 'shared/services/Project.service';
 import CellxgeneService from 'shared/services/Cellxgene.service';
+import CellxgeneDeleteService from 'shared/services/CellxgeneDelete.service';
 import CustomButton from 'components/CustomButton';
 import { TabCard } from '../TabCard';
 import { colors } from 'shared/theme/colors';
@@ -295,6 +296,11 @@ export default function ProjectBarCard({
     let cachedProjects = JSON.parse(localStorage.getItem("cached_projects"));
     cachedProjects[project._id]["cellxgene"] = res;
     localStorage.setItem("cached_projects", JSON.stringify(cachedProjects));
+
+    // Delete old services
+    let deletedServices = await CellxgeneDeleteService.getDeleteServices();
+
+
   }
 
   // Set cellxgene state based on the cache value

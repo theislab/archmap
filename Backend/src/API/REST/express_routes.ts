@@ -33,7 +33,7 @@ import {
 } from "./routes/user/userRouter";
 import { get_model, get_allModels } from "./routes/model/modelRouter";
 import { get_atlas, get_user_atlases, get_atlas_visualization, get_allAtlases, upload_atlas, edit_atlas, delete_atlas, download_atlas, get_scvi_atlases, post_anndata_args, trigger_cloud_run_job, update_atlas_benchmark_status } from "./routes/atlas/atlasRouter";
-import { get_cellxgene_instance } from "./routes/cellxgene/cellxgeneRouter";
+import { get_cellxgene_instance, delete_old_cxg_services } from "./routes/cellxgene/cellxgeneRouter";
 
 import * as swaggerUi from "swagger-ui-express";
 
@@ -220,6 +220,8 @@ export function express_routes(): Router {
 
   // cellxgene proxy route
   router.use(get_cellxgene_instance());
+  router.use(delete_old_cxg_services());
+
 
   // upload routes
   router.use(upload_get_upload_url_route());

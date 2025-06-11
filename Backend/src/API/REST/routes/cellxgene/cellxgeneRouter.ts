@@ -22,4 +22,24 @@ const get_cellxgene_instance = (): Router => {
     return router;
   };
 
-  export {get_cellxgene_instance};
+  const delete_old_cxg_services = (): Router => {
+    let router = express.Router();
+  
+    router.get("/delete-old-cxg-services", async(req: any, res) => {
+      try{
+        const endpoint = "https://europe-west3-custom-helix-329116.cloudfunctions.net/delete-old-cxg-services";
+        const deletedServices = (await axios.get(endpoint)).data;
+  
+  
+        return res.status(200).json(deletedServices);
+      }catch(err){
+        console.error("Error deleting services");
+        console.error(JSON.stringify(err));
+        console.error(err);
+        return res.status(500).send("Error deleting services");
+      }
+    });
+    return router;
+  }
+
+  export {get_cellxgene_instance, delete_old_cxg_services};
