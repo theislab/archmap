@@ -751,7 +751,7 @@ export default function ProjectBarCard({
                       <Box sx={{paddingLeft: '10px'}}>
                         <IconButton
                             onClick={() => fetchPresignedUrlAndDownload([project.location,project.outputFileWithCounts])}
-                            disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
+                            disabled={project.status !== 'DOWNLOAD_READY'}
                           >
                             {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
                         </IconButton>
