@@ -156,7 +156,7 @@ const get_atlas_visualization = (): Router => {
 const get_allAtlases = (): Router => {
   let router = express.Router();
 
-  router.get("/atlases", validationMdw, optional_auth(), async (req: any, res) => {
+  router.get("/atlases", optional_auth(), async (req: any, res) => {
     try {
       const atlases = await AtlasService.getAllAtlases();
       // check if the atlases are present in the GCP bucket
