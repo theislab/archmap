@@ -22,7 +22,7 @@ import ModelService from "../../../../database/services/model.service";
 import AtlasUpdateTokenService from "../../../../database/services/atlas_update_token.service.js";
 import { UpdateAtlasDTO } from "../../../../database/dtos/atlas.dto";
 import { result_benchmark_path } from "../file_upload/bucket_filepaths";
-
+import { generatePublicAtlasToken } from "../../../../util/jwtHelpers";
 
 import util from "util";
 
@@ -150,17 +150,24 @@ const get_atlas_visualization = (): Router => {
   return router;
 };
 
+
 /**
  *  Get all available Archmap Core atlases.
  */
-const get_allAtlases = (): Router => {
-  let router = express.Router();
 
-  router.get("/atlases", validationMdw, async (req: any, res) => {
+
+const get_allAtlases = (): Router => {
+  const router = express.Router();
+
+  router.get("/atlases", optional_auth(), async (req, res) => {
     try {
+      // If no JWT provided, auto-generate public one
+      if (req.is_public_token && !req.is_authenticated) {
+        req.public_jwt = generatePublicAtlasToken();
+      }
+
       const atlases = await AtlasService.getAllAtlases();
-      // check if the atlases are present in the GCP bucket
-      // Delete the atlas from GCP
+
       const storage = new Storage({
         projectId: process.env.GCP_PROJECT_ID,
         credentials: {
@@ -168,49 +175,45 @@ const get_allAtlases = (): Router => {
           private_key: process.env.GCP_PRIVATE_KEY,
           client_id: process.env.GCP_CLIENT_ID,
         },
-
       });
+
       const bucketName = process.env.S3_BUCKET_NAME;
-      
 
-      const atlases_filtered = await Promise.all(atlases.map(async (atlas) => {
-        const fileName = `atlas/${atlas._id}/data.h5ad`;
-        const file = storage.bucket(bucketName).file(fileName);
-        const [exists] = await file.exists();
-        
-        if (!exists) {
-          return null; // Return null for non-existing atlases
+      const atlases_filtered = await Promise.all(
+        atlases.map(async (atlas) => {
+          const file = storage.bucket(bucketName).file(`atlas/${atlas._id}/data.h5ad`);
+          const [exists] = await file.exists();
+          return exists ? atlas : null;
+        })
+      );
+
+      const filteredAtlases = atlases_filtered.filter(Boolean);
+
+      const loggedInUserId = req.user_id;
+      const isPublic = req.is_public_token;
+
+      // Filter private atlases for guests
+      const visibleAtlases = filteredAtlases.filter((atlas) => {
+        if (atlas.isPrivate) {
+          return loggedInUserId && atlas.uploadedBy === loggedInUserId;
         }
-      
-        return atlas; // Return the atlas object for existing atlases
-      }));
-      
-      const filteredAtlases1 = atlases_filtered.filter(atlas => atlas !== null);
-
-      // filter out private atlases
-      // Check for logged-in user
-      const loggedInUserId = req.user_id; // Assuming req.user.id contains the logged-in user's ID
-
-      // Filter atlases
-      const filteredAtlases = filteredAtlases1.filter(atlas => {
-          if (atlas.isPrivate) {
-              // Exclude if atlas is private and either no user is logged in or the IDs don't match
-              return loggedInUserId && atlas.uploadedBy === loggedInUserId;
-          }
-          // Include public atlases
-          return true;
+        return true;
       });
-      // check user == atlas.uploadedBy 
-      return res.status(200).json(filteredAtlases);
+
+      // Send the data back
+      return res.status(200).json({
+        token: req.public_jwt || null,
+        atlases: visibleAtlases,
+      });
     } catch (err) {
-      console.error("Error accessing the atlases!");
-      console.error(JSON.stringify(err));
-      console.error(err);
+      console.error("Error accessing the atlases!", err);
       return res.status(500).send("Unable to access the atlases.");
     }
   });
+
   return router;
 };
+
 
 const get_scvi_atlases = (): Router => {
   let router = express.Router();

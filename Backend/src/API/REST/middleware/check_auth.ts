@@ -56,29 +56,75 @@ export default function check_auth() {
 
 
 
-export function optional_auth() {
-  let router = express.Router();
+// export function optional_auth() {
+//   let router = express.Router();
 
-  router.use(async (req: ExtRequest, res, next) => {
+//   router.use(async (req: ExtRequest, res, next) => {
+//     req.is_authenticated = false;
+
+//     const authHeader = req.header("auth") || req.header("Authorization");
+//     const jwtToken = authHeader?.split(" ")[1] || authHeader;
+
+//     if (!authHeader) {
+//       return next(); // No token provided, continue without authentication
+//     }
+
+//     try {
+//       const decoded = jwt.verify(jwtToken, JWT_SECRET) as { id: string; email: string };
+
+//       if (!decoded?.id) {
+//         return next(); // Invalid token, proceed without authentication
+//       }
+
+//       try {
+//         const user = await UserService.getUserById(decoded.id);
+
+//         if (user) {
+//           req.is_authenticated = true;
+//           req.user_id = user._id;
+//           req.email = user.email;
+//           req.is_administrator = user.isAdministrator;
+//           req.is_verified = user.isEmailVerified;
+//         }
+//       } catch (dbErr) {
+//         console.error("Database error fetching user:", dbErr);
+//       }
+//     } catch (err) {
+//       console.error("JWT Verification Error:", err);
+//     }
+
+//     next(); // Continue execution regardless of authentication success/failure
+//   });
+
+//   return router;
+// }
+
+export function optional_auth() {
+  const router = express.Router();
+
+  router.use(async (req, res, next) => {
     req.is_authenticated = false;
+    req.is_public_token = false;
 
     const authHeader = req.header("auth") || req.header("Authorization");
-    if (!authHeader) {
-      return next(); // No token provided, continue without authentication
+    const jwtToken = authHeader?.split(" ")[1] || authHeader;
+
+    if (!jwtToken) {
+      // No JWT: mark as public guest (we’ll handle it later)
+      req.is_public_token = true;
+      return next();
     }
 
-    const jwtToken = authHeader.split(" ")[1] || authHeader;
-
     try {
-      const decoded = jwt.verify(jwtToken, JWT_SECRET) as { id: string; email: string };
+      const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-      if (!decoded?.id) {
-        return next(); // Invalid token, proceed without authentication
+      if (decoded.role === "public") {
+        req.is_public_token = true;
+        return next();
       }
 
-      try {
+      if (decoded?.id) {
         const user = await UserService.getUserById(decoded.id);
-
         if (user) {
           req.is_authenticated = true;
           req.user_id = user._id;
@@ -86,17 +132,18 @@ export function optional_auth() {
           req.is_administrator = user.isAdministrator;
           req.is_verified = user.isEmailVerified;
         }
-      } catch (dbErr) {
-        console.error("Database error fetching user:", dbErr);
       }
     } catch (err) {
       console.error("JWT Verification Error:", err);
+      // fall back to public guest
+      req.is_public_token = true;
     }
 
-    next(); // Continue execution regardless of authentication success/failure
+    next();
   });
 
   return router;
 }
+
 
 
