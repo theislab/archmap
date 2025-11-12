@@ -8,4 +8,6 @@ export interface ExtRequest extends Request {
   is_administrator?: boolean; // declare optional property "administrator"
   is_authorized?: boolean; // declare optional property "authorized"
   is_verified?: boolean; // declare optional property "verifiedEmail"
+  is_public_token?: boolean;
+  public_jwt?: string;
 }
