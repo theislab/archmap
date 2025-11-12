@@ -156,14 +156,24 @@ const get_atlas_visualization = (): Router => {
  */
 
 
+import jwt from "jsonwebtoken";
+
+
+// Helper function to generate a random public JWT
+function generatePublicAtlasToken(): string {
+  const payload = { role: "public" };
+  return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: "1h" });
+}
+
 const get_allAtlases = (): Router => {
   const router = express.Router();
 
   router.get("/atlases", optional_auth(), async (req, res) => {
     try {
       // If no JWT provided, auto-generate public one
-      if (req.is_public_token && !req.is_authenticated) {
-        req.public_jwt = generatePublicAtlasToken();
+      let public_jwt: string | null = null;
+      if (!req.is_authenticated) {
+        public_jwt = generatePublicAtlasToken();
       }
 
       const atlases = await AtlasService.getAllAtlases();
@@ -190,7 +200,6 @@ const get_allAtlases = (): Router => {
       const filteredAtlases = atlases_filtered.filter(Boolean);
 
       const loggedInUserId = req.user_id;
-      const isPublic = req.is_public_token;
 
       // Filter private atlases for guests
       const visibleAtlases = filteredAtlases.filter((atlas) => {
@@ -202,7 +211,7 @@ const get_allAtlases = (): Router => {
 
       // Send the data back
       return res.status(200).json({
-        token: req.public_jwt || null,
+        token: public_jwt,
         atlases: visibleAtlases,
       });
     } catch (err) {
