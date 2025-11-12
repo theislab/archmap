@@ -168,7 +168,7 @@ function generatePublicAtlasToken(): string {
 const get_allAtlases = (): Router => {
   const router = express.Router();
 
-  router.get("/atlases", optional_auth(), async (req, res) => {
+  router.get("/atlases", optional_auth(), async (req: ExtRequest, res) => {
     try {
       // If no JWT provided, auto-generate public one
       let public_jwt: string | null = null;
