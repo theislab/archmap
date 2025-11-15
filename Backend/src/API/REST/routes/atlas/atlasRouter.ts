@@ -22,7 +22,6 @@ import ModelService from "../../../../database/services/model.service";
 import AtlasUpdateTokenService from "../../../../database/services/atlas_update_token.service.js";
 import { UpdateAtlasDTO } from "../../../../database/dtos/atlas.dto";
 import { result_benchmark_path } from "../file_upload/bucket_filepaths";
-import { generatePublicAtlasToken } from "../../../../util/jwtHelpers";
 
 import util from "util";
 
