@@ -6,7 +6,7 @@ import { validationMdw } from "../../middleware/validation";
 import { Storage } from "@google-cloud/storage";
 
 import multer from "multer";
-import optional_auth from "../../middleware/check_auth";
+import check_auth from "../../middleware/check_auth";
 import tar from 'tar-stream';
 import zlib from 'zlib';
 import { pipeline } from 'stream';

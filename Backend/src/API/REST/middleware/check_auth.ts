@@ -56,7 +56,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "";
 
 
 
-export function check_auth() {
+export default function check_auth() {
   let router = express.Router();
 
   router.use(async (req: any, res, next) => {
