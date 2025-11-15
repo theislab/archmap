@@ -56,7 +56,7 @@ export default function check_auth() {
 
 
 
-export default function optional_auth() {
+export function optional_auth() {
   let router = express.Router();
 
   router.use(async (req: any, res, next) => {
