@@ -268,10 +268,7 @@ const get_allAtlases = (): Router => {
       });
 
       // Send the data back
-      return res.status(200).json({
-        token: public_jwt,
-        atlases: visibleAtlases,
-      });
+      return res.status(200).json(visibleAtlases);
     } catch (err) {
       console.error("Error accessing the atlases!", err);
       return res.status(500).send("Unable to access the atlases.");

@@ -47,7 +47,7 @@ export default function check_auth() {
         return console.error(e); // abort on error;
       }
     } else {
-      return res.status(403).send("JWT missing.");
+      return res.status(403).send("jwt missing.");
     }
   });
 
@@ -59,7 +59,7 @@ export default function check_auth() {
 export function optional_auth() {
   let router = express.Router();
 
-  router.use(async (req: ExtRequest, res, next) => {
+  router.use(async (req: any, res, next) => {
     req.is_authenticated = false;
 
     const authHeader = req.header("auth") || req.header("Authorization");
