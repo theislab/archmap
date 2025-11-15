@@ -6,11 +6,11 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = window.localStorage.getItem('jwt');
+  const token = window.localStorage.getItem('jwt') || window.localStorage.getItem('public_jwt');
 
   if (token) {
     // eslint-disable-next-line no-param-reassign
-    config.headers.auth = token;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
