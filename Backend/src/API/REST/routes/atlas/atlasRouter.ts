@@ -6,7 +6,7 @@ import { validationMdw } from "../../middleware/validation";
 import { Storage } from "@google-cloud/storage";
 
 import multer from "multer";
-import check_auth from "../../middleware/check_auth";
+import optional_auth from "../../middleware/check_auth";
 import tar from 'tar-stream';
 import zlib from 'zlib';
 import { pipeline } from 'stream';
@@ -72,7 +72,7 @@ const get_atlas = (): Router => {
 
 const get_user_atlases = (): Router => {
   let router = express.Router();
-  router.get("/youratlases", validationMdw, check_auth(), async (req: any, res) => {
+  router.get("/youratlases", validationMdw, optional_auth(), async (req: any, res) => {
     try {
       const loggedInUserId = req.user_id; // Assuming req.user.id contains the logged-in user's ID
 
@@ -226,7 +226,7 @@ function generatePublicAtlasToken(): string {
 const get_allAtlases = (): Router => {
   const router = express.Router();
 
-  router.get("/atlases", check_auth(), async (req: any, res) => {
+  router.get("/atlases", optional_auth(), async (req: any, res) => {
     try {
       // If no JWT provided, auto-generate public one
       let public_jwt: string | null = null;
