@@ -72,7 +72,7 @@ const get_atlas = (): Router => {
 
 const get_user_atlases = (): Router => {
   let router = express.Router();
-  router.get("/youratlases", validationMdw, optional_auth(), async (req: any, res) => {
+  router.get("/youratlases", validationMdw, check_auth(), async (req: any, res) => {
     try {
       const loggedInUserId = req.user_id; // Assuming req.user.id contains the logged-in user's ID
 
