@@ -35,14 +35,36 @@ import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined
 
 
 function ProcessingStatus({ project }) {
+  const [progress, setProgress] = useState(project.ml_pipeline_progress);
+
+  useEffect(() => {
+    // Fetch function
+    const fetchProgress = async () => {
+      try {
+        const res = await ProjectService.getProject(project._id); // <-- Your API to fetch updated project
+        setProgress(res.ml_pipeline_progress);
+      } catch (error) {
+        console.error("Error fetching ML pipeline progress:", error);
+      }
+    };
+
+    // Fetch immediately on mount
+    fetchProgress();
+
+    // Poll every 2 minutes
+    const interval = setInterval(fetchProgress, 1 * 60 * 1000);
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, [project._id]);
+
   return (
     <>
       <Box sx={{ pr: 2, flexGrow: 1 }}>
         <LinearProgress />
       </Box>
-      {project.ml_pipeline_progress ? (
+      {progress ? (
         <Typography variant="caption" noWrap sx={{ pr: 2 }}>
-          {project.ml_pipeline_progress}
+          {progress}
         </Typography>
       ) : (
         <Typography variant="caption" noWrap sx={{ pr: 2 }}>
@@ -52,6 +74,7 @@ function ProcessingStatus({ project }) {
     </>
   );
 }
+
 
 
 
