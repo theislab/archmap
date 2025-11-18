@@ -29,6 +29,13 @@ function LoginForm(props) {
 
   const history = useHistory();
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      doLogin();
+    }
+  };
+
   const onClose = useCallback(() => {
     setLoginDetails({
       email: '',
@@ -88,6 +95,8 @@ function LoginForm(props) {
   }
 
   const doLogin = useCallback(() => {
+    if (loading) return;   // ⛔ Prevent double-click or Enter spam
+    
     if (!validateInput()) {
       return;
     }
@@ -150,64 +159,76 @@ function LoginForm(props) {
         aria-describedby="simple-modal-description"
       >
         <Box sx={boxStyle}>
-          <Grid>
-            <Grid container direction="row" justifyContent="center">
-              <Grid xs item />
-              <Grid align="center">
-                <Avatar src={logo} sx={{ width: 72, height: 72 }} />
-                <h2>Sign In</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();   // stop page reload
+              doLogin();
+            }}
+          >
+            <Grid>
+              <Grid container direction="row" justifyContent="center">
+                <Grid xs item />
+                <Grid align="center">
+                  <Avatar src={logo} sx={{ width: 72, height: 72 }} />
+                  <h2>Sign In</h2>
+                </Grid>
+                <Grid xs align="right" item>
+                  <CloseIcon onClick={onClose} className={styles.closeImg} />
+                </Grid>
               </Grid>
-              <Grid xs align="right" item>
-                <CloseIcon onClick={onClose} className={styles.closeImg} />
-              </Grid>
+
+              <TextField
+                id="email"
+                type="text"
+                inputMode="email"
+                error={!!errors.email}
+                helperText={errors.email}
+                label="E-mail"
+                placeholder="Enter e-mail address"
+                fullWidth
+                required
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+              />
+
+              <TextField
+                id="password"
+                error={!!errors.password}
+                helperText={errors.password}
+                label="Password"
+                type="password"
+                margin="dense"
+                placeholder="Enter password"
+                fullWidth
+                required
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+              />
+
+              <FormControlLabel
+                control={<Checkbox id="remember" color="primary" onChange={handleCheckedChange} />}
+                label="Remember me"
+              />
+
+              <LoadingButton
+                loading={loading}
+                type="submit"          // ← IMPORTANT
+                color="primary"
+                variant="contained"
+                fullWidth
+              >
+                Sign in
+              </LoadingButton>
+
+              <Typography
+                onClick={handlepasswordForget}
+                className={styles.pwReminderLink}
+                sx={{ cursor: 'pointer' }}
+              >
+                Forgot password?
+              </Typography>
             </Grid>
-            <TextField
-              id="email"
-              type="email"
-              error={!!errors.email}
-              helperText={errors.email}
-              label="E-mail"
-              placeholder="Enter e-mail address"
-              fullWidth
-              required
-              onChange={handleTextChange}
-            />
-            <TextField
-              id="password"
-              error={!!errors.password}
-              helperText={errors.password}
-              label="Password"
-              type="password"
-              margin="dense"
-              placeholder="Enter password"
-              fullWidth
-              required
-              onChange={handleTextChange}
-            />
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  id="remember"
-                  color="primary"
-                  onChange={handleCheckedChange}
-                />
-              )}
-              label="Remember me"
-            />
-            <LoadingButton
-              loading={loading}
-              type="submit"
-              color="primary"
-              variant="contained"
-              fullWidth
-              onClick={doLogin}
-            >
-              Sign in
-            </LoadingButton>
-            <Typography mt={1}>
-              <Link href="#" onClick={handlepasswordForget} className={styles.pwReminderLink}>Forgot password?</Link>
-            </Typography>
-          </Grid>
+          </form>
         </Box>
       </Modal>
       <Snackbar
