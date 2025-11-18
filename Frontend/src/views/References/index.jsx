@@ -27,6 +27,8 @@ import { useAuth } from 'shared/context/authContext';
 import { LoginContext } from 'shared/context/loginContext';
 import PasswordForgetForm from 'components/PasswordForgetForm';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const tmpObj = [
   {
@@ -56,6 +58,7 @@ const References = () => {
   const { path } = useRouteMatch();
   const [atlases, setAtlases] = useState([]);
   const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useAuth();
   const history = useHistory();
   // function to update the state in the URL
@@ -87,6 +90,18 @@ const References = () => {
       setValue(0);
     }
   };
+
+  useEffect(() => {
+  Promise.all([
+    AtlasService.getAtlases(),
+  ])
+    .then(([newAtlases]) => {
+      setAtlases(newAtlases);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => setLoading(false));
+}, []);
+
 
   useEffect(() => {
     AtlasService.getAtlases()
@@ -296,6 +311,22 @@ const References = () => {
   });
 
   const executeScroll = () => (user ? history.push({ pathname: '/sequencer/help' }) : history.push({ pathname: '/', state: { contact_us: true } }));
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          height: '80vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
