@@ -38,6 +38,7 @@ export default function register_route(): Router {
 
       const tokenToAdd: AddTokenDTO = { _userId: userAdded._id };
       const token = await TokenService.addToken(tokenToAdd);
+      console.log(`Token: -> ${token}, ${token.token}`);
       // Make sure to uncomment this line
       if(process.env.NODE_ENV === 'production'){
         mailer.send_verification_mail(first_name, email, token.token);

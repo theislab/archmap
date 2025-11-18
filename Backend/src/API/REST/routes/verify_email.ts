@@ -7,6 +7,7 @@ export default function verify_email(): Router {
 
   router.get("/verify/:token", async (req, res) => {
     const tokenObj = await TokenService.getTokenByToken(req.params.token);
+    console.log(`Verifying token: ${req.params.token} -> ${tokenObj}`);
     if (!tokenObj)
       return res.status(404).send("Verification token could not be found. It may have expired.");
 
