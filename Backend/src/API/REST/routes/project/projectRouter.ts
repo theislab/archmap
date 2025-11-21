@@ -149,7 +149,7 @@ const get_users_projects = (): Router => {
 
 
 const sanitizeErrorMessage = (errorMessage: string) => {
-  const MAX_ERROR_MESSAGE_LENGTH = 255; // Maximum length for error message
+  const MAX_ERROR_MESSAGE_LENGTH = 1000; // Maximum length for error message
   if (typeof errorMessage === 'string') {
     let sanitizedMessage = errorMessage.replace(/[\r\n]+/gm, ' ')
                                        .replace(/(?:\w+:)?\/\/[^\s]+/g, '[URL]')
