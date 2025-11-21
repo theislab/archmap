@@ -6,6 +6,8 @@ import { Document, model, Schema } from "mongoose";
 export interface IAtlas extends Document {
   name: string;
   previewPictureURL: string;
+  isHCAAtlas: boolean;
+  HCAiconLink: string;
   classifierLabels: Array<string>;
   modalities: Array<string>;
   numberOfCells: number;
@@ -52,6 +54,17 @@ const atlasSchema = new Schema<IAtlas>(
       type: String,
       required: false,
       default: "https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/inrevision.png"
+    },
+    HCAiconLink: {
+      type: String,
+      required: false,
+      default: "https://storage.googleapis.com/jst-2021-bucket-static/images_atlas/hca_icon.png"
+    },
+
+    isHCAAtlas: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
 
     classifierLabels: [

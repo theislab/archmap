@@ -6,6 +6,8 @@ export interface AddAtlasDTO {
     batchKey: string;
     cellTypeKey: string;
     previewPictureURL: string;
+    isHCAAtlas?: boolean;
+    HCAiconLink?: string;
     classifierLabels: Array<string>;
     modalities: Array<string>;
     numberOfCells: number;

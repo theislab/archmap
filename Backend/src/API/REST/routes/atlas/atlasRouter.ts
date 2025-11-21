@@ -531,6 +531,8 @@ const upload_atlas = (): Router => {
         batchKey: req.body.batchKey,
         cellTypeKey: req.body.cellTypeKey,
         previewPictureURL: req.body.previewPictureURL,
+        isHCAAtlas: req.body.isHCAAtlas,
+        HCAiconLink: req.body.HCAiconLink,
         classifierLabels: req.body.classifierLabels,
         modalities: req.body.modalities,
         numberOfCells: req.body.numberOfCells,

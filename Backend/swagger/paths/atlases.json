@@ -36,6 +36,12 @@
                   "previewPictureURL": {
                     "type": "string"
                   },
+                  "isHCAAtlas": {
+                    "type": "boolean"
+                  },
+                  "HCAiconLink": {
+                    "type": "string"
+                  },
                   "classifierLabels": {
                     "type": "array",
                     "items": {
@@ -153,6 +159,12 @@
                     "previewPictureURL": {
                       "type": "string"
                     },
+                    "isHCAAtlas": {
+                      "type": "boolean"
+                    },
+                    "HCAiconLink": {
+                      "type": "string"
+                    },
                     "classifierLabels": {
                       "type": "array",
                       "items": {
@@ -233,6 +245,12 @@
                       "type": "string"
                     },
                     "previewPictureURL": {
+                      "type": "string"
+                    },
+                    "isHCAAtlas": {
+                      "type": "boolean"
+                    },
+                    "HCAiconLink": {
                       "type": "string"
                     },
                     "classifierLabels": {
