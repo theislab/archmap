@@ -110,6 +110,8 @@ function AtlasModelChoice({
                 cellsInReference={a.numberOfCells}
                 species={a.species}
                 imgLink={a.previewPictureURL}
+                isHCAAtlas={a.isHCAAtlas}
+                HCAiconLink={a.HCAiconLink}
                 selected={selectedAtlas.name === a.name}
                 selectedAtlas={selectedAtlas}
                 onSelect={setSelectedAtlas}

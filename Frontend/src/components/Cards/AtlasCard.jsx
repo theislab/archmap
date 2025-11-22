@@ -24,7 +24,7 @@ import axiosInstance from 'shared/services/axiosInstance';
  * 
  */
 export default function AtlasCard({
-  width = '100%', height = '100%', title, atlas, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, classifierLabels, modalities,
+  width = '100%', height = '100%', title, atlas, atlasId, inrevision, uploadedBy, userId, isPrivate, imgLink, isHCAAtlas, HCAiconLink, classifierLabels, modalities,
   cellsInReference, species, learnMoreLink, onSelect, selected = false, disabled = false,
   isSearchPage = false
 }) {
@@ -209,6 +209,26 @@ export default function AtlasCard({
           cursor: disabled ? 'default' : 'pointer',
         }}
       >
+        { isHCAAtlas && HCAiconLink &&
+          (
+          <Box
+            component="img"
+            src={HCAiconLink}   // ← replace with your icon URL
+            alt="HCA icon"
+            sx={{
+              position: 'absolute',
+              top: 2,
+              right: 8,
+              width: 64,
+              height: 64,
+              zIndex: -1,
+              pointerEvents: 'none', // ensures it does not intercept clicks
+              borderRadius: '50%',   // optional: makes it circular
+            }}
+          />
+          )
+        }
+
         {
           !disabled && isHover
           && (

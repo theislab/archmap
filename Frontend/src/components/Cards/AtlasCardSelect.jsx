@@ -25,7 +25,7 @@ import RectSkeleton from "components/Skeletons/RectSkeleton"
  * @param learnMoreLink onHover button Learn More url
  */
 export default function AtlasCardSelect({
-  width = "100%", height = "100%", title, inrevision, imgLink, classifierLabels, modalities,
+  width = "100%", height = "100%", title, inrevision, imgLink, isHCAAtlas, HCAiconLink, classifierLabels, modalities,
   cellsInReference, species, mapLink, learnMoreLink, selected=false, 
   onSelect, selectedAtlas, atlasObject={},isLoading=true
 }) {
@@ -80,6 +80,7 @@ export default function AtlasCardSelect({
           position: "relative",
         }}
       >
+
         {
           isHover &&
           <Box
@@ -125,7 +126,8 @@ export default function AtlasCardSelect({
             flexDirection: 'column',
             boxShadow: isHover ? 'none' : '0px 4px 6px 0px rgba(33, 37, 41, .2), 0px 0px 1px 0px rgba(33, 37, 41, .32)',
             borderRadius: '1.2rem',
-            justifyContent: 'center',
+            // justifyContent: 'center',
+            justifyContent: 'flex-start',
             borderStyle: 'solid',
             borderColor: selected ? '#008BF5' : 'transparent',
             borderWidth: '4px',
@@ -134,17 +136,41 @@ export default function AtlasCardSelect({
           <Typography
             sx={{
               fontSize: "1.4rem",
-              fontWeight: "bold"
+              fontWeight: "bold",
+              mt: '-20px',
+              pr: '7px',       // ← padding so text never runs under the icon
+              // wordBreak: 'break-word',
+              
             }}
           >
             {title}
           </Typography>
 
+          {isHCAAtlas && HCAiconLink && (
+            <Box
+              component="img"
+              src={HCAiconLink}
+              alt="HCA icon"
+              sx={{
+                position: 'absolute',
+                top: -8,
+                right: 8,
+                width: 56,
+                height: 56,
+                zIndex: -1,
+                pointerEvents: 'none',   // prevents click blocking
+                borderRadius: '50%',     // optional: nice rounded look
+              }}
+            />
+          )}
+
           <Box component="img" src={imgLink} alt="Atlas preview img"
             sx={{
-              width: "80%",
+              width: "100%",        // image can grow up to the card width
+              maxWidth: "140px",    // ← your max width
+              maxHeight: "120px",   // ← your max height
               margin: "auto",
-              objectFit: "cover"
+              objectFit: "contain", // keeps full image visible without cropping
             }}
           />
 
