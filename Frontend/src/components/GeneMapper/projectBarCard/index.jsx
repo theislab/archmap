@@ -68,7 +68,7 @@ function ProcessingStatus({ project }) {
         </Typography>
       ) : (
         <Typography variant="caption" noWrap sx={{ pr: 2 }}>
-          Processing by scArches...
+          Submitting your request and preparing computing resources ...
         </Typography>
       )}
     </>
