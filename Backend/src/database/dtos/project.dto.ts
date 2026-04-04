@@ -16,6 +16,7 @@ export interface UpdateProjectDTO {
   gene_conversion?: string;
   result?: string;
   ml_pipeline_progress?: string;
+  resultSize?: number;
 }
 
 /**

@@ -315,9 +315,21 @@ const update_project_results = (): Router => {
         };
         await ProjectService.updateProjectById(project._id, updateLocationAndStatus);
       } else if (project.status === ProjectStatus.DONE) {
+        let headParams = {
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: `results/${project._id}/query_model.tar.gz`
+        };
+        let fileSize = 0;
+        try {
+          let headResult = await s3.headObject(headParams).promise();
+          fileSize = headResult.ContentLength || 0;
+        } catch (error) {
+          console.error('Error getting file size for download:', error);
+        }
         const updateStatus: UpdateProjectDTO = {
           status: ProjectStatus.DOWNLOAD_READY,
-          outputFileWithCounts: `results/${project._id}/query_model.tar.gz`
+          outputFileWithCounts: `results/${project._id}/query_model.tar.gz`,
+          resultSize: fileSize
         };
         await ProjectService.updateProjectById(project._id, updateStatus);
       } else {
