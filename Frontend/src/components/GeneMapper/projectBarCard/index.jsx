@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import {
-  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button, CircularProgress,
+  Box, IconButton, LinearProgress, Stack, CardActionArea, Snackbar, Collapse, Link, Divider, Grid, Alert, Button, CircularProgress, Menu, MenuItem,
 } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -51,7 +51,7 @@ function ProcessingStatus({ project }) {
     // Fetch immediately on mount
     fetchProgress();
 
-    // Poll every 2 minutes
+    // Poll every 1 minute
     const interval = setInterval(fetchProgress, 1 * 60 * 1000);
 
     return () => clearInterval(interval); // cleanup on unmount
@@ -178,6 +178,8 @@ export default function ProjectBarCard({
   const [Metric4InfoOpen, setMetric4InfoOpen] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [fetchUrlError, setFetchUrlError] = useState(null);
+  const [fetchingLabelUrl, setFetchingLabelUrl] = useState(false);
+  const [downloadMenuAnchor, setDownloadMenuAnchor] = useState(null);
   const [fetchingRatio, setFetchingRatio] = useState(false);
   const [fetchedRatio, setFetchedRatio] = useState('');
   const [fetchRatioError, setFetchRatioError] = useState(null);
@@ -253,47 +255,73 @@ export default function ProjectBarCard({
     setOpen(!open);
   };
 
-  const fetchPresignedUrlAndDownload = async ([location,outputFileWithCounts]) => {
+  const getFilenameFromKey = (key) => {
+    if (!key) return project.name;
+    const fragments = key.split("/");
+    return fragments[fragments.length - 1] || project.name;
+  };
+
+  const downloadFileFromPresignedUrl = (presignedUrl, filename) => {
+    const link = document.createElement('a');
+    link.href = presignedUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadMenuOpen = (event) => {
+    setDownloadMenuAnchor(event.currentTarget);
+  };
+
+  const handleDownloadMenuClose = () => {
+    setDownloadMenuAnchor(null);
+  };
+
+  const fetchPresignedUrlAndDownload = async ([location, outputFileWithCounts]) => {
     setFetchingUrl(true);
     setFetchUrlError(null);
 
-    
     let outputFile;
-
     if (!outputFileWithCounts) {
-    // for demos
+      // for demos
       outputFile = location.substr(56);
     } else {
       outputFile = outputFileWithCounts;
-      
     }
-
 
     try {
       const response = await axiosInstance.post('/file_download/results', {
-        // id: projectId,
-        // status: status,
         outputFileWithCounts: outputFile,
-
       });
-
-      
 
       const data = await response.data;
       const presignedUrl = data.presignedUrl;
-      // Create a temporary anchor tag and programmatically click it to download the file
-      const link = document.createElement('a');
-      link.href = presignedUrl;
-      link.download = `${project.name}.h5ad`; // Set the download filename
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
+      const filename = getFilenameFromKey(outputFile);
+      downloadFileFromPresignedUrl(presignedUrl, filename);
     } catch (err) {
       console.error('Error fetching presigned URL:', err);
       setFetchUrlError('Failed to download file.');
     } finally {
       setFetchingUrl(false);
+    }
+  };
+
+  const fetchPredictionLabelsAndDownload = async () => {
+    setFetchingLabelUrl(true);
+    setFetchUrlError(null);
+
+    try {
+      const response = await axiosInstance.post('/file_download/prediction_labels', {
+        projectId: project._id,
+      });
+      const data = await response.data;
+      downloadFileFromPresignedUrl(data.presignedUrl, 'query_prediction_labels.txt');
+    } catch (err) {
+      console.error('Error fetching prediction labels URL:', err);
+      setFetchUrlError('Failed to download prediction labels.');
+    } finally {
+      setFetchingLabelUrl(false);
     }
   };
 
@@ -771,18 +799,44 @@ export default function ProjectBarCard({
                           }
                         </Alert>
                       </Snackbar>
-                      <Box sx={{paddingLeft: '10px'}}>
-                        <IconButton
-                            onClick={() => fetchPresignedUrlAndDownload([project.location,project.outputFileWithCounts])}
-                            disabled={project.status !== 'DOWNLOAD_READY'}
+                      <Box sx={{paddingLeft: '10px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                        <Button
+                          variant="outlined"
+                          startIcon={<DownloadIcon />}
+                          onClick={handleDownloadMenuOpen}
+                          disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl || fetchingLabelUrl}
+                        >
+                          Download
+                        </Button>
+                        <Menu
+                          anchorEl={downloadMenuAnchor}
+                          open={Boolean(downloadMenuAnchor)}
+                          onClose={handleDownloadMenuClose}
+                        >
+                          <MenuItem
+                            disabled={project.status !== 'DOWNLOAD_READY' || fetchingUrl}
+                            onClick={async () => {
+                              handleDownloadMenuClose();
+                              await fetchPresignedUrlAndDownload([project.location, project.outputFileWithCounts]);
+                            }}
                           >
-                            {fetchingUrl ? <CircularProgress size={24} /> : <DownloadIcon />}
-                        </IconButton>
+                            {fetchingUrl ? 'Downloading result...' : 'Result tar.gz'}
+                          </MenuItem>
+                          <MenuItem
+                            disabled={project.status !== 'DOWNLOAD_READY' || fetchingLabelUrl}
+                            onClick={async () => {
+                              handleDownloadMenuClose();
+                              await fetchPredictionLabelsAndDownload();
+                            }}
+                          >
+                            {fetchingLabelUrl ? 'Downloading labels...' : 'Prediction labels (.txt)'}
+                          </MenuItem>
+                        </Menu>
                         {fetchUrlError && <Typography color="error">{fetchUrlError}</Typography>}
                         <IconButton onClick={() => handleDelete()}>
-                        {deleted
-                          ? <ReplayIcon />
-                          : <DeleteOutlineIcon color="error" />}
+                          {deleted
+                            ? <ReplayIcon />
+                            : <DeleteOutlineIcon color="error" />}
                         </IconButton>
                       </Box>
                     </>

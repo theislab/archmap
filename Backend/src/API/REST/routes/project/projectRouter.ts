@@ -13,7 +13,7 @@ import { AddProjectDTO, AddScviProjectDTO, UpdateProjectDTO } from "../../../../
 import s3, { try_delete_object_from_s3 } from "../../../../util/s3";
 import { DeleteObjectRequest } from "aws-sdk/clients/s3";
 import { ProjectStatus } from "../../../../database/models/project";
-import { query_path, result_model_path, result_path, result_cxg_path } from "../file_upload/bucket_filepaths";
+import { query_path, result_model_path, result_path, result_prediction_labels_path, result_cxg_path } from "../file_upload/bucket_filepaths";
 import { AddDeletedProjectDTO } from "../../../../database/dtos/deletedProject.dto";
 
 const get_projects = (): Router => {
@@ -452,6 +452,7 @@ const cleanup_old_projects = (): Router => {
       let oldprojects = await DeletedProjectService.getProjectsOverLifetime();
       for (const project of oldprojects) {
         try_delete_object_from_s3(result_path(project.id));
+        try_delete_object_from_s3(result_prediction_labels_path(project.id));
         try_delete_object_from_s3(result_model_path(project.id));
         try_delete_object_from_s3(query_path(project.id));
       }

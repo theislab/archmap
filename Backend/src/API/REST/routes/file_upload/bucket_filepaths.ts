@@ -8,6 +8,9 @@ export function query_path(projectid: ObjectId | string): string {
 export function result_path(projectid: ObjectId | string): string {
   return `results/${projectid}/query_model.tar.gz`;
 }
+export function result_prediction_labels_path(projectid: ObjectId | string): string {
+  return `results/${projectid}/query_prediction_labels.txt`;
+}
 export function result_cxg_path(projectid: ObjectId | string): string {
   return `results/${projectid}/query_cxg.h5ad`;
 }

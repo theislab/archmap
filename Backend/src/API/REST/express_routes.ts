@@ -23,6 +23,7 @@ import upload_start_upload_route from "./routes/file_upload/start_upload";
 import upload_get_upload_url_route from "./routes/file_upload/get_upload_url";
 import download_results_route from "./routes/file_download/results";
 import download_benchmark_results_route from "./routes/file_download/benchmark_results";
+import download_prediction_labels_route from "./routes/file_download/prediction_labels";
 import upload_user_avatar_route from "./routes/upload_user_avatar";
 
 import {
@@ -240,8 +241,7 @@ export function express_routes(): Router {
   // download routes
   router.use(download_results_route());
   router.use(download_benchmark_results_route());
-
-  
+  router.use(download_prediction_labels_route());
 
   //contact routes
   router.use(contact_us());
