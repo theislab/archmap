@@ -12,6 +12,17 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function ProjectInfo({ project, atlas, model }) {
   const [atlasInfoOpen, setAtlasInfoOpen] = useState(false);
   const [modelInfoOpen, setModelInfoOpen] = useState(false);
+
+  const formatBytes = (bytes) => {
+    if (bytes === 0) return '0 MB';
+    const mb = bytes / (1024 * 1024);
+    if (mb < 1024) {
+      return mb.toFixed(2) + ' MB';
+    } else {
+      return (mb / 1024).toFixed(2) + ' GB';
+    }
+  };
+
   return (
     <>
       <Typography>
@@ -27,6 +38,9 @@ function ProjectInfo({ project, atlas, model }) {
         </IconButton>}
       </Typography>
       <Typography>{`Dataset: ${project?.fileName}`}</Typography>
+      {project?.resultSize > 0 && (
+        <Typography>{`Result Size: ${formatBytes(project.resultSize)}`}</Typography>
+      )}
       {atlas?._id
       && <AtlasInfo id={atlas._id} open={atlasInfoOpen} setOpen={setAtlasInfoOpen} />}
       {model?._id
